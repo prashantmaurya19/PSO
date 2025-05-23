@@ -1,0 +1,67 @@
+#login {
+  width: 100%;
+  height: 97%;
+  padding: 0px 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // height: $BOARD_DIMENSION * $BOARD_SQUARE_SIZE;
+
+  @include outline_();
+  &--form {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    background-color: #000000;
+    border-radius: 10px;
+    flex-direction: column;
+    width: 30%;
+    height: 70%;
+
+    h2 {
+      @include flex_center();
+      color: white;
+      width: 100%;
+      height: 20%;
+    }
+
+    form {
+      overflow: hidden;
+      width: 80%;
+      height: 60%;
+
+      // @include debug_outline($color: #fff);
+      div {
+        color: white;
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        justify-content: end;
+        width: 100%;
+        height: 30%;
+        margin-top: 1%;
+        // @include debug_outline();
+        label {
+          justify-self: start;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+          width: 100%;
+          height: 60%;
+          border-radius: 2px;
+        }
+      }
+      button {
+        width: 100%;
+        height: 20%;
+        color: black;
+        margin-top: 10%;
+      }
+    }
+  }
+  .signup-link {
+    // @include outline_();
+  }
+}
