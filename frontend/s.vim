@@ -13,22 +13,20 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +6 src/App.jsx
+badd +16 src/components/header/navbar.jsx
+badd +7 src/css/util.js
+badd +10 src/util/log.js
 badd +5 src/main.jsx
-badd +19 src/components/header/navbar.jsx
-badd +13 src/index.css
-badd +75 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/mason_lsp_config.lua
-badd +0 health://
+badd +83 src/css/_const.js
+badd +9 src/css/global.js
+badd +22 src/App.jsx
+badd +14 src/index.css
+badd +15 src/css/theme.js
 argglobal
 %argdel
-set stal=2
-tabnew +setlocal\ bufhidden=wipe
-tabnew +setlocal\ bufhidden=wipe
-tabnew +setlocal\ bufhidden=wipe
-tabrewind
 edit src/components/header/navbar.jsx
 argglobal
-balt src/main.jsx
+balt src/css/util.js
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -39,70 +37,14 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 19 - ((18 * winheight(0) + 22) / 45)
+let s:l = 16 - ((15 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 19
-normal! 04|
+keepjumps 16
+normal! 027|
 lcd ~/Documents/Coding/PlayShogiOnline/frontend
-tabnext
-argglobal
-enew
-file health://
-balt ~/Documents/Coding/PlayShogiOnline/frontend/src/components/header/navbar.jsx
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-lcd ~/Documents/Coding/PlayShogiOnline/frontend
-tabnext
-edit ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/mason_lsp_config.lua
-argglobal
-balt ~/Documents/Coding/PlayShogiOnline/frontend/src/components/header/navbar.jsx
-setlocal foldmethod=manual
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 75 - ((41 * winheight(0) + 22) / 45)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 75
-normal! 09|
-lcd ~/Documents/Coding/PlayShogiOnline/frontend
-tabnext
-edit ~/Documents/Coding/PlayShogiOnline/frontend/src/index.css
-argglobal
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 13 - ((12 * winheight(0) + 22) / 45)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 13
-normal! 014|
-lcd ~/Documents/Coding/PlayShogiOnline/frontend
-tabnext 3
-set stal=1
+tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
