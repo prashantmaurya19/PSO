@@ -3,6 +3,7 @@ import th from "./css/theme";
 import { join, getTranslatedCss } from "./css/util";
 import style from "./css/global";
 import { useEffect } from "react";
+import Index from "./components/pages";
 
 function App() {
   useEffect(function () {
@@ -24,6 +25,7 @@ function App() {
       )}
     >
       <NavBar />
+      <Index />
     </div>
   );
 }
