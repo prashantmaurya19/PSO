@@ -1,13 +1,12 @@
 import React from "react";
 
 /**
- * @typedef {{outline:React.CSSProperties}} DebugProperties
  * @property {React.CSSProperties} full_dimension
  * @property {React.CSSProperties} full_w
  * @property {React.CSSProperties} full_h
  * @property {React.CSSProperties} backwardItalic
  * @property {React.CSSProperties} flexCenter
- * @property {DebugProperties} debug
+ * @property {React.CSSProperties} debug
  */
 const M = {
   /**
@@ -46,10 +45,12 @@ const M = {
   full_h: {
     height: "100%",
   },
+  /**  
+   * @type {React.CSSProperties}
+  */
   debug: {
-    outline: {
-      outline: "1px solid red",
-    },
+    outline: "1px solid red",
+    background : "rgba(255,255,255,0.1)"
   },
 };
 

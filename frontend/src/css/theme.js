@@ -10,7 +10,7 @@ const M = {
     /**
      * @property {string} primary
      */
-    text: { primary: "#faeded", second: "#0f0f0f" },
+    text: { primary: "#faeded", second: "#0f0f0f", third: "#212121" },
     primary: "#0f0f0f",
     second: "#faeded",
     third: "#02bd34",
@@ -21,7 +21,7 @@ const M = {
    * @type {string}
    */
   bg: "#0f0f0f",
-  primary:"#02bd34"
+  primary: "#02bd34",
 };
 
 export default M;

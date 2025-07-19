@@ -108,6 +108,7 @@ function LeftSection() {
           display: "flex",
           alignItems: "end",
           justifyContent: "start",
+          // outline: g.debug.outline,
           // padding: "2%",
         },
       })}
@@ -119,11 +120,12 @@ function LeftSection() {
               width: "150px",
               height: "30px",
               fontSize: "20px",
-	      fontFamily:"Roboto",
+              fontFamily: "Roboto",
               borderRadius: "15px",
               color: th.index.third,
               border: "1px solid",
               borderColor: th.index.third,
+	      margin:"0 0 0 10px"
             },
             g.flexCenter,
           ),
@@ -158,14 +160,13 @@ export default function Section1() {
             display: "flex",
             height: "95vh",
             alignItems: "center",
-            justifyContent: "end",
+            justifyContent: "space-between",
           },
           g.full_w,
         ),
       })}
     >
       <LeftSection />
-      <ShogiPices />
       <RightSlogan />
     </section>
   );
