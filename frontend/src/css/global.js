@@ -7,8 +7,16 @@ import React from "react";
  * @property {React.CSSProperties} backwardItalic
  * @property {React.CSSProperties} flexCenter
  * @property {React.CSSProperties} debug
+ * @property {React.CSSProperties} width_with_scroll
  */
 const M = {
+  /**
+   * @type {React.CSSProperties}
+   */
+  width_with_scroll: {
+    width: "99.21vw",
+  },
+
   /**
    * @type {React.CSSProperties}
    */
@@ -45,12 +53,12 @@ const M = {
   full_h: {
     height: "100%",
   },
-  /**  
+  /**
    * @type {React.CSSProperties}
-  */
+   */
   debug: {
     outline: "1px solid red",
-    background : "rgba(255,255,255,0.1)"
+    background: "rgba(255,255,255,0.1)",
   },
 };
 

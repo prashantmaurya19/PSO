@@ -1,14 +1,17 @@
-import NavBar from "./components/header/navbar";
 import th from "./css/theme";
 import { join, getTranslatedCss } from "./css/util";
 import style from "./css/global";
 import { useEffect } from "react";
 import Index from "./components/pages";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LoginPage from "./components/pages/login";
 
 function App() {
   useEffect(function () {
     let id = "pmreactcustomrenderedstylesheet";
-    if (!document.getElementById(id)) {
+    let ele = document.getElementById(id);
+    window.style_status = true;
+    if (!ele) {
       const style = document.createElement("style");
       style.id = id;
       style.innerHTML = getTranslatedCss();
@@ -17,15 +20,16 @@ function App() {
   }, []);
   return (
     <div
-      style={join(
-        {
-          background: th.bg,
-        },
-        style.full_dimension,
-      )}
+      style={join({
+        background: th.bg,
+      })}
     >
-      <NavBar />
-      <Index />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

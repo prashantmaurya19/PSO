@@ -1,30 +1,37 @@
-// import d from "../../css/debug";
 import { join, merge, style } from "../../css/util";
 import th from "../../css/theme";
+import g from "../../css/global";
 import "react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * @param {{css:import("../../css/util").CssPsedoProperties}}
  */
-export const NavButton = ({ css = {}, children }) => {
+export const NavButton = ({ css = {}, to = "#", children }) => {
   return (
-    <button
+    <Link
+      to={to}
       {...style(
         merge(
           {
-            "&": {
-              width: "100px",
-              height: "90%",
-              borderRadius: "20px",
-              color: th.index.text.primary,
-              border: `${th.index.second} 1px solid`,
-              background: `linear-gradient(0deg,${th.index.primary} 50%, ${th.index.second} 50%)`,
-              backgroundSize: "100% 200%",
-              marginRight: "10px",
-              backgroundPosition: "0% 100%",
-              transition: "background 50ms ease-in-out",
-            },
+            "&": join(
+              {
+                textDecoration: "none",
+                fontFamily: "inherit",
+                width: "100px",
+                height: "90%",
+                borderRadius: "20px",
+                color: th.index.text.primary,
+                border: `${th.index.second} 1px solid`,
+                background: `linear-gradient(0deg,${th.index.primary} 50%, ${th.index.second} 50%)`,
+                backgroundSize: "100% 200%",
+                marginRight: "10px",
+                backgroundPosition: "0% 100%",
+                transition: "background 50ms ease-in-out",
+              },
+              g.flexCenter,
+            ),
             hover: {
               color: th.index.text.second,
               backgroundPosition: "0% 0%",
@@ -35,22 +42,24 @@ export const NavButton = ({ css = {}, children }) => {
       )}
     >
       {children}
-    </button>
+    </Link>
   );
 };
 
-function NavBar() {
+function NavBar({ children }) {
   return (
     <nav
       {...style({
-        "&": join({
-          display: "flex",
-          justifyContent: "space-between",
-          flexFlow: "row",
-          width: "100%",
-          height: "40px",
-          color: th.index.text.primary,
-        }),
+        "&": join(
+          {
+            display: "flex",
+            justifyContent: "space-between",
+            flexFlow: "row",
+            height: "4vh",
+            color: th.index.text.primary,
+          },
+          g.full_w,
+        ),
       })}
     >
       <span
@@ -90,36 +99,7 @@ function NavBar() {
           justifyContent: "end",
         })}
       >
-        <NavButton>Home</NavButton>
-        <NavButton>About</NavButton>
-        <NavButton
-          css={{
-            "&": {
-              borderColor: th.index.third,
-              background: `linear-gradient(0deg,${th.index.primary} 50%, ${th.index.third} 50%)`,
-              color: th.index.third,
-            },
-	    hover:{
-              color: th.index.text.primary,
-	    }
-          }}
-        >
-          login
-        </NavButton>
-        <NavButton
-          css={{
-            "&": {
-              borderColor: th.index.forth,
-              background: `linear-gradient(0deg,${th.index.primary} 50%, ${th.index.forth} 50%)`,
-              color: th.index.forth,
-            },
-	    hover:{
-              color: th.index.text.primary,
-	    }
-          }}
-        >
-          sign Up
-        </NavButton>
+        {children}
       </span>
     </nav>
   );

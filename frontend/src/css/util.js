@@ -1,6 +1,7 @@
 import React from "react";
 import c from "./_const";
 import { v1 } from "uuid";
+import { getTrace } from "../util/log";
 
 //take care more in later
 /**
@@ -26,9 +27,15 @@ export function css(id, style) {
  * @param {CssPsedoProperties} props
  */
 export function style(props) {
-  let id = uuid();
-  css(id, props);
-
+  let id = undefined;
+  let t = getTrace()+JSON.stringify(props);
+  if (window.style_status) {
+    id = c.ids[t];
+  } else {
+    id = c.ids[t] ? c.ids[t] : uuid();
+    c.ids[t] = id;
+    css(id, props);
+  }
   return {
     id: id,
   };
@@ -50,6 +57,7 @@ export function merge(current, extended) {
  * @returns {React.CSSProperties}
  */
 export function join(...css) {
+  if (css.length == 1) return css[0];
   return Object.assign({}, ...css);
 }
 

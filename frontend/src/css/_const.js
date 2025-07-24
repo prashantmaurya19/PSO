@@ -1,9 +1,10 @@
-// import { debug } from "../util/log";
 /**
  * @type {Object}
  * @property {CssPsedoPropertiesManager} _css
+ * @property {Object} ids
  */
-const M = {};
+const M = {
+};
 
 class CssPsedoPropertiesManager {
   constructor() {
@@ -11,6 +12,14 @@ class CssPsedoPropertiesManager {
      * @type {Object.<string,React.CSSProperties>}
      */
     this._css = {};
+    this.staus = document.getElementById("pmreactcustomrenderedstylesheet")
+      ? true
+      : false;
+    this.self_identifier = "&";
+  }
+
+  getStatus() {
+    return this.staus;
   }
 
   /**
@@ -48,14 +57,10 @@ class CssPsedoPropertiesManager {
     let ans = "";
     for (let i of Object.keys(this._css)) {
       for (const e in this.getStyle(i)) {
-        if (e == "&") {
-          ans += `
-#${i} {${this.translate(this.getStyle(i)[e])}}
-`;
+        if (e.substring(0, 1) == this.self_identifier) {
+          ans += `#${e.replace(this.self_identifier, i)} {${this.translate(this.getStyle(i)[e])}}`;
         } else {
-          ans += `
-#${i}:${e} {${this.translate(this.getStyle(i)[e])}}
-`;
+          ans += `#${i}:${e} {${this.translate(this.getStyle(i)[e])}}`;
         }
       }
     }
@@ -79,5 +84,6 @@ class CssPsedoPropertiesManager {
 }
 
 M._css = new CssPsedoPropertiesManager();
+M.ids = {};
 
 export default M;

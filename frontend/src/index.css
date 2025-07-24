@@ -4,7 +4,6 @@
 }
 
 body {
-  width: 99.21vw;
   height: max-content;
 }
 
@@ -26,3 +25,4 @@ body {
     padding-top: 2%;
   }
 }
+
