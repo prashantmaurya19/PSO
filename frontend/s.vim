@@ -3,7 +3,7 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
-cd ~/Documents/Coding/PlayShogiOnline/frontend
+cd ~/Documents/coding/PSO/frontend
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
@@ -13,20 +13,16 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +16 src/components/header/navbar.jsx
-badd +7 src/css/util.js
-badd +10 src/util/log.js
-badd +5 src/main.jsx
-badd +83 src/css/_const.js
-badd +9 src/css/global.js
-badd +22 src/App.jsx
-badd +14 src/index.css
-badd +15 src/css/theme.js
+badd +44 src/components/header/navbar.jsx
+badd +1 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/telescope_ext.lua
+badd +1 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/util/file.lua
+badd +8 src/util/tailwind.js
+badd +10 src/index.css
 argglobal
 %argdel
 edit src/components/header/navbar.jsx
 argglobal
-balt src/css/util.js
+balt src/index.css
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -37,13 +33,13 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 16 - ((15 * winheight(0) + 19) / 38)
+let s:l = 44 - ((7 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 16
-normal! 027|
-lcd ~/Documents/Coding/PlayShogiOnline/frontend
+keepjumps 44
+normal! 012|
+lcd ~/Documents/coding/PSO/frontend
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -57,7 +53,6 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

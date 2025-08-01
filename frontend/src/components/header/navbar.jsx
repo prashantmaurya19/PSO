@@ -1,44 +1,34 @@
-import { join, merge, style } from "../../css/util";
-import th from "../../css/theme";
-import g from "../../css/global";
+import { join } from "../../util/tailwind";
 import "react";
 import React from "react";
 import { Link } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 
 /**
- * @param {{css:import("../../css/util").CssPsedoProperties}}
+ * @param {{ className:string,to:string }}
  */
-export const NavButton = ({ css = {}, to = "#", children }) => {
+export const NavButton = ({ className = "", to = "#", children }) => {
   return (
     <Link
       to={to}
-      {...style(
-        merge(
-          {
-            "&": join(
-              {
-                textDecoration: "none",
-                fontFamily: "inherit",
-                width: "100px",
-                height: "90%",
-                borderRadius: "20px",
-                color: th.index.text.primary,
-                border: `${th.index.second} 1px solid`,
-                background: `linear-gradient(0deg,${th.index.primary} 50%, ${th.index.second} 50%)`,
-                backgroundSize: "100% 200%",
-                marginRight: "10px",
-                backgroundPosition: "0% 100%",
-                transition: "background 50ms ease-in-out",
-              },
-              g.flexCenter,
-            ),
-            hover: {
-              color: th.index.text.second,
-              backgroundPosition: "0% 0%",
-            },
-          },
-          css,
+      className={twMerge(
+        join(
+          "no-underline",
+          "font-[inherit]",
+          "w-[100px] h-[90%]",
+          "ml-2",
+          "rounded-3xl",
+          "text-index-second",
+          "border-1 border-index-second border-solid",
+          "bg-linear-[0deg,theme(colors.index-primary)_50%,theme(colors.index.second)_50%]",
+          "bg-size-[100%_200%]",
+          "bg-position-[0_100%]",
+          "transition-background duration-75 ease-in-out",
+          "flex items-center justify-center",
+          "hover:text-index-primary",
+          "hover:bg-position-[0_0%]",
         ),
+        className,
       )}
     >
       {children}
@@ -49,55 +39,22 @@ export const NavButton = ({ css = {}, to = "#", children }) => {
 function NavBar({ children }) {
   return (
     <nav
-      {...style({
-        "&": join(
-          {
-            display: "flex",
-            justifyContent: "space-between",
-            flexFlow: "row",
-            height: "4vh",
-            color: th.index.text.primary,
-          },
-          g.full_w,
-        ),
-      })}
+      className={join(
+        "flex justify-between flex-row",
+        "h-[var(--nav-height)] w-full",
+        "text-index-second",
+      )}
     >
-      <span
-        style={join({
-          display: "flex",
-          width: "30%",
-          height: "100%",
-        })}
-      >
-        <span
-          style={join({
-            display: "block",
-            background: th.index.third,
-            height: "150%",
-            aspectRatio: "1",
-            borderRadius: "50%",
-            translate: "-30% -40%",
-          })}
-        ></span>
-        <p
-          style={{
-            fontSize: "34px",
-            display: "block",
-            marginLeft: "-28px",
-            zIndex: 1,
-          }}
-        >
-          Shogi.com
-        </p>
+      <span className="flex w-[30%] h-full">
+        <span className="block bg-index-third h-[150%] aspect-square rounded-[50%] translate-x-[-30%] translate-y-[-40%]"></span>
+        <p className="text-[26px] block ml-[-28px] z-10">Shogi.com</p>
       </span>
       <span
-        style={join({
-          padding: "2px 5px 0 2px",
-          height: "100%",
-          width: "50%",
-          display: "flex",
-          justifyContent: "end",
-        })}
+        className={join(
+          "pt-[2px] pr-[5px] pb-0 pl-[2px]",
+          "h-full w-1/2",
+          "flex justify-end",
+        )}
       >
         {children}
       </span>

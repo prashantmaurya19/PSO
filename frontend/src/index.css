@@ -1,6 +1,21 @@
-* {
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f0f0f;
+  --color-primary: #02bd34;
+
+  --color-index-primary: #0f0f0f;
+  --color-index-second: #faeded;
+  --color-index-third: #02bd34;
+  --color-index-forth: #d60229;
+  --font-DM_Sans: DM Sans;
+  --font-Roboto: Roboto;
+}
+
+:root {
+  --nav-height: 4vh;
+  --without-scroll-width: 99.21vw;
+  --page-sub-section-height: 96vh;
 }
 
 body {
@@ -12,17 +27,14 @@ body {
   height: 100%;
 }
 
-@keyframes topDownPadding {
-  0% {
-    padding-top: 2%;
-    animation-timing-function: cubic-bezier(1, 0, 0.33, 0.99);
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(4px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
   50% {
-    padding-top: 8%;
-    animation-timing-function: cubic-bezier(0.02, 0.66, 1, 0.76);
-  }
-  100% {
-    padding-top: 2%;
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
-
