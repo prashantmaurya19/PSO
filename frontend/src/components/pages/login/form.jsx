@@ -1,3 +1,9 @@
-export default function LoginForm() {
-  return <div className="bg-amber-900 w-1/2 h-1/2"></div>;
+import { twMerge } from "tailwind-merge";
+
+/**
+ * @param {Object} param0
+ * @param {string} [param0.className=""]
+ */
+export default function LoginForm({ className = "" }) {
+  return <div className={twMerge("outline-1 rounded-[4px] outline-index-third backdrop-blur-[3px]"," w-1/2 h-9/12", className)}></div>;
 }
