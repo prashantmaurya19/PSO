@@ -14,27 +14,29 @@ export default function ChessGridBG({
   return (
     <div
       className={twMerge(
-        join("w-full h-full grid grid-rows-10 grid-cols-40 overflow-hidden"),
+        join("grid grid-rows-20 grid-cols-20 overflow-hidden"),
         className,
       )}
     >
       {(function () {
-        const deg = ["45","-45"];
+        const deg = ["-90", "0"];
         const e = [];
         for (let i = 0; i < 400; i++)
           e.push(
-            chessPieceProvider.getRandomePiece(
-              i,
-              {
-                style: {
-                  transform: `rotate(${getRandomElement(deg)}deg)`,
+            <span key={i} className="outline-1 outline-index-third/50 flex justify-center items-center">
+              {chessPieceProvider.getRandomePiece(
+                i,
+                {
+                  style: {
+                    transform: `rotate(${getRandomElement(deg)}deg)`,
+                  },
+                  className: join("w-[50%] overflow-hidden aspect-square"),
                 },
-                className: join("w-3/4 h-3/4 overflow-hidden"),
-              },
-              {
-                className: join(`fill-index-third/40 `),
-              },
-            ),
+                {
+                  className: join(`fill-index-third/40 `),
+                },
+              )}
+            </span>,
           );
         return e;
       })()}

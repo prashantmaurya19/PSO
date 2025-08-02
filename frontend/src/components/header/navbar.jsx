@@ -39,7 +39,7 @@ export const NavButton = ({ className = "", to = "#", children }) => {
 function NavBar({ children }) {
   return (
     <nav
-      className={join(
+      className={join("bg-bg/50 backdrop-blur-[3px]",
         "flex justify-between flex-row",
         "h-[var(--nav-height)] w-full",
         "text-index-second",
