@@ -5,11 +5,17 @@ import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
 /**
- * @param {{ className:string,to:string }}
+ * @param {{ className:string,to:string ,onClick:function(object):void}}
  */
-export const NavButton = ({ className = "", to = "#", children }) => {
+export const NavButton = ({
+  onClick = null,
+  className = "",
+  to = "#",
+  children,
+}) => {
   return (
-    <Link
+    <a
+      onClick={onClick}
       to={to}
       className={twMerge(
         join(
@@ -23,6 +29,7 @@ export const NavButton = ({ className = "", to = "#", children }) => {
           "bg-linear-[0deg,theme(colors.index-primary)_50%,theme(colors.index.second)_50%]",
           "bg-size-[100%_200%]",
           "bg-position-[0_100%]",
+          "cursor-default",
           "transition-background duration-75 ease-in-out",
           "flex items-center justify-center",
           "hover:text-index-primary",
@@ -32,14 +39,15 @@ export const NavButton = ({ className = "", to = "#", children }) => {
       )}
     >
       {children}
-    </Link>
+    </a>
   );
 };
 
 function NavBar({ children }) {
   return (
     <nav
-      className={join("bg-bg/50 backdrop-blur-[3px]",
+      className={join(
+        "bg-bg/50 backdrop-blur-[3px]",
         "flex justify-between flex-row",
         "h-[var(--nav-height)] w-full",
         "text-index-second",
