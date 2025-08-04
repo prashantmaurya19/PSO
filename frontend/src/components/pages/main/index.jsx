@@ -1,13 +1,10 @@
 import NavBar, { NavButton } from "../../header/navbar";
-import Section1 from "./section1";
+import {LeftSection,RightSlogan} from "./sections";
 import { join } from "../../../util/tailwind";
 import gsap from "gsap";
-import { Navigate, redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function IndexPage() {
-  // const { contextSafe } = useGSAP();
-  // gsap.registerPlugin(useGSAP);
-
   const navigate = useNavigate();
 
   const click = async function (e) {
@@ -21,7 +18,6 @@ export default function IndexPage() {
       gsap.to(".main-right", {
         x: 800,
         opacity: 0,
-	// background:"green",
         duration: 1,
         stagger: 0.2,
       }),
@@ -31,7 +27,7 @@ export default function IndexPage() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-[100vw] h-[100vh] flex justify-center items-center flex-col">
       <NavBar>
         <NavButton>Home</NavButton>
         <NavButton>About</NavButton>
@@ -57,7 +53,10 @@ export default function IndexPage() {
           sign Up
         </NavButton>
       </NavBar>
-      <Section1 />
+    <section className="flex flex-row items-center justify-between w-full grow-1 overflow-hidden">
+      <LeftSection />
+      <RightSlogan />
+    </section>
     </div>
   );
 }

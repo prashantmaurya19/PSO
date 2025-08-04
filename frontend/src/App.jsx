@@ -4,7 +4,7 @@ import LoginPage from "./components/pages/login";
 
 function App() {
   return (
-    <div className="bg-bg">
+    <div className="bg-bg w-full h-full">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<IndexPage />} />
