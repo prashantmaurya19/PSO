@@ -1,5 +1,33 @@
 import { FontAwesomeChessPieceProvider } from "../impl/chess_piece_providers";
 
+export class StorageManager {
+  /**
+   * @param {object} state - an object with key value pair
+   * @param {boolean} [strict=false] - throw exception if overiding the key or key is not present while get
+   */
+  constructor(state, strict = false) {
+    this.state = state == undefined ? {} : state;
+    this.strict = strict;
+  }
+  /** set data and throw exception on overiding value if [strict=true]
+   * @param {string} key
+   * @param {any} value
+   */
+  set(key, value) {
+    if (this.strict && this.state[key] != undefined)
+      throw ReferenceError(`${key} is already present`);
+    this.state[key] = value;
+  }
+  /** retrive data and throw exception on invalid key if [strict=true]
+   * @param {string} key
+   */
+  get(key) {
+    if (this.strict && this.state[key] == undefined)
+      throw ReferenceError(`${key} is not present`);
+    return this.state[key];
+  }
+}
+
 /**
  * @typedef Configuration
  * @property {object} provider

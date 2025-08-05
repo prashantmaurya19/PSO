@@ -1,8 +1,8 @@
 import NavBar, { NavButton } from "../../header/navbar";
 import LoginForm from "./form";
-import { FontAwesomeChessPieceProvider } from "../../../impl/chess_piece_providers";
 import { useNavigate } from "react-router-dom";
 import { join } from "../../../util/tailwind";
+import { getAnimation } from "../../../util/animator";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -10,13 +10,17 @@ export default function LoginPage() {
     <div className="h-[100vh] w-[100vw] bg-bg flex justify-center items-center flex-col overflow-hidden">
       <NavBar>
         <NavButton
-          onClick={function () {
+          onClick={async function () {
+            await getAnimation(
+              "login-form-close",
+              "#login-form-container",
+              ".fields",
+            ).get();
             navigate("/");
           }}
         >
           Home
         </NavButton>
-        <NavButton>About</NavButton>
         <NavButton
           className={join(
             "border-index-forth",

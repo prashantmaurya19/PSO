@@ -1,8 +1,61 @@
 import { join } from "../../util/tailwind";
 import "react";
 import React from "react";
-import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+
+/**
+ * @param {Object} param0
+ * @param {{id:string, to:string ,onClick:function(object):void}} [param0.opt={}]
+ * @param {string} className
+ */
+export function SignUpButton({ className, children, opt = {} }) {
+  return (
+    <NavButton
+      {...opt}
+      className={twMerge(
+        join(
+          "border-index-forth",
+          "bg-linear-0",
+	  "from-index-primary from-50%",
+	  "to-index-forth to-50%",
+          "text-index-forth",
+          "hover:text-index-second",
+          "overflow-hidden",
+        ),
+        className,
+      )}
+    >
+      {children}
+    </NavButton>
+  );
+}
+
+/**
+ * @param {Object} param0
+ * @param {{id:string, to:string ,onClick:function(object):void}} [param0.opt={}]
+ * @param {string} className
+ */
+export function LoginButton({ className, children, opt = {} }) {
+  return (
+    <NavButton
+      className={twMerge(
+        join(
+          "border-index-third",
+          "bg-linear-0",
+	  "from-index-primary from-50%",
+	  "to-index-third to-50%",
+          "text-index-third",
+          "hover:text-index-second",
+          "overflow-hidden",
+        ),
+        className,
+      )}
+      {...opt}
+    >
+      {children}
+    </NavButton>
+  );
+}
 
 /**
  * @param {{id:string, className:string,to:string ,onClick:function(object):void}}
@@ -28,7 +81,9 @@ export const NavButton = ({
           "rounded-3xl",
           "text-index-second",
           "border-1 border-index-second border-solid",
-          "bg-linear-[0deg,theme(colors.index-primary)_50%,theme(colors.index-second)_50%]",
+          "bg-linear-0",
+	  "from-index-primary from-50%",
+	  "to-index-second to-50%",
           "bg-size-[100%_200%]",
           "bg-position-[0_100%]",
           "cursor-default",
