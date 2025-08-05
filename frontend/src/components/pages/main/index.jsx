@@ -1,5 +1,5 @@
 import NavBar, { NavButton } from "../../header/navbar";
-import {LeftSection,RightSlogan} from "./sections";
+import { LeftSection, RightSlogan } from "./sections";
 import { join } from "../../../util/tailwind";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
@@ -21,8 +21,15 @@ export default function IndexPage() {
         duration: 1,
         stagger: 0.2,
       }),
+      gsap.to("#main-navbar-login-btn", {
+        width: 0,
+        opacity: 0,
+        margin: 0,
+        padding: 0,
+        display: "none",
+        duration: 0.8,
+      }),
     ]);
-    console.log("animation completed");
     navigate("/login");
   };
 
@@ -32,12 +39,14 @@ export default function IndexPage() {
         <NavButton>Home</NavButton>
         <NavButton>About</NavButton>
         <NavButton
+          id="main-navbar-login-btn"
           onClick={click}
           className={join(
             "border-index-third",
             "bg-linear-[0deg,theme(colors.index-primary)_50%,theme(colors.index-third)_50%]",
             "text-index-third",
             "hover:text-index-second",
+            "overflow-hidden",
           )}
         >
           login
@@ -53,10 +62,10 @@ export default function IndexPage() {
           sign Up
         </NavButton>
       </NavBar>
-    <section className="flex flex-row items-center justify-between w-full grow-1 overflow-hidden">
-      <LeftSection />
-      <RightSlogan />
-    </section>
+      <section className="flex flex-row items-center justify-between w-full grow-1 overflow-hidden">
+        <LeftSection />
+        <RightSlogan />
+      </section>
     </div>
   );
 }

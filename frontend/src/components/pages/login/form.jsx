@@ -1,6 +1,8 @@
 import { twMerge } from "tailwind-merge";
 import { join } from "../../../util/tailwind";
 import { useNavigate } from "react-router-dom";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export function ForgetPasswordLink({ className = "" }) {
   const navigate = useNavigate();
@@ -61,22 +63,41 @@ export function InputField({
  * @param {string} [param0.className=""]
  */
 export default function LoginForm({ className = "" }) {
+  useGSAP(async () => {
+    const tl = gsap.timeline();
+    await tl
+      .to("#login-form-container", {
+        boxShadow: `0px 0px 10px 1px ${getComputedStyle(document.documentElement).getPropertyValue("--color-index-third")}`,
+        duration: 1,
+      })
+      .from(".fields", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.16,
+      });
+  });
+
   const element_width = "w-[23vw]";
   return (
     <div
+      id="login-form-container"
       className={twMerge(
         join(
-          "outline-1 rounded-[4px] outline-index-third ",
+          // "outline-1 rounded-[4px] outline-index-third ",
           "flex justify-start items-center flex-col",
           " w-max h-max",
           "px-10 py-10",
-          "shadow-[0px_0px_10px_1px_theme(colors.index-third)]"),
+          "rounded-2xl",
+          // "shadow-[0px_0px_10px_1px_theme(colors.index-third)]",
+        ),
         className,
       )}
     >
       <span
         className={join(
           `${element_width} h-[5vh]`,
+          "fields",
           "bg-transparent text-index-third",
           "border-2 border-solid border-index-third",
           "flex items-center justify-center",
@@ -88,7 +109,7 @@ export default function LoginForm({ className = "" }) {
         Welcome to Chess.com
       </span>
       <InputField
-        className={`${element_width} h-[5vh]`}
+        className={`${element_width} h-[5vh] fields`}
         inputClass="p-3"
         icon={
           <svg
@@ -104,7 +125,7 @@ export default function LoginForm({ className = "" }) {
         }
       />
       <InputField
-        className={`${element_width} h-[5vh]`}
+        className={`${element_width} h-[5vh] fields`}
         inputType="password"
         inputPlaceholder="Enter Password"
         inputClass="p-3"
@@ -133,6 +154,7 @@ export default function LoginForm({ className = "" }) {
 
       <div
         className={join(
+          "fields",
           `${element_width} h-[5vh]`,
           "text-index-second-500",
           "flex justify-between",
@@ -145,6 +167,7 @@ export default function LoginForm({ className = "" }) {
 
       <button
         className={join(
+          "fields",
           "text-index-third text-lg",
           "border-2 border-solid border-index-third",
           "rounded-4xl",
