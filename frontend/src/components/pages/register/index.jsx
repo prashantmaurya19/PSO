@@ -1,5 +1,6 @@
-import NavBar, { LoginButton, NavButton } from "../../header/navbar";
-import { RegistrationForm } from "../login/form";
+import NavBar from "../../header/navbar";
+import { LoginButton, NavButton } from "../../buttons/navbutton";
+import { RegistrationForm } from "../../form/registration";
 import { getAnimation } from "../../../util/animator";
 import { useNavigate } from "react-router-dom";
 
@@ -9,17 +10,12 @@ export default function RegistrationPage() {
     <div className="h-[100vh] w-[100vw] bg-bg flex justify-center items-center flex-col overflow-hidden">
       <NavBar>
         <NavButton
-          id="register-navbar-home-btn"
           onClick={async function () {
-            await Promise.all(
-              getAnimation(
-                "login-form-close",
-                "#register-form-container",
-                ".fields",
-              )
-                .with("nav-button-close", "#register-navbar-home-btn")
-                .get(),
-            );
+            await getAnimation(
+              "login-form-close",
+              "#register-form-container",
+              ".fields",
+            ).get();
             navigate("/");
           }}
         >
@@ -27,23 +23,17 @@ export default function RegistrationPage() {
         </NavButton>
         <LoginButton
           opt={{
-            id: "register-navbar-signup-btn",
             onClick: async function () {
-              await Promise.all(
-                getAnimation(
-                  "login-form-close",
-                  "#register-form-container",
-                  ".fields",
-                )
-                  .with("nav-button-close", "#register-navbar-signup-btn")
-                  .get(),
-              );
+              await getAnimation(
+                "login-form-close",
+                "#register-form-container",
+                ".fields",
+              ).get();
               navigate("/login");
             },
           }}
-        >
-          login
-        </LoginButton>
+          text="login"
+        />
       </NavBar>
       <section className="w-full grow-1 flex justify-center items-center">
         <RegistrationForm />

@@ -1,8 +1,8 @@
-import NavBar, { NavButton } from "../../header/navbar";
-import LoginForm from "./form";
+import NavBar from "../../header/navbar";
+import LoginForm from "../../form/login";
 import { useNavigate } from "react-router-dom";
-import { join } from "../../../util/tailwind";
 import { getAnimation } from "../../../util/animator";
+import { NavButton, SignUpButton } from "../../buttons/navbutton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,19 +21,24 @@ export default function LoginPage() {
         >
           Home
         </NavButton>
-        <NavButton
-          className={join(
-            "border-index-forth",
-            "bg-linear-[0deg,theme(colors.index-primary)_50%,theme(colors.index-forth)_50%]",
-            "text-index-forth",
-            "hover:text-index-second",
-          )}
-        >
-          sign Up
-        </NavButton>
+        <SignUpButton
+          opt={{
+            id: "main-navbar-signup-btn",
+            onClick: async function (e) {
+              e.preventDefault();
+              await getAnimation(
+                "login-form-close",
+                "#login-form-container",
+                ".fields",
+              ).get();
+              navigate("/register");
+            },
+          }}
+          text="sign Up"
+        />
       </NavBar>
       <div className="w-full h-[var(--page-sub-section-height)] flex justify-center items-center">
-        <LoginForm />
+        <LoginForm id="login-form-container" />
       </div>
     </div>
   );

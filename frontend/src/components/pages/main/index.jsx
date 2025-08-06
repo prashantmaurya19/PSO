@@ -1,18 +1,15 @@
-import NavBar, {
-  LoginButton,
-  NavButton,
-  SignUpButton,
-} from "../../header/navbar";
+import { LoginButton, SignUpButton } from "../../buttons/navbutton";
 import { LeftSection, RightSlogan } from "./sections";
 import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import { getAnimation } from "../../../util/animator";
+import NavBar from "../../header/navbar";
 
 export default function IndexPage() {
   const navigate = useNavigate();
 
   useGSAP(async () => {
-    await Promise.all(getAnimation("main.open").get());
+    await getAnimation("main.open").get();
   });
 
   return (
@@ -23,33 +20,24 @@ export default function IndexPage() {
             id: "main-navbar-login-btn",
             onClick: async function (e) {
               e.preventDefault();
-              await Promise.all(
-                getAnimation("main.close")
-                  .with("nav-button-close", "#main-navbar-login-btn")
-                  .get(),
-              );
+              await Promise.all(getAnimation("main.close").get());
               navigate("/login");
             },
           }}
-        >
-          login
-        </LoginButton>
+          text="login"
+        />
+
         <SignUpButton
           opt={{
             id: "main-navbar-signup-btn",
             onClick: async function (e) {
               e.preventDefault();
-              await Promise.all(
-                getAnimation("main.close")
-                  .with("nav-button-close", "#main-navbar-signup-btn")
-                  .get(),
-              );
+              await Promise.all(getAnimation("main.close").get());
               navigate("/register");
             },
           }}
-        >
-          sign Up
-        </SignUpButton>
+          text="sign Up"
+        />
       </NavBar>
       <section className="flex flex-row items-center justify-between w-full grow-1 overflow-hidden">
         <LeftSection />
