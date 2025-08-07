@@ -1,29 +1,30 @@
-import { join } from "../../../util/tailwind";
+import { join, joinTWClass } from "../../../util/tailwind";
 import "react";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
 /**
- * @param {Object} param0
- * @param {{id:string, to:string ,onClick:function(object):void}} [param0.opt={}]
- * @param {string} className
+ * @param {{text:string} & NavButtonProps} param0
  */
-export function SignUpButton({ className, text = "", opt = {} }) {
+export function SignUpButton({ text = "demo", ...opt }) {
   return (
     <NavButton
-      {...opt}
-      className={twMerge(
-        join(
-          "border-index-forth",
-          "bg-linear-0",
-          "from-index-primary from-50%",
-          "to-index-forth to-50%",
-          "text-index-forth",
-          "hover:text-index-second",
-          "overflow-hidden",
+      {...{
+        className: twMerge(
+          joinTWClass(
+            "border-index-forth",
+            "bg-linear-0",
+            "from-index-primary from-50%",
+            "to-index-forth to-50%",
+            "text-index-forth",
+            "hover:text-index-second",
+            "overflow-hidden",
+            "text-index-forth",
+          ),
+          opt.className,
         ),
-        className,
-      )}
+        ...opt,
+      }}
     >
       {text}
     </NavButton>
@@ -31,26 +32,26 @@ export function SignUpButton({ className, text = "", opt = {} }) {
 }
 
 /**
- * @param {Object} param0
- * @param {{id:string, to:string ,onClick:function(object):void}} [param0.opt={}]
- * @param {string} className
+ * @param {{text:string} & NavButtonProps} param0
  */
-export function LoginButton({ className, text, opt = {} }) {
+export function LoginButton({ text = "demo", ...opt }) {
   return (
     <NavButton
-      className={twMerge(
-        join(
-          "border-index-third",
-          "bg-linear-0",
-          "from-index-primary from-50%",
-          "to-index-third to-50%",
-          "text-index-third",
-          "hover:text-index-second",
-          "overflow-hidden",
+      {...{
+        className: twMerge(
+          joinTWClass(
+            "border-index-third",
+            "bg-linear-0",
+            "from-index-primary from-50%",
+            "to-index-third to-50%",
+            "text-index-third",
+            "hover:text-index-second",
+            "overflow-hidden",
+          ),
+          opt.className,
         ),
-        className,
-      )}
-      {...opt}
+        ...opt,
+      }}
     >
       {text}
     </NavButton>
@@ -58,7 +59,11 @@ export function LoginButton({ className, text, opt = {} }) {
 }
 
 /**
- * @param {{id:string, className:string,to:string ,onClick:function(object):void}}
+ * @typedef {{to:string} & HTMLAnchorElement} NavButtonProps
+ */
+
+/**
+ * @param {NavButtonProps} p0
  */
 export const NavButton = ({
   onClick = null,
@@ -66,6 +71,7 @@ export const NavButton = ({
   to = "#",
   children,
   id = "",
+  ...rest
 }) => {
   return (
     <a
@@ -83,7 +89,7 @@ export const NavButton = ({
           "border-1 border-index-second border-solid",
           "bg-linear-0",
           "from-index-primary from-50%",
-          "to-index-second to-50%",
+          "to-index-second to-50% ",
           "bg-size-[100%_200%]",
           "bg-position-[0_100%]",
           "cursor-default",
@@ -94,6 +100,7 @@ export const NavButton = ({
         ),
         className,
       )}
+      {...rest}
     >
       {children}
     </a>

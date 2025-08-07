@@ -1,6 +1,4 @@
 import { twMerge } from "tailwind-merge";
-import { useRef } from "react";
-import c from "../../../util/config";
 
 /**
  * @param {{className:string,opt:object}}

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import { join } from "../../../util/tailwind";
+import { joinTWClass } from "../../../util/tailwind";
 
 /**
  * @typedef {{text:string} & import("react").ButtonHTMLAttributes} SubmitButtonProps
@@ -11,7 +11,7 @@ export function ForgetPasswordButton({ className = "" }) {
   const navigate = useNavigate();
   return (
     <a
-      className={twMerge(join("w-max h-full"), className)}
+      className={twMerge(joinTWClass("w-max h-full"), className)}
       onClick={(_e) => navigate("/")}
     >
       Forget Password?
@@ -27,7 +27,7 @@ export function LoginButton({ className = "", ...args }) {
     <SubmitButton
       {...args}
       className={twMerge(
-        join("text-index-third", "border-index-third"),
+        joinTWClass("text-index-third", "border-index-third"),
         className,
       )}
     />
@@ -42,7 +42,7 @@ export function SingupButton({ className = "", ...args }) {
     <SubmitButton
       {...args}
       className={twMerge(
-        join("text-index-forth", "border-index-forth"),
+        joinTWClass("text-index-forth", "border-index-forth"),
         className,
       )}
     />
@@ -57,7 +57,7 @@ export function SubmitButton({ text = "submit", className = "", ...args }) {
     <button
       {...args}
       className={twMerge(
-        join(
+        joinTWClass(
           "text-index-second ",
           "text-lg",
           "border-index-second",

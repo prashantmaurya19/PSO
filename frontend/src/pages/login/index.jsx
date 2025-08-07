@@ -1,8 +1,8 @@
-import NavBar from "../../header/navbar";
-import LoginForm from "../../form/login";
+import NavBar from "../../components/header/navbar";
+import LoginForm from "../../components/form/login";
 import { useNavigate } from "react-router-dom";
-import { getAnimation } from "../../../util/animator";
-import { NavButton, SignUpButton } from "../../buttons/navbutton";
+import { getAnimation } from "../../util/animator";
+import { NavButton, SignUpButton } from "../../components/buttons/navbutton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -22,17 +22,14 @@ export default function LoginPage() {
           Home
         </NavButton>
         <SignUpButton
-          opt={{
-            id: "main-navbar-signup-btn",
-            onClick: async function (e) {
-              e.preventDefault();
-              await getAnimation(
-                "login-form-close",
-                "#login-form-container",
-                ".fields",
-              ).get();
-              navigate("/register");
-            },
+          onClick={async function (e) {
+            e.preventDefault();
+            await getAnimation(
+              "login-form-close",
+              "#login-form-container",
+              ".fields",
+            ).get();
+            navigate("/register");
           }}
           text="sign Up"
         />

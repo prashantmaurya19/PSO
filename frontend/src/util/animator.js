@@ -75,7 +75,7 @@ const anime = {
 export const animation = new StorageManager(anime);
 
 /**
- * @typedef {"main.close"|"main.open"|"login.open"|"login.close"|"nav-button-close"|"login-form-open"|"login-form-close"} AnimationLitrals
+ * @typedef {"main.close"|"main.open"|"nav-button-close"|"login-form-open"|"login-form-close"} AnimationLitrals
  */
 
 class AnimationHelper {

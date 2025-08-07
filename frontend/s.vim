@@ -13,28 +13,12 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +32 src/components/pages/login/index.jsx
-badd +6 src/components/pages/login/form.jsx
-badd +11 src/App.jsx
-badd +21 src/components/pages/main/index.jsx
-badd +46 src/components/pages/main/section1.jsx
-badd +6 ~/.config/nvim/pm_user/lua/pm_user/util/lsp.lua
-badd +59 ~/.config/nvim/lua/plugins/mason_lsp_config.lua
+badd +30 src/components/buttons/form/index.jsx
 argglobal
 %argdel
-set stal=2
-tabnew +setlocal\ bufhidden=wipe
-tabrewind
-edit src/components/pages/login/form.jsx
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
+edit src/components/buttons/form/index.jsx
 argglobal
-balt src/components/pages/main/index.jsx
+balt src/components/buttons/form/index.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -45,34 +29,13 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 17) / 34)
+let s:l = 30 - ((15 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 6
-normal! 08|
-tabnext
-edit ~/.config/nvim/lua/plugins/mason_lsp_config.lua
-argglobal
-balt ~/.config/nvim/pm_user/lua/pm_user/util/lsp.lua
-setlocal foldmethod=manual
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 59 - ((23 * winheight(0) + 17) / 34)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 59
-normal! 075|
+keepjumps 30
+normal! 053|
 tabnext 1
-set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif

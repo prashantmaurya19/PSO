@@ -1,7 +1,7 @@
-import NavBar from "../../header/navbar";
-import { LoginButton, NavButton } from "../../buttons/navbutton";
-import { RegistrationForm } from "../../form/registration";
-import { getAnimation } from "../../../util/animator";
+import NavBar from "../../components/header/navbar";
+import { LoginButton, NavButton } from "../../components/buttons/navbutton";
+import { RegistrationForm } from "../../components/form/registration";
+import { getAnimation } from "../../util/animator";
 import { useNavigate } from "react-router-dom";
 
 export default function RegistrationPage() {
@@ -22,15 +22,13 @@ export default function RegistrationPage() {
           Home
         </NavButton>
         <LoginButton
-          opt={{
-            onClick: async function () {
-              await getAnimation(
-                "login-form-close",
-                "#register-form-container",
-                ".fields",
-              ).get();
-              navigate("/login");
-            },
+          onClick={async function () {
+            await getAnimation(
+              "login-form-close",
+              "#register-form-container",
+              ".fields",
+            ).get();
+            navigate("/login");
           }}
           text="login"
         />
