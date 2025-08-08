@@ -29,7 +29,7 @@ public class Security {
     http.authorizeHttpRequests(
         request ->
             request
-                .requestMatchers("/health/**", "/register/**","/login/**")
+                .requestMatchers("/health/**", "/register/**","/login/**","/verify/**")
                 .permitAll()
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN")

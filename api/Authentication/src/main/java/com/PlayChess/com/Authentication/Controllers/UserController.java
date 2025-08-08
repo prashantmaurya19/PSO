@@ -1,6 +1,7 @@
 package com.PlayChess.com.Authentication.Controllers;
 
 import com.PlayChess.com.Authentication.Pojo.User;
+import com.PlayChess.com.Authentication.Response.VerifiedClient;
 import com.PlayChess.com.Authentication.Services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class UserController {
     User d = this.us.getUserByUsername(au.getName());
     return new ResponseEntity<User>(d, d == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
   }
+
 
   @PutMapping
   public ResponseEntity<User> updateUserCredential(@RequestBody User newu) {

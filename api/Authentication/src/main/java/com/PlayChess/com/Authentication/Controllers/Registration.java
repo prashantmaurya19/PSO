@@ -2,6 +2,7 @@ package com.PlayChess.com.Authentication.Controllers;
 
 import com.PlayChess.com.Authentication.Pojo.User;
 import com.PlayChess.com.Authentication.Response.AuthResponse;
+import com.PlayChess.com.Authentication.Response.VerifiedClient;
 import com.PlayChess.com.Authentication.Services.UserLoaderService;
 import com.PlayChess.com.Authentication.Services.UserService;
 import com.PlayChess.com.Authentication.Utils.JwtUtil;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +47,13 @@ public class Registration {
     } catch (Exception e) {
       return new ResponseEntity<AuthResponse>(new AuthResponse("error", "fail"), HttpStatus.OK);
     }
+  }
+
+  @GetMapping("/verify/{id}")
+  public ResponseEntity<VerifiedClient> verify(@PathVariable String id) {
+    String username = ju.extractUsername(id);
+    User ud = us.getUserByUsername(username);
+    return new ResponseEntity<VerifiedClient>(
+        new VerifiedClient(ud.getUsername(), "ok", ud.getRoles()), HttpStatus.OK);
   }
 }
