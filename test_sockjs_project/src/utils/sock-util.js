@@ -7,6 +7,7 @@ import { Client } from "@stomp/stompjs";
  * @param {string} url
  * @param {Array.<string>} topics
  * @param {function(string):void} onMessageCallback
+ * @returns {[boolean,function(string,string):void]}
  */
 export const useSockJSConnection = (url, topics, onMessageCallback) => {
   const [isConnected, setIsConnected] = useState(false);
