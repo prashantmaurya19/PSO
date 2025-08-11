@@ -1,5 +1,6 @@
 package com.PlayChess.com.UserServices.Filters;
 
+import com.PlayChess.com.UserServices.Enums.JwtHeaderEnum;
 import com.PlayChess.com.UserServices.FeignRepo.AuthService;
 import com.PlayChess.com.UserServices.Pojo.AuthUserDetails;
 import com.PlayChess.com.UserServices.Utils.ClientUserBuilder;
@@ -33,16 +34,21 @@ public class AuthenticationServiceFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String cookie_str = cu.getAllCookies(request);
-    if (cookie_str.equals("")) throw new UsernameNotFoundException("Invalid Request");
+    if (!cookie_str.equals("")) {
+      try {
+        AuthUserDetails ud = as.verifyByCookie(cookie_str);
+        if (ud.getUsername().equals("")) throw new UsernameNotFoundException("Invalid User");
 
-    AuthUserDetails ud = as.verifyByCookie(cookie_str);
-    if (ud.getUsername().equals("")) throw new UsernameNotFoundException("Invalid User");
-
-    UserDetails userDetails = cub.create(ud.getUsername(), ud.getRoles());
-    UsernamePasswordAuthenticationToken auth =
-        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    SecurityContextHolder.getContext().setAuthentication(auth);
+        UserDetails userDetails = cub.create(ud.getUsername(), ud.getRoles());
+        UsernamePasswordAuthenticationToken auth =
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        response.addHeader(JwtHeaderEnum.VERIFIED_USER, ud.getUsername());
+      } catch (Exception e) {
+      }
+    }
     chain.doFilter(request, response);
   }
 }

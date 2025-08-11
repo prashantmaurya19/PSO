@@ -1,4 +1,4 @@
-async function loginToAuthService() {
+export async function loginToAuthService() {
   const res = await fetch("http://localhost:8080/auth/login", {
     method: "POST",
     headers: {
@@ -10,9 +10,8 @@ async function loginToAuthService() {
     }),
   });
 
-  document.getElementById("screen").innerText = JSON.stringify(
-    await res.json(),
-    null,
-    "   ",
-  );
+  console.log(res.headers);
+  const jres = await res.json();
+  console.log(jres);
+  document.cookie += `token_id=${jres.token};`;
 }

@@ -6,9 +6,7 @@ import com.PlayChess.com.Authentication.Response.VerifiedClient;
 import com.PlayChess.com.Authentication.Services.UserService;
 import com.PlayChess.com.Authentication.Utils.CookiesUtil;
 import com.PlayChess.com.Authentication.Utils.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.rmi.ServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,12 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(
+    origins = "http://localhost:7000",
+    exposedHeaders = {"X-Custom-Header", "Location", "Set-Cookie"})
 @RestController
 public class Registration {
 
@@ -60,20 +62,5 @@ public class Registration {
     User ud = us.getUserByUsername(username);
     return new ResponseEntity<VerifiedClient>(
         new VerifiedClient(ud.getUsername(), "ok", ud.getRoles()), HttpStatus.OK);
-  }
-
-  /** it verifies user with cookies */
-  @GetMapping("/verify/v2")
-  public ResponseEntity<VerifiedClient> verifyClient(HttpServletRequest request)
-      throws ServerException {
-    // add caching
-    try {
-      String username = ju.extractUsername(cu.extractJwtCookies(request));
-      User ud = us.getUserByUsername(username);
-      return new ResponseEntity<VerifiedClient>(
-          new VerifiedClient(ud.getUsername(), "ok", ud.getRoles()), HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(new VerifiedClient("", "failed", null), HttpStatus.NOT_FOUND);
-    }
   }
 }

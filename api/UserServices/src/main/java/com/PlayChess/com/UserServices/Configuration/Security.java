@@ -25,7 +25,7 @@ public class Security {
     http.authorizeHttpRequests(
         request ->
             request
-                .requestMatchers("/public/**")
+                .requestMatchers("/public/**","/ws/**")
                 .permitAll()
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
