@@ -1,9 +1,10 @@
 import { joinTWClass } from "../utils/tailwind";
 import { useSockJSConnection } from "../utils/sock-util";
-import { loginToAuthService } from "../utils/exp";
+import socket from "../utils/sock-const";
+import { checkHealthRequest, loginToAuthService } from "../utils/exp";
 export default function WebSocketEndPointSuit() {
   const { isConnected, sendMessage } = useSockJSConnection(
-    "http://localhost:8081/us/ws/v1",
+    "http://localhost:8080/ps/ws/v1",
     ["/t1/tdemo"],
     (msg) => console.log(msg),
   );
@@ -38,14 +39,25 @@ export default function WebSocketEndPointSuit() {
           )}
           onClick={() => {
             sendMessage("/w1/demo", "hellow server");
+            // socket.send("/w1/demo", "hellow server");
           }}
         >
           run
         </button>
-        <input
-          placeholder="Enter Topics"
-          className="w-[40%] h-[90%] p-1 border-gray-600 border-1 border-solid"
-        />
+        <button
+          className={joinTWClass(
+            "w-[40%] h-[90%] p-1",
+            "border-gray-600 border-1 border-solid",
+            "active:scale-[0.96]",
+            "flex justify-center items-center",
+            "text-2xl",
+          )}
+          onClick={() => {
+            checkHealthRequest();
+          }}
+        >
+          check health
+        </button>
       </div>
     </div>
   );

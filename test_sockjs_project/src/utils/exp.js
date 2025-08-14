@@ -1,17 +1,25 @@
+export async function checkHealthRequest() {
+  const res = await fetch("http://localhost:8080/ur/health/status");
+  console.log(res.headers);
+  const jres = await res.text();
+  console.log(jres);
+  if (jres.token != undefined) document.cookie += `token_id=${jres.token};`;
+}
+
 export async function loginToAuthService() {
-  const res = await fetch("http://localhost:8080/auth/login", {
+  const headers = new Headers();
+  headers.append(
+    "Authorization",
+    `Basic ${btoa(`xyzking10009@gmail.com:prashant`)}`,
+  );
+  const res = await fetch("http://localhost:8080/ur/user/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      password: "prashant",
-      username: "prashantmaurya109@gmail.com",
-    }),
+    headers: headers,
   });
 
   console.log(res.headers);
   const jres = await res.json();
   console.log(jres);
-  document.cookie += `token_id=${jres.token};`;
+  if (jres.token != undefined)
+    document.cookie = `token_id=${jres.token};${document.cookie}`;
 }

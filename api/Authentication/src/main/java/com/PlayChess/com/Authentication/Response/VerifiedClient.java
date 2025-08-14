@@ -10,6 +10,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VerifiedClient {
   public String username;
-  public String status = "ok";
+  public int status;
   public List<String> roles;
 }

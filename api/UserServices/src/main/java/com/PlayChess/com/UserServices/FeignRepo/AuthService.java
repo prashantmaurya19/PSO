@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(url = "http://localhost:8080/", value = "Auth-Service")
+// @FeignClient(url = "http://localhost:8080/", value = "Auth-Service")
+@FeignClient(name = "USER-REGISTRY")
 public interface AuthService {
 
   @GetMapping("/auth/verify/{id}")

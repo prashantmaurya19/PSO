@@ -1,12 +1,10 @@
 package com.PlayChess.com.UserServices.Configuration;
 
-import com.PlayChess.com.UserServices.Enums.JwtHeaderEnum;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -38,12 +36,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                   Map<String, Object> attributes)
                   throws Exception {
 
-                String username =
-                    ((ServletServerHttpResponse) response)
-                        .getServletResponse()
-                        .getHeader(JwtHeaderEnum.VERIFIED_USER);
+                // String username =
+                //     ((ServletServerHttpResponse) response)
+                //         .getServletResponse()
+                //         .getHeader(JwtHeaderEnum.VERIFIED_USER);
 
-                if ((username == null ? "" : username).equals("")) return false;
+                // if ((username == null ? "" : username).equals("")) return false;
 
                 return true;
               }
@@ -60,7 +58,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
               }
             })
         .setAllowedOrigins("http://localhost:7000/")
-        .withSockJS();
+        .withSockJS()
+        .setSuppressCors(true);
   }
 
   //   @Override

@@ -9,5 +9,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthResponse {
   public String token;
-  public String status = "ok";
+  public String status;
 }
