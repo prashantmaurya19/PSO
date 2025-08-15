@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import socket from "./utils/sock-const";
 import WebSocketEndPointSuit from "./suits/websocket-endpoint-suit";
 
 /**
@@ -9,6 +10,8 @@ function Container({ children }) {
 }
 
 function App() {
+  const url = "http://localhost:8080/ps/ws/v1";
+  // useEffect(, []);
   return (
     <div className="w-full h-max flex justify-center bg-bg ">
       <Container>
