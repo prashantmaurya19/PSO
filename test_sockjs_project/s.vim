@@ -13,41 +13,14 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +7 vite.config.js
-badd +9 src/index.css
-badd +4 src/suits/websocket-endpoint-suit.js
-badd +5 src/utils/tailwind.js
-badd +2 src/App.jsx
-badd +15 src/utils/exp.js
-badd +4 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/other.lua
-badd +48 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/cmp.lua
-badd +23 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/nvim_highlight_colors.lua
+badd +19 src/App.jsx
+badd +28 src/components/loader.jsx
+badd +8 src/suits/websocket-endpoint-suit.jsx
 argglobal
 %argdel
-set stal=2
-tabnew +setlocal\ bufhidden=wipe
-tabrewind
-edit src/App.jsx
-let s:save_splitbelow = &splitbelow
-let s:save_splitright = &splitright
-set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-1wincmd h
-wincmd w
-let &splitbelow = s:save_splitbelow
-let &splitright = s:save_splitright
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
-exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
-exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
+edit src/components/loader.jsx
 argglobal
-balt src/suits/websocket-endpoint-suit.js
+balt src/App.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -58,62 +31,13 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 2 - ((1 * winheight(0) + 18) / 37)
+let s:l = 28 - ((26 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 2
-normal! 063|
-lcd ~/Documents/coding/PSO/test_sockjs_project
-wincmd w
-argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/test_sockjs_project/src/utils/exp.js", ":p")) | buffer ~/Documents/coding/PSO/test_sockjs_project/src/utils/exp.js | else | edit ~/Documents/coding/PSO/test_sockjs_project/src/utils/exp.js | endif
-if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/test_sockjs_project/src/utils/exp.js
-endif
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 15 - ((14 * winheight(0) + 18) / 37)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 15
-normal! 06|
-lcd ~/Documents/coding/PSO/test_sockjs_project
-wincmd w
-exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
-exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
-tabnext
-edit ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/nvim_highlight_colors.lua
-argglobal
-balt ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/cmp.lua
-setlocal foldmethod=manual
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 23 - ((22 * winheight(0) + 18) / 37)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 23
-normal! 036|
-lcd ~/Documents/coding/PSO/test_sockjs_project
+keepjumps 28
+normal! 041|
 tabnext 1
-set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif

@@ -1,16 +1,16 @@
 import { twMerge } from "tailwind-merge";
-import { join } from "../../../util/tailwind";
+import { joinTWClass } from "../../../util/tailwind";
 
 export function RememberMe({ className = "" }) {
   return (
-    <span className={twMerge(join("h-full w-max"), className)}>
+    <span className={twMerge(joinTWClass("h-full w-max"), className)}>
       <input type="checkbox" /> Remember me
     </span>
   );
 }
 
 /**
- * @param {import("react").HtmlHTMLAttributes & {inputProp:import("react").InputHTMLAttributes}} p
+ * @param {import("react").HTMLProps  & {inputProp:import("react").InputHTMLAttributes}} p
  */
 export function UsernameField(p) {
   return (
@@ -33,7 +33,7 @@ export function UsernameField(p) {
 }
 
 /**
- * @param {import("react").HtmlHTMLAttributes & {inputProp:import("react").InputHTMLAttributes}} p
+ * @param {import("react").HTMLProps & {inputProp:import("react").InputHTMLAttributes}} p
  */
 export function PasswordField(p) {
   return (
@@ -41,7 +41,7 @@ export function PasswordField(p) {
       {...p}
       icon={
         <button
-          className={join(
+          className={joinTWClass(
             "text-lg",
             "h-full aspect-square mr-1",
             "mr-1",
@@ -65,7 +65,7 @@ export function PasswordField(p) {
 }
 
 /**
- * @typedef {import("react").HtmlHTMLAttributes & {inputProp:import("react").InputHTMLAttributes,icon:import("react").JSX.Element}} InputFieldProps
+ * @typedef {import("react").HTMLProps & {inputProp:import("react").InputHTMLAttributes & import("react").HTMLProps,icon:import("react").JSX.Element}} InputFieldProps
  */
 
 /**
@@ -76,7 +76,7 @@ export function InputField({ className = "", inputProp, icon, ...args }) {
     <div
       {...args}
       className={twMerge(
-        join(
+        joinTWClass(
           "border-index-third border-2 border-solid",
           "flex justify-center items-center",
           "mb-3",
@@ -91,7 +91,13 @@ export function InputField({ className = "", inputProp, icon, ...args }) {
         {...{
           ...inputProp,
           className: twMerge(
-            join("h-full", "bg-bg", "text-index-second", "p-3", "grow-1"),
+            joinTWClass(
+              "h-full",
+              "bg-bg",
+              "text-index-second",
+              "p-3",
+              "grow-1",
+            ),
             inputProp.className,
           ),
         }}

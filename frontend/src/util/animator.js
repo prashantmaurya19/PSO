@@ -70,12 +70,26 @@ const anime = {
         stagger: 0.16,
       });
   },
+  "hide-SelfContainedLoader": function (tl) {
+    return gsap.to(".SelfContainedLoader", {
+      opacity: 0,
+      duration: 1,
+      delay: 2,
+    });
+  },
+  "show-SelfContainedLoader": function (tl) {
+    return gsap.to(".SelfContainedLoader", {
+      opacity: 1,
+      duration: 1,
+      delay: 2,
+    });
+  },
 };
 
 export const animation = new StorageManager(anime);
 
 /**
- * @typedef {"main.close"|"main.open"|"nav-button-close"|"login-form-open"|"login-form-close"} AnimationLitrals
+ * @typedef {"show-SelfContainedLoader"|"hide-SelfContainedLoader"|"main.close"|"main.open"|"nav-button-close"|"login-form-open"|"login-form-close"} AnimationLitrals
  */
 
 class AnimationHelper {

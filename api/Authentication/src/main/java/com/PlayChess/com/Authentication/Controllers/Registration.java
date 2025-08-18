@@ -2,9 +2,7 @@ package com.PlayChess.com.Authentication.Controllers;
 
 import com.PlayChess.com.Authentication.Pojo.User;
 import com.PlayChess.com.Authentication.Response.RegistrationResponse;
-import com.PlayChess.com.Authentication.Response.VerifiedClient;
 import com.PlayChess.com.Authentication.Services.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

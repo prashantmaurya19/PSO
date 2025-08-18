@@ -2,12 +2,15 @@ import { join } from "../../util/tailwind";
 import "react";
 import React from "react";
 
-
-function NavBar({ children }) {
+/**
+ * @param {import("react").HTMLProps & import("react").HTMLAttributes} param0
+ */
+function NavBar({ children, ...a }) {
   return (
     <nav
+      {...a}
       className={join(
-        "bg-bg/50 backdrop-blur-[3px]",
+        "bg-transparent backdrop-blur-[3px]",
         "flex justify-between flex-row",
         "h-[var(--nav-height)] w-full",
         "text-index-second",

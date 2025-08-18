@@ -1,12 +1,17 @@
 import React, { useEffect } from "react";
-import socket from "./utils/sock-const";
-import WebSocketEndPointSuit from "./suits/websocket-endpoint-suit";
+// import socket from "./utils/sock-const";
+// import WebSocketEndPointSuit from "./suits/websocket-endpoint-suit";
+import { SelfContainedLoader } from "./components/loader";
 
 /**
  * @param {React.PropsWithChildren}
  */
 function Container({ children }) {
-  return <div className="w-[90%] h-max">{children}</div>;
+  return (
+    <div className="w-[90%] h-max min-h-[100vh] flex justify-center items-center">
+      {children}
+    </div>
+  );
 }
 
 function App() {
@@ -15,7 +20,7 @@ function App() {
   return (
     <div className="w-full h-max flex justify-center bg-bg ">
       <Container>
-        <WebSocketEndPointSuit />
+        <SelfContainedLoader />
       </Container>
     </div>
   );
