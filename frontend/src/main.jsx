@@ -4,11 +4,15 @@ import App from "./App.jsx";
 import "./index.css";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 gsap.registerPlugin(useGSAP);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>,
 );

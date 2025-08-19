@@ -9,6 +9,7 @@ import { FormTitle } from "./title";
 import { request } from "../../util/requests";
 import { useRef } from "react";
 import { validate } from "../../util/validate";
+import { useNavigate } from "react-router-dom";
 
 /** all fields has class RegistrationFormFields
  * @param {Object} param0
@@ -16,6 +17,7 @@ import { validate } from "../../util/validate";
  * @param {()=>void|Promise} [param0.onSubmit=()=>{}]
  */
 export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
+  const navigate = useNavigate();
   const { contextSafe } = useGSAP(async () => {
     await anime()
       .timeline()
@@ -37,6 +39,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
   const password = useRef();
 
   const element_width = "w-[23vw]";
+
   return (
     <div
       id="register-form-container"
@@ -102,13 +105,13 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         text="Sign Up"
         onClick={contextSafe(async () => {
           onSubmit();
-          // await anime()
-          //   .timeline()
-          //   .formFieldAll("to", ".RegistrationFormFields")
-          //   .formContainerHide("#register-form-container")
-          //   .selfContainedLoaderShow(".SelfContainedLoader")
-          //   .endTimeline()
-          //   .build();
+          await anime()
+            .timeline()
+            .formFieldAll("to", ".RegistrationFormFields")
+            .formContainerHide("#register-form-container")
+            .selfContainedLoaderShow(".SelfContainedLoader")
+            .endTimeline()
+            .build();
           const form_data = {
             email: username.current.value,
             password: password.current.value,
@@ -116,17 +119,17 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
             firstname: firstname.current.value,
             lastname: lastname.current.value,
           };
-          console.log(
-            validate(form_data)
-              .string("username")
-              .limit(4, 64)
-              .email()
-              .and()
-              .string("password")
-              .limit(4, 16)
-              .and()
-              .get(),
-          );
+          // console.log(
+          //   validate(form_data)
+          //     .string("username")
+          //     .limit(4, 64)
+          //     .email()
+          //     .and()
+          //     .string("password")
+          //     .limit(4, 16)
+          //     .and()
+          //     .get(),
+          // );
           const response = await request("/ur/register")
             .post()
             .json()
@@ -135,7 +138,10 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
 
           const res = await response.json();
           if (res.status == "ok") {
+            // TODO: send request to server for login token
+            // then set the cookies
             await anime().selfContainedLoaderHide().build();
+            navigate("/dashboard");
           }
         })}
         className={join("RegistrationFormFields", `${element_width} h-[5vh]`)}

@@ -2,6 +2,7 @@
 
 @theme {
   --color-bg: #0f0f0f;
+  --color-bg-light: #111112;
   --color-primary: #02bd34;
 
   --color-index-primary: #0f0f0f;
@@ -22,6 +23,10 @@
 
 body {
   height: max-content;
+}
+
+.debug {
+  @apply outline-1 outline-solid outline-amber-500;
 }
 
 #root {

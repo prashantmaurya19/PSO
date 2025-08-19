@@ -2,19 +2,19 @@ import NavBar from "../../components/header/navbar";
 import { LoginButton, NavButton } from "../../components/buttons/navbutton";
 import { RegistrationForm } from "../../components/form/registration";
 import { anime } from "../../util/anime";
-import { useNavigate } from "react-router-dom";
-import { SelfContainedLoader } from "../../components/loader/form";
+import { useNavigate } from "react-router-dom"; import { SelfContainedLoader } from "../../components/loader/form";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
+import { PageLayout, PageContentLayout } from "../../components/page/section";
 
 export default function RegistrationPage() {
   const container = useRef();
   const { contextSafe } = useGSAP({ scope: container });
   const navigate = useNavigate();
   return (
-    <div
+    <PageLayout
       ref={container}
-      className="h-[100vh] w-[100vw] bg-bg flex justify-center items-center flex-col overflow-hidden "
+      className="flex justify-center items-center flex-col"
     >
       <NavBar>
         <NavButton
@@ -42,10 +42,10 @@ export default function RegistrationPage() {
           text="login"
         />
       </NavBar>
-      <section className="w-full grow-1 flex justify-center items-center relative">
+      <PageContentLayout className="relative flex justify-center items-center">
         <SelfContainedLoader className="opacity-0" />
         <RegistrationForm className="absolute" />
-      </section>
-    </div>
+      </PageContentLayout>
+    </PageLayout>
   );
 }

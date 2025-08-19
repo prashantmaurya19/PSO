@@ -1,4 +1,4 @@
-import { join, joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "../../../util/tailwind";
 import "react";
 import React from "react";
 import { twMerge } from "tailwind-merge";
@@ -79,7 +79,7 @@ export const NavButton = ({
       onClick={onClick}
       to={to}
       className={twMerge(
-        join(
+        joinTWClass(
           "no-underline",
           "font-[inherit]",
           "aspect-[3/1] h-full",
