@@ -1,21 +1,34 @@
 import { twMerge } from "tailwind-merge";
 import { join } from "../../util/tailwind";
 import { useGSAP } from "@gsap/react";
-import { getAnimation } from "../../util/animator";
-import { PasswordField, RememberMe, UsernameField } from "./inputs";
-import { ForgetPasswordButton, LoginButton } from "../buttons/form";
+import { PasswordField, UsernameField } from "./inputs";
+import { LoginButton } from "../buttons/form";
 import { FormTitle } from "./title";
+import { anime } from "../../util/anime";
+import { validate } from "../../util/validate";
+import { useRef } from "react";
+import { request, response } from "../../util/requests";
+import { useNavigate } from "react-router-dom";
 
 /**
  * @param {import("react").HTMLAttributes} param0
  */
 export default function LoginForm({ className = "", ...a }) {
-  useGSAP(async () => {
-    await getAnimation(
-      "login-form-open",
-      "#login-form-container",
-      ".fields",
-    ).get();
+  const navigate = useNavigate();
+  const username_element = useRef();
+  const password_element = useRef();
+  const { contextSafe } = useGSAP(async () => {
+    await anime()
+      .timeline()
+      .formContainerShow("#login-form-container")
+      .formFieldAll("from", ".fields")
+      .endTimeline()
+      .build();
+    // await getAnimation(
+    //   "login-form-open",
+    //   "#login-form-container",
+    //   ".fields",
+    // ).get();
   });
 
   const element_width = "w-[23vw]";
@@ -40,6 +53,7 @@ export default function LoginForm({ className = "", ...a }) {
       <UsernameField
         className={`${element_width} h-[5vh] fields`}
         inputProp={{
+          ref: username_element,
           type: "text",
           placeholder: "Enter Username",
           className: "p-3",
@@ -49,26 +63,45 @@ export default function LoginForm({ className = "", ...a }) {
       <PasswordField
         className={`${element_width} h-[5vh] fields`}
         inputProp={{
+          ref: password_element,
           type: "password",
           placeholder: "Enter Password",
           className: "p-3",
         }}
       />
 
-      <div
-        className={join(
-          "fields",
-          `${element_width} h-[5vh]`,
-          "text-index-second-500",
-          "flex justify-between",
-          "text-xl",
-        )}
-      >
-        <RememberMe />
-        <ForgetPasswordButton />
-      </div>
+      <LoginButton
+        onClick={contextSafe(async function () {
+          const form_data = {
+            username: username_element.current.value,
+            password: password_element.current.value,
+          };
+          validate(form_data)
+            .string("username")
+            .limit(4, 64)
+            .email()
+            .and()
+            .string("password")
+            .limit(4, 16)
+            .and()
+            .get();
 
-      <LoginButton className={join("fields", `${element_width} h-[5vh]`)} />
+          await anime()
+            .timeline()
+            .formFieldAll("to", ".fields")
+            .formContainerHide("#login-form-container")
+            .endTimeline()
+            .build();
+          const resp = await request("/ur/user/login")
+            .post()
+            .httpBasic(form_data.username, form_data.password)
+            .execute();
+          const res = await resp.json();
+          response(res).storeInCookie("token_id", "token");
+          navigate("/dashboard", { auth: true });
+        })}
+        className={join("fields", `${element_width} h-[5vh]`)}
+      />
     </div>
   );
 }

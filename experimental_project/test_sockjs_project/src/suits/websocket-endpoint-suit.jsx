@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { joinTWClass } from "../utils/tailwind";
-import socket from "../utils/sock-const";
+// import socket from "../utils/sock-const";
 import { useWebSocketService, useSockJSConnection } from "../utils/sock-util";
 import { checkHealthRequest, loginToAuthService } from "../utils/exp";
 export default function WebSocketEndPointSuit() {

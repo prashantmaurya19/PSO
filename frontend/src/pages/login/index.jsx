@@ -1,8 +1,8 @@
 import NavBar from "../../components/header/navbar";
 import LoginForm from "../../components/form/login";
 import { useNavigate } from "react-router-dom";
-import { getAnimation } from "../../util/animator";
 import { NavButton, SignUpButton } from "../../components/buttons/navbutton";
+import { anime } from "../../util/anime";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -11,11 +11,12 @@ export default function LoginPage() {
       <NavBar>
         <NavButton
           onClick={async function () {
-            await getAnimation(
-              "login-form-close",
-              "#login-form-container",
-              ".fields",
-            ).get();
+            await anime()
+              .timeline()
+              .formFieldAll("to", ".fields")
+              .formContainerHide("#login-form-container")
+              .endTimeline()
+              .build();
             navigate("/");
           }}
         >
@@ -24,11 +25,17 @@ export default function LoginPage() {
         <SignUpButton
           onClick={async function (e) {
             e.preventDefault();
-            await getAnimation(
-              "login-form-close",
-              "#login-form-container",
-              ".fields",
-            ).get();
+            await anime()
+              .timeline()
+              .formFieldAll("to", ".fields")
+              .formContainerHide("#login-form-container")
+              .endTimeline()
+              .build();
+            // await getAnimation(
+            //   "login-form-close",
+            //   "#login-form-container",
+            //   ".fields",
+            // ).get();
             navigate("/register");
           }}
           text="sign Up"

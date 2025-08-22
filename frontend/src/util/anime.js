@@ -316,12 +316,11 @@ class Anime {
       direction,
       animation: this.#handleAnimationObject(
         {
-          width: 0,
+          y: -50,
           opacity: 0,
-          margin: 0,
-          padding: 0,
-          display: "none",
-          duration: 0.8,
+          duration: 1,
+          stagger: 0.2,
+	  ease:"circ"
         },
         user_animation,
       ),

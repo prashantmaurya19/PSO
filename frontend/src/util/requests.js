@@ -5,6 +5,31 @@
  * @property {RequestInit} param
  */
 
+class ResponseHandler {
+  constructor(json_data) {
+    this.data = json_data;
+  }
+
+  /**
+   * @param {string} cookie_name - name of cookie by which the value will store
+   * @param {string} name - name of property in response
+   * @returns {ResponseHandler}
+   */
+  storeInCookie(cookie_name, name) {
+    if (this.data[name] != undefined)
+      document.cookie += `${cookie_name}=${this.data[name]};`;
+    return this;
+  }
+}
+
+/**
+ * @param {object} d - response of server
+ * @returns {ResponseHandler}
+ */
+export function response(d) {
+  return new ResponseHandler(d);
+}
+
 class Requests {
   #handleHeaderInit() {
     if (this.request_object.param.headers == undefined)
@@ -18,8 +43,8 @@ class Requests {
      * @type {RequestObject}
      */
     this.request_object = {
-      // url: "http://localhost:8080",
-      url: "https://4b768640-cfb0-4023-9359-50797410da67.mock.pstmn.io",
+      url: "http://localhost:8080",
+      // url: "https://4b768640-cfb0-4023-9359-50797410da67.mock.pstmn.io",
       endpoint: endpoint,
       param: { method: "GET" },
     };

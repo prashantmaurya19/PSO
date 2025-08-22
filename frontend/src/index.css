@@ -15,6 +15,10 @@
   --font-Roboto: Roboto;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --nav-height: 4vh;
   --without-scroll-width: 99.21vw;

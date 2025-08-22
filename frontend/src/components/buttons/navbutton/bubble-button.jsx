@@ -1,11 +1,10 @@
 import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "../../../util/tailwind";
-import { Avatar } from "../../profile/avatar";
 
 /**
  * @param {{avatar:import("react").HTMLProps & import("react").HTMLAttributes} & import("react").HTMLProps & import("react").HTMLAttributes} p0
  */
-export function BubbleButton({ className = "", avatar = {}, ...a }) {
+export function BubbleButton({ children, className = "", ...a }) {
   return (
     <div
       {...a}
@@ -19,7 +18,7 @@ export function BubbleButton({ className = "", avatar = {}, ...a }) {
         className,
       )}
     >
-      <Avatar {...avatar} />
+      {children}
     </div>
   );
 }

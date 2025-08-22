@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BubbleButton } from "../../components/buttons/navbutton/bubble-button";
 import NavBar from "../../components/header/navbar";
 import { ToolTipMenu } from "../../components/menu/tooltip-menu";
@@ -6,18 +6,31 @@ import { PageContentLayout, PageLayout } from "../../components/page/section";
 import { joinTWClass } from "../../util/tailwind";
 import { toggleJsxAtrribute } from "../../util/jjsx";
 import { ToolTipButton } from "../../components/buttons/tooltip-menu-buttons";
-import { AvatarCircle } from "../../components/profile/avatar";
+import { Avatar, AvatarCircle } from "../../components/profile/avatar";
 import { NavElementSet } from "../../components/header/nav-elementset";
 import { ToolTipSolidSeparator } from "../../components/separator/tooltip-menu";
 import { ChessPlayGround } from "./dmain";
 import { DToolTipMenusHolder } from "./dtooltip-menu";
-import { useDispatch } from "react-redux";
-import { show } from "../../store/feature/context-switching";
+import { useSelector } from "react-redux";
+import { SettingGearIcon } from "../../components/icon/dashboard";
+import { Navigate, useLocation } from "react-router-dom";
 
 export function DashBoard() {
+  const location = useLocation();
+  const auth = location.auth;
+  if (auth == null) {
+    return <Navigate to={"/login"} />;
+  }
+  const context_manager = useSelector(
+    (state) => state.contextSwitchSclice.contexts,
+  );
   const profile_toot_tip_menu = useRef();
-  const element = useRef(null);
-  const dispath = useDispatch();
+  const defaultelement = useRef(null);
+  const chessplaygroundelement = useRef(null);
+  useEffect(() => {
+    context_manager.show("dmain", defaultelement.current, "data-subview");
+  });
+  // const dispath = useDispatch();
   return (
     <PageLayout className="flex justify-center items-center flex-col">
       <NavBar>
@@ -27,13 +40,20 @@ export function DashBoard() {
           <BubbleButton
             onClick={(e) => {
               e.preventDefault();
-              dispath(show(["dmain", element.current, "data-subview"]));
+              context_manager.show(
+                "dmain",
+                chessplaygroundelement.current,
+                "data-subview",
+              );
             }}
             className={joinTWClass(
               "border-2 border-solid border-orange-500/70",
-              "hover:border-orange-700",
+              "hover:border-red-700",
+              "p-0.5",
             )}
-          />
+          >
+            <SettingGearIcon />
+          </BubbleButton>
         </NavElementSet>
         <NavElementSet
           className={joinTWClass("h-full aspect-square", "relative")}
@@ -46,8 +66,11 @@ export function DashBoard() {
             className={joinTWClass(
               "border-2 border-solid border-gray-600/70",
               "hover:border-gray-300",
+              "focus:border-gray-300",
             )}
-          />
+          >
+            <Avatar />
+          </BubbleButton>
         </NavElementSet>
       </NavBar>
       <PageContentLayout className="relative">
@@ -80,8 +103,11 @@ export function DashBoard() {
             />
           </ToolTipMenu>
         </DToolTipMenusHolder>
-        <ChessPlayGround ref={element} />
-        <ChessPlayGround ref={element} />
+        <ChessPlayGround
+          ref={chessplaygroundelement}
+          className="bg-purple-600"
+        />
+        <ChessPlayGround ref={defaultelement} className="bg-sky-500" />
       </PageContentLayout>
     </PageLayout>
   );

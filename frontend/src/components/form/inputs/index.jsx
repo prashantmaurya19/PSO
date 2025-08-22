@@ -10,7 +10,7 @@ export function RememberMe({ className = "" }) {
 }
 
 /**
- * @param {import("react").HTMLProps  & {inputProp:import("react").InputHTMLAttributes}} p
+ * @param {import("../../../util/jjsx").JSXElement  & {inputProp:import("../../../util/jjsx").JSXElement}} p
  */
 export function UsernameField(p) {
   return (
@@ -33,7 +33,7 @@ export function UsernameField(p) {
 }
 
 /**
- * @param {import("react").HTMLProps & {inputProp:import("react").InputHTMLAttributes}} p
+ * @param {import("../../../util/jjsx").JSXElement  & {inputProp:import("../../../util/jjsx").JSXElement}} p
  */
 export function PasswordField(p) {
   return (

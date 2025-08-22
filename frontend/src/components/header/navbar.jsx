@@ -28,7 +28,7 @@ function NavBar({ className = "", children, ...a }) {
         className={joinTWClass(
           "pt-[2px] pr-[5px] pb-0 pl-[5px]",
           "h-full w-1/2",
-          "flex justify-end",
+          "flex justify-end gap-1.5",
         )}
       >
         {children}

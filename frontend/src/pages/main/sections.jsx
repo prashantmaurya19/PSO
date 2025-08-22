@@ -31,9 +31,15 @@ export function RightSlogan() {
   );
 }
 
-export function LeftSection() {
+/**
+ * @param {import("../../util/jjsx").JSXElement} param0
+ */
+export function LeftSection({ ...a }) {
   return (
-    <div className="box-border h-full w-[60%] flex items-center justify-center">
+    <div
+      {...a}
+      className="box-border h-full w-[60%] flex items-center justify-center"
+    >
       <span
         id="main-left-chess_board"
         className="bg-linear-90 from-pink-600 to-red-600  w-1/2 aspect-square rounded-[7px]"

@@ -111,6 +111,7 @@ class SocketHandler {
   }
 }
 
-const handler = new SocketHandler();
+// const handler = new SocketHandler();
+const handler = null;
 
 export default handler;
