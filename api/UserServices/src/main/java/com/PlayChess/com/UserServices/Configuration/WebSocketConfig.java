@@ -1,10 +1,15 @@
 package com.PlayChess.com.UserServices.Configuration;
 
+import java.util.List;
 import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -16,10 +21,19 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+  @Override
+  public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+    messageConverters.add(new MappingJackson2MessageConverter()); // For JSON
+    messageConverters.add(new StringMessageConverter()); // For plain text
+    return true;
+  }
+
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.setApplicationDestinationPrefixes("/w1");
     registry.enableSimpleBroker("/t1");
+    registry.setUserDestinationPrefix("/c1");
   }
 
   @Override
@@ -35,13 +49,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                   WebSocketHandler wsHandler,
                   Map<String, Object> attributes)
                   throws Exception {
-
-                // String username =
-                //     ((ServletServerHttpResponse) response)
-                //         .getServletResponse()
-                //         .getHeader(JwtHeaderEnum.VERIFIED_USER);
-
-                // if ((username == null ? "" : username).equals("")) return false;
 
                 return true;
               }
@@ -61,19 +68,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         .withSockJS()
         .setSuppressCors(true);
   }
-
-  //   @Override
-  //   public void configureClientInboundChannel(ChannelRegistration registration) {
-  //     registration.interceptors(
-  //         new ChannelInterceptor() {
-  //           @Override
-  //           public Message<?> preSend(Message<?> message, MessageChannel channel) {
-  //             StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-  //             if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-  //               log.info("" + accessor.getHeader("Cookie"));
-  //             }
-  //             return message;
-  //           }
-  //         });
-  //   }
 }

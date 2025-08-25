@@ -1,8 +1,9 @@
-import socket from "./utils/sock-const";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/index.js";
 
 // window.addEventListener("load", () => {
 //   const url = "http://localhost:8080/ps/ws/v1";
@@ -32,6 +33,8 @@ import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>,
 );

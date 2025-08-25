@@ -1,5 +1,5 @@
 import React from "react";
-import { WebSocketSpecificUser } from "./suits/websocket-specific-user";
+import { WebSocketEndPointSuit } from "./suits/websocket-endpoint-suit";
 
 /**
  * @param {React.PropsWithChildren}
@@ -18,7 +18,7 @@ function App() {
   return (
     <div className="w-full h-max flex justify-center bg-bg ">
       <Container>
-        <WebSocketSpecificUser />
+        <WebSocketEndPointSuit />
       </Container>
     </div>
   );

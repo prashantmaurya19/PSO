@@ -1,0 +1,19 @@
+{
+  "namespace": "com.PlayChess.com.RequestConsumerDispatcher.Model",
+  "type": "record",
+  "name": "GameEvent",
+  "fields": [
+    {
+      "name": "to",
+      "type": "string"
+    },
+    {
+      "name": "action",
+      "type": "string"
+    },
+    {
+      "name": "from",
+      "type": "string"
+    }
+  ]
+}

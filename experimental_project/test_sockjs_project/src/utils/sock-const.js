@@ -1,7 +1,6 @@
-import { Stomp, Client } from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-
-class SocketHandler {
+export class SocketHandler {
   constructor() {
     console.log("%chandler created", "color: green;font-size: 20px");
     this.socket = null;

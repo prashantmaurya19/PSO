@@ -1,0 +1,15 @@
+{
+  "namespace": "com.PlayChess.com.RequestConsumerDispatcher.Model",
+  "type": "record",
+  "name": "GameRequest",
+  "fields": [
+    {
+      "name": "type",
+      "type": "string"
+    },
+    {
+      "name": "user",
+      "type": "string"
+    }
+  ]
+}
