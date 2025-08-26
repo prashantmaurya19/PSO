@@ -13,6 +13,6 @@ spring:
       # value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       autoOffsetReset: "earliest"
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
   application:
     name: RequestConsumerDispatcher

@@ -6,7 +6,7 @@ import { WebSocketEndPointSuit } from "./suits/websocket-endpoint-suit";
  */
 function Container({ children }) {
   return (
-    <div className="w-[90%] h-max min-h-[100vh] flex justify-center items-center">
+    <div className="w-full h-max min-h-[100vh] flex justify-center items-center">
       {children}
     </div>
   );

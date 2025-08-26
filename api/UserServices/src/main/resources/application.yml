@@ -13,13 +13,13 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       # value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
   application:
     name: PSO-SERVICES
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: prashant
-    url: jdbc:mysql://localhost:3306/pso_db
+    url: jdbc:mysql://db:3306/pso_db?useSSL=false&allowPublicKeyRetrieval=true
     username: pso
   jpa:
     hibernate:
@@ -30,4 +30,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/

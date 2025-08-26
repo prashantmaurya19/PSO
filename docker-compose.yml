@@ -1,0 +1,81 @@
+services:
+  db:
+    image: "mysql:latest"
+    networks:
+      - pmnet
+    environment:
+      MYSQL_ROOT_PASSWORD: pso_prashant
+      MYSQL_DATABASE: pso_db
+      MYSQL_USER: pso
+      MYSQL_PASSWORD: prashant
+
+  zookeeper:
+    image: "pmzookeeper"
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Apps/Kafka:/kafka
+
+  service-registry:
+    image: "pmapp"
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/ServiceRegistry/:/app
+
+  user-service:
+    image: "pmapp"
+    depends_on:
+      - service-registry
+      - kafka
+      - db
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/UserServices/:/app
+
+  request-consumerDispatcher:
+    image: "pmapp"
+    depends_on:
+      - kafka
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/RequestConsumerDispatcher/:/app
+
+  authentication:
+    image: "pmapp"
+    depends_on:
+      - service-registry
+      - db
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/Authentication/:/app
+
+  gateway:
+    image: "pmapp"
+    hostname: localhost
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-registry
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/Gateway/:/app
+
+  kafka:
+    image: "pmkafka"
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Apps/Kafka:/kafka
+
+networks:
+  pmnet:
+    driver: bridge

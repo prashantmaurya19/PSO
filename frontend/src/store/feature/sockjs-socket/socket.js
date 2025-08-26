@@ -35,7 +35,10 @@ class MessageHandler {
  */
 export class SocketHandler {
   constructor() {
-    console.log("%chandler created", "color: green;font-size: 20px");
+    console.log(
+      "%c socket handler created ",
+      "background:yellow;color: green;font-size: 14px;font-weight:900",
+    );
     this.socket = null;
     this.stomp_client = null;
     this.is_connected = false;
@@ -43,8 +46,8 @@ export class SocketHandler {
     this.default_onSubscribeHandler = this.#attachOnSubscribeDecorator(
       function (topic, msg) {
         console.log(
-          `%c[${topic}] message => ${msg.text()}`,
-          "color: pink;font-size: 12px",
+          `%c[${topic}] message => ${msg}`,
+          "color: pink;font-size: 20px",
         );
       },
       "/SocketHandler/defaultOnSubscribeHandler",

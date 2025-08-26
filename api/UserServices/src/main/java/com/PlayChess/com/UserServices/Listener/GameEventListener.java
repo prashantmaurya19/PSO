@@ -4,11 +4,14 @@ import com.PlayChess.com.UserServices.Model.GameEvent;
 import com.PlayChess.com.UserServices.Services.GameEventDispatcherService;
 import com.PlayChess.com.UserServices.Services.ObjectMapperService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GameEventListener {
 
   private final GameEventDispatcherService geds;
@@ -17,7 +20,6 @@ public class GameEventListener {
   @KafkaListener(topics = "game_event", groupId = "us-consumer")
   public void notifyToClient(String e) {
     GameEvent event = oms.parse(e, GameEvent.class);
-    // push update to client via websocket
     if (!geds.isEventAccepted(event)) return;
     geds.dispatchToClient(event);
   }

@@ -8,7 +8,7 @@ spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         password: prashant
-        url: jdbc:mysql://localhost:3306/pso_db
+        url: jdbc:mysql://db:3306/pso_db
         username: pso
     jpa:
         hibernate:
@@ -19,4 +19,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone : http://localhost:8761/eureka/
+      defaultZone : http://service-registry:8761/eureka/

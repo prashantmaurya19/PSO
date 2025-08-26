@@ -1,6 +1,34 @@
 import { twMerge } from "tailwind-merge";
 import { ContextContainer } from "../../../components/page/context-container";
 import { joinTWClass } from "../../../util/tailwind";
+import {
+  BliztPlayMenuButton,
+  NewBotPlayMenuButon,
+  NewGamePlayMenuButon,
+} from "../../../components/buttons/dmenu-button";
+
+
+/**
+ * @param {import("../../../util/jjsx").JSXElement} param0
+ */
+export function StartUpMenu({ className = "", ...opt }) {
+  return (
+    <ContextContainer
+      {...opt}
+      className={twMerge(
+        className,
+        joinTWClass(
+          "flex justify-center items-center flex-col gap-7",
+          "absolute",
+        ),
+      )}
+    >
+      <BliztPlayMenuButton />
+      <NewGamePlayMenuButon />
+      <NewBotPlayMenuButon />
+    </ContextContainer>
+  );
+}
 
 /**
  * @param {import("../../../util/jjsx").JSXElement} p0
