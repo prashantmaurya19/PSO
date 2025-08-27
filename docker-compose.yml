@@ -18,6 +18,8 @@ services:
 
   service-registry:
     image: "pmapp"
+    ports:
+      - "8761:8761"
     networks:
       - pmnet
     volumes:
@@ -36,6 +38,8 @@ services:
 
   request-consumerDispatcher:
     image: "pmapp"
+    ports:
+      - "8185:8185"
     depends_on:
       - kafka
     networks:
@@ -59,6 +63,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - authentication
+      - user-service
+      - request-consumerDispatcher
       - service-registry
     networks:
       - pmnet

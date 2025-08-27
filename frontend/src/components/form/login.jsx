@@ -11,9 +11,9 @@ import { request, response } from "../../util/requests";
 import { useNavigate } from "react-router-dom";
 
 /**
- * @param {import("react").HTMLAttributes} param0
+ * @param {{disable:boolean}&import("react").HTMLAttributes} param0
  */
-export default function LoginForm({ className = "", ...a }) {
+export default function LoginForm({ disable = false, className = "", ...a }) {
   const navigate = useNavigate();
   const username_element = useRef();
   const password_element = useRef();
@@ -24,11 +24,6 @@ export default function LoginForm({ className = "", ...a }) {
       .formFieldAll("from", ".fields")
       .endTimeline()
       .build();
-    // await getAnimation(
-    //   "login-form-open",
-    //   "#login-form-container",
-    //   ".fields",
-    // ).get();
   });
 
   const element_width = "w-[23vw]";
@@ -76,29 +71,35 @@ export default function LoginForm({ className = "", ...a }) {
             username: username_element.current.value,
             password: password_element.current.value,
           };
-          validate(form_data)
-            .string("username")
-            .limit(4, 64)
-            .email()
-            .and()
-            .string("password")
-            .limit(4, 16)
-            .and()
-            .get();
-
+          try {
+            if (!disable) {
+              // validate credentials here
+              validate(form_data)
+                .string("username")
+                .limit(4, 64)
+                .email()
+                .and()
+                .string("password")
+                .limit(4, 16)
+                .and()
+                .get();
+              const resp = await request("/ur/user/login")
+                .post()
+                .httpBasic(form_data.username, form_data.password)
+                .execute();
+              const res = await resp.json();
+              response(res).storeInCookie("token_id", "token");
+            }
+          } catch (error) {
+            return console.log(error);
+          }
           await anime()
             .timeline()
             .formFieldAll("to", ".fields")
             .formContainerHide("#login-form-container")
             .endTimeline()
             .build();
-          const resp = await request("/ur/user/login")
-            .post()
-            .httpBasic(form_data.username, form_data.password)
-            .execute();
-          const res = await resp.json();
-          response(res).storeInCookie("token_id", "token");
-          navigate("/dashboard", { auth: true });
+          navigate("/dashboard", { state: { auth: true } });
         })}
         className={join("fields", `${element_width} h-[5vh]`)}
       />

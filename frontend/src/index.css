@@ -29,6 +29,16 @@ body {
   height: max-content;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 .debug {
   @apply outline-1 outline-solid outline-amber-500;
 }

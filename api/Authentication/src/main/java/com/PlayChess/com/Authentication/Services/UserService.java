@@ -5,6 +5,8 @@ import com.PlayChess.com.Authentication.Pojo.User;
 import com.PlayChess.com.Authentication.Pojo.UserInterface;
 import com.PlayChess.com.Authentication.Repositories.Users;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.modelmapper.ModelMapper;
@@ -12,18 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-  final Users ur;
+  private final Users ur;
 
-  final ModelMapper mm;
-  final PasswordEncoder pe;
+  private final ModelMapper mm;
+  private final PasswordEncoder pe;
 
-  public UserService(Users ur, ModelMapper mm, PasswordEncoder pe) {
-    this.ur = ur;
-    this.mm = mm;
-    this.pe = pe;
-  }
 
   public boolean isUserHavePassword(UserInterface u) {
     return !(u.getPassword() == null || u.getPassword().equals(""));

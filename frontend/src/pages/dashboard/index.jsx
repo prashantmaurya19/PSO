@@ -1,25 +1,18 @@
 import NavBar from "../../components/header/navbar";
 import { PageContentLayout, PageLayout } from "../../components/page/section";
-import { useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
-import { StartUpMenu } from "./dmain";
-import { GameDurationMenu } from "./dmain/GameDurationMenu";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export function DashBoard() {
   const location = useLocation();
-  const auth = location.auth;
-  // if (auth == null) {
-  //   return <Navigate to={"/login"} />;
-  // }
-  const context_manager = useSelector(
-    (state) => state.context_manager.contexts,
-  );
+  const auth = location.state == undefined ? null : location.state.auth;
+  if (auth == null) {
+    return <Navigate to={"/login"} />;
+  }
   return (
     <PageLayout className="flex justify-center items-center flex-col">
       <NavBar></NavBar>
       <PageContentLayout className="relative">
-        <GameDurationMenu />
-	<StartUpMenu />
+        <Outlet />
       </PageContentLayout>
     </PageLayout>
   );

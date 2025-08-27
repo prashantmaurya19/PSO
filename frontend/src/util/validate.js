@@ -3,6 +3,25 @@
  * @typedef {Object.<string,ValidationTypes>} ValidationObject
  */
 
+/**
+ * @param {object} o
+ * @returns {string}
+ */
+export function getTypeName(o) {
+  return o.constructor.name;
+}
+/** check if o is any of given type return true
+ * @param {object} o
+ * @param {...Function} types - type name
+ * @returns {boolean}
+ */
+export function isTypeOf(o, ...types) {
+  for (const a of types) {
+    if (getTypeName(o) === a.name) return true;
+  }
+  return false;
+}
+
 class ValidationError extends Error {
   /**
    * @param {object} m
@@ -103,31 +122,12 @@ class StringValidation {
 }
 
 class Validation {
-  /**
-   * @param {object} o
-   * @returns {string}
-   */
-  #getContructorName(o) {
-    return o.constructor.name;
-  }
-  /** check if o is type name
-   * @param {object} o
-   * @param {...Function} name - type name
-   * @returns {boolean}
-   */
-  isTypeOf(o, ...name) {
-    for (const a of name) {
-      if (this.#getContructorName(o) === a.name) return true;
-    }
-    return false;
-  }
-
   /** check if a object is string or not
    * @param {object} s
    * @returns {boolean}
    */
   isString(s) {
-    return this.isTypeOf(s, String);
+    return isTypeOf(s, String);
   }
 
   /** check object is a number
@@ -135,7 +135,7 @@ class Validation {
    * @returns {boolean}
    */
   isNumber(s) {
-    return this.isTypeOf(s, Number) && !isNaN(s);
+    return isTypeOf(s, Number) && !isNaN(s);
   }
 
   /** check object is a boolean
@@ -143,7 +143,7 @@ class Validation {
    * @returns {boolean}
    */
   isBoolean(s) {
-    return this.isTypeOf(s, Boolean);
+    return isTypeOf(s, Boolean);
   }
 
   /** return value of field

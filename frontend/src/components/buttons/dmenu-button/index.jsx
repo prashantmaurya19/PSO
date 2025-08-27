@@ -7,9 +7,13 @@ import {
   SettingGearIcon,
 } from "../../icon/dashboard";
 
-export function NewBotPlayMenuButon() {
+/**
+ * @param {import("../../../util/jjsx").JSXElement} param0
+ */
+export function NewBotPlayMenuButon({...a}) {
   return (
     <IconStartUpMenuButton
+      {...a}
       text="Bot Game"
       icon={
         <RobotHeadIcon
@@ -23,9 +27,13 @@ export function NewBotPlayMenuButon() {
   );
 }
 
-export function NewGamePlayMenuButon() {
+/**
+ * @param {import("../../../util/jjsx").JSXElement} param0
+ */
+export function NewGamePlayMenuButon({...a}) {
   return (
     <IconStartUpMenuButton
+      {...a}
       text="New Game"
       icon={
         <PawnIcon
@@ -39,9 +47,13 @@ export function NewGamePlayMenuButon() {
   );
 }
 
-export function BliztPlayMenuButton() {
+/**
+ * @param {import("../../../util/jjsx").JSXElement} param0
+ */
+export function BliztPlayMenuButton({...a}) {
   return (
     <IconStartUpMenuButton
+      {...a}
       text="3 Min "
       icon={
         <BlitzChessIcon
