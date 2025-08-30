@@ -1,6 +1,3 @@
-
-
-
 export async function checkHealthRequest() {
   const res = await fetch("http://localhost:8080/ur/health/status");
   console.log(res.headers);
@@ -9,13 +6,10 @@ export async function checkHealthRequest() {
   if (jres.token != undefined) document.cookie += `token_id=${jres.token};`;
 }
 
-export async function loginToAuthService() {
+export async function loginToAuthService(url,username, password) {
   const headers = new Headers();
-  headers.append(
-    "Authorization",
-    `Basic ${btoa(`xyzking10009@gmail.com:prashant`)}`,
-  );
-  const res = await fetch("http://localhost:8080/ur/user/login", {
+  headers.append("Authorization", `Basic ${btoa(`${username}:${password}`)}`);
+  const res = await fetch(url, {
     method: "POST",
     headers: headers,
   });

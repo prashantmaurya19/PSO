@@ -6,6 +6,7 @@ import { DashBoard } from "./pages/dashboard";
 import { StartUpMenu } from "./pages/dashboard/dmain";
 import { GameDurationMenu } from "./pages/dashboard/dmain/GameDurationMenu";
 import { BotPlayCreateMenu } from "./pages/dashboard/dmain/BotPlayCreateMenu";
+import { ChessArenaGround } from "./pages/dashboard/dmain/ChessArenaGround";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<StartUpMenu />} />
           <Route path="new_game" element={<GameDurationMenu />} />
           <Route path="new_bot_game" element={<BotPlayCreateMenu />} />
+          <Route path="chess_arena" element={<ChessArenaGround />} />
         </Route>
       </Routes>
     </BrowserRouter>

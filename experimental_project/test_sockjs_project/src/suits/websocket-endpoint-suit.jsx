@@ -1,7 +1,7 @@
 import { joinTWClass } from "../utils/tailwind";
 import { checkHealthRequest, loginToAuthService } from "../utils/exp";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SocketHandler } from "../utils/sock-const";
 import { twMerge } from "tailwind-merge";
 
@@ -30,6 +30,7 @@ function OpsButton({ text = "", className = "", ...a }) {
 }
 
 export function WebSocketEndPointSuit() {
+  const [isconnected, setConnected] = useState(false);
   /**
    * @type {SocketHandler}
    */
@@ -39,16 +40,16 @@ export function WebSocketEndPointSuit() {
     url,
     () => {
       console.log(
-        "%csubscribe: is_connected= ",
-        socket.is_connected,
+        "%csubscribe: is_connected= " + socket.isConnected(),
         "color: pink;font-size: 16px",
       );
+      setConnected(true);
       socket.subscribe(
         {
           topic: "/t1/tdemo",
         },
         {
-          topic: "/c1/xyzking10009@gmail.com/game_event",
+          topic: "/c1/user@chess.com/game_event",
         },
       );
     },
@@ -73,12 +74,16 @@ export function WebSocketEndPointSuit() {
         <OpsButton
           text="login"
           onClick={() => {
-            loginToAuthService();
+            loginToAuthService(
+              "http://localhost:8080/ur/user/login",
+              "user@chess.com",
+              "prashant",
+            );
           }}
         />
         <OpsButton
           className={joinTWClass(
-            socket.isConnected() ? "border-green-600" : "border-red-500",
+            isconnected ? "border-green-600" : "border-red-500",
           )}
           onClick={() => {
             socket.send("/w1/demo", "hellow server");
@@ -90,7 +95,7 @@ export function WebSocketEndPointSuit() {
           onClick={() => {
             socket.send("/w1/game_request", {
               type: "3min",
-              user: "xyzking10009@gmail.com",
+              user: "user@chess.com",
             });
           }}
           text="add game request"

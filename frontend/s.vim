@@ -13,23 +13,13 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +46 src/pages/register/index.jsx
-badd +105 src/components/form/registration.jsx
-badd +24 src/components/loader/form/index.jsx
-badd +181 src/util/validate.js
-badd +94 src/components/form/inputs/index.jsx
+badd +4 src/components/chess-arena/index.jsx
+badd +77 src/util/cache.js
 argglobal
 %argdel
-edit src/components/form/inputs/index.jsx
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
+edit src/util/cache.js
 argglobal
-balt src/components/form/registration.jsx
+balt src/components/chess-arena/index.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -40,13 +30,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 94 - ((28 * winheight(0) + 19) / 38)
+let s:l = 77 - ((37 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 94
-normal! 028|
-lcd ~/Documents/coding/PSO/frontend
+keepjumps 77
+normal! 027|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -54,8 +43,6 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
-let &winminheight = s:save_winminheight
-let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)

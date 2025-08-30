@@ -22,7 +22,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getRook(key, svg_opt, path_opt) {
     return (
@@ -44,7 +44,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getBishop(key, svg_opt, path_opt) {
     return (
@@ -66,7 +66,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getPawn(key, svg_opt, path_opt) {
     return (
@@ -88,7 +88,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getKnight(key, svg_opt, path_opt) {
     return (
@@ -110,7 +110,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getQueen(key, svg_opt, path_opt) {
     return (
@@ -132,7 +132,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getKing(key, svg_opt, path_opt) {
     return (
@@ -154,7 +154,7 @@ export class FontAwesomeChessPieceProvider extends PieceProvider {
    * @param {number} key
    * @param {object} svg_opt
    * @param {object} path_opt
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getRandomePiece(key, svg_opt, path_opt) {
     return getRandomElement(this.pool)(key, svg_opt, path_opt);

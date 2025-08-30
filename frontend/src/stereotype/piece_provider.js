@@ -5,14 +5,14 @@
 export class PieceProvider {
   /** get king icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getKing(key) {
     throw new Error("Method 'getKing()' must be implemented.");
   }
   /** get knight icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getKnight(key) {
     throw new Error("Method 'getKnight()' must be implemented.");
@@ -20,7 +20,7 @@ export class PieceProvider {
 
   /** get queen icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getQueen(key) {
     throw new Error("Method 'getQueen()' must be implemented.");
@@ -28,7 +28,7 @@ export class PieceProvider {
 
   /** get bishop icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getBishop(key) {
     throw new Error("Method 'getBishop()' must be implemented.");
@@ -36,7 +36,7 @@ export class PieceProvider {
 
   /** get pawn icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getPawn(key) {
     throw new Error("Method 'getPawn()' must be implemented.");
@@ -44,7 +44,7 @@ export class PieceProvider {
 
   /** get rook icon as function component
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getRook(key) {
     throw new Error("Method 'getRook()' must be implemented.");
@@ -52,7 +52,7 @@ export class PieceProvider {
 
   /** get a random
    * @param {number|string} key
-   * @returns {React.FC}
+   * @returns {import("react").JSX.Element}
    */
   getRandomePiece(){
     throw new Error("Method 'getRandomePiece()' must be implemented.");

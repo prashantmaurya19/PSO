@@ -59,13 +59,12 @@ export function GameDurationMenu({ className = "", ...opt }) {
       {...opt}
       className={twMerge(
         className,
-        joinTWClass(
-          "flex justify-center items-center flex-col gap-7",
-          "absolute",
-        ),
+        joinTWClass("flex justify-center items-center flex-col gap-7"),
       )}
     >
-      <span className="w-[70%] text-white text-center text-3xl">Select Game Duration</span>
+      <span className="w-[70%] text-white text-center text-3xl">
+        Select Game Duration
+      </span>
       <GridContainer>
         <GridCell>1 Min</GridCell>
         <GridCell>2 Min</GridCell>

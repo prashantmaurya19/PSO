@@ -11,7 +11,7 @@ export function DashBoard() {
   return (
     <PageLayout className="flex justify-center items-center flex-col">
       <NavBar></NavBar>
-      <PageContentLayout className="relative">
+      <PageContentLayout>
         <Outlet />
       </PageContentLayout>
     </PageLayout>

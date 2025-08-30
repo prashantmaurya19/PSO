@@ -158,7 +158,6 @@ export function BotPlayForm({ className = "", ...a }) {
           "w-[90%] h-[95%]",
           "flex justify-center items-center flex-col gap-7",
           "p-2",
-          "debug",
         ),
       )}
     >
@@ -168,7 +167,9 @@ export function BotPlayForm({ className = "", ...a }) {
       <BlackAndWhiteSideSelection ref={side_slection_ele} />
       <BotPlayFormSubmitButton
         onClick={() => {
-          console.log(side_slection_ele.current.querySelector("input:checked").value);
+          console.log(
+            side_slection_ele.current.querySelector("input:checked").value,
+          );
         }}
       >
         Play
