@@ -3,10 +3,11 @@ import { joinTWClass } from "../../util/tailwind";
 import { Avatar } from "../profile/avatar";
 import { FontAwesomeChessPieceProvider } from "../../impl/chess_piece_providers";
 import { PieceProvider } from "../../stereotype/piece_provider";
-import { getFENCharToChessPieceELement } from "../../util/chess";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { isUppercase } from "../../util/astring";
+import { FontAwesomeChessPiece } from "../icon/fontawesome";
+import { formatMiliSeconds, min2ms } from "../../util/time";
 
 /**
  * @param {import("../../util/jjsx").JSXElement}
@@ -20,15 +21,15 @@ function ChessBoardCell({ className = "", children, ...a }) {
 }
 
 /**
- * @typedef {{chessPieceProvider:PieceProvider,flip:boolean,premove:boolean,initialPosition:string}} ChessBoardProps
+ * @typedef {{flip:boolean,initialPosition:string}} ChessBoardProps
  * @param {ChessBoardProps & import("../../util/jjsx").JSXElement}
  */
 function ChessBoard({
   initialPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
-  chessPieceProvider = new FontAwesomeChessPieceProvider(),
-  premove = false,
   flip = false,
   className,
+  onMovePlayed = null,
+  onPieceClick = null,
   ...a
 }) {
   const rows = 8,
@@ -58,18 +59,19 @@ function ChessBoard({
               if (Number.isInteger(c)) {
                 empty_cell = c;
               } else {
-                piece = getFENCharToChessPieceELement(
-                  initialPosition.charAt(prog),
-                  chessPieceProvider,
-                  {
-                    className: joinTWClass(
-                      "cursor-grab",
-                      "cursor-[-webkit-grab]",
-                      "cursor-[-moz-grab]",
-                      "block",
-                    ),
-                    draggable: "true",
-                    onDragStart: (e) => {
+                piece = (
+                  <div
+                    draggable
+                    onDrag={(e) => {
+                      // let ele =
+                      //   e.target.children.length == 0
+                      //     ? e.target.parentNode
+                      //     : e.target;
+                      // ele.style.transform = `translate(${e.clientX - ele.pmx}px,${e.clientY - ele.pmy}px)`;
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onDragStart={(e) => {
                       const ele =
                         e.target.children.length == 0
                           ? e.target.parentNode
@@ -79,24 +81,29 @@ function ChessBoard({
                       ele.pmx = e.clientX;
                       e.stopPropagation();
                       e.stopPropagation();
-                    },
-                    onDrag: (e) => {
-                      let ele =
-                        e.target.children.length == 0
-                          ? e.target.parentNode
-                          : e.target;
-                      ele.style.transform = `translate(${e.clientX - ele.pmx}px,${e.clientY - ele.pmy}px)`;
-                      e.preventDefault();
-                      e.stopPropagation();
-                    },
-                  },
-                  {
-                    className: joinTWClass(
-                      isUppercase(initialPosition.charAt(prog))
-                        ? "fill-white"
-                        : "fill-emerald-900",
-                    ),
-                  },
+                    }}
+                    className="w-full h-full relative"
+                  >
+                    <FontAwesomeChessPiece
+                      className={joinTWClass(
+                        "cursor-grab",
+                        // "cursor-[-webkit-grab]",
+                        // "cursor-[-moz-grab]",
+                        "block object-fill",
+                        "absolute",
+                        "w-full h-full",
+                        "p-2",
+                      )}
+                      fenChar={initialPosition.charAt(prog)}
+                      iconProps={{
+                        style: {
+                          color: isUppercase(initialPosition.charAt(prog))
+                            ? "white"
+                            : "black",
+                        },
+                      }}
+                    />
+                  </div>
                 );
               }
               prog++;
@@ -129,9 +136,7 @@ function ChessBoard({
                 }}
                 key={i * rows + j}
                 className={
-                  (i * rows + j) % 2 == i % 2
-                    ? "bg-emerald-400"
-                    : "bg-transparent"
+                  (i * rows + j) % 2 == i % 2 ? "bg-emerald-400" : "bg-gray-700"
                 }
               >
                 {piece}
@@ -156,7 +161,7 @@ function InfoPanel({ className, children, ...a }) {
       {...a}
       className={twMerge(
         joinTWClass(
-          "max-w-[40%] w-max h-[80%]",
+          "w-max h-[80%]",
           "px-3",
           "flex justify-center items-center gap-4",
         ),
@@ -169,9 +174,15 @@ function InfoPanel({ className, children, ...a }) {
 }
 
 /**
- * @param {{timeProps:import("../../util/jjsx").JSXElement}&import("../../util/jjsx").JSXElement}
+ * @param {{text:string,clockTime:number,timeProps:import("../../util/jjsx").JSXElement}&import("../../util/jjsx").JSXElement}
  */
-function SideInfoPanels({ timeProps = {}, className, ...a }) {
+function SideInfoPanels({
+  text = "player (xyz)",
+  clockTime = 0,
+  timeProps = {},
+  className,
+  ...a
+}) {
   return (
     <div
       {...a}
@@ -180,26 +191,26 @@ function SideInfoPanels({ timeProps = {}, className, ...a }) {
         className,
       )}
     >
-      <InfoPanel>
+      <InfoPanel className="items-start py-1">
         <span
           className={joinTWClass("h-full aspect-square", "block", "relative")}
         >
           <Avatar className="absolute" />
         </span>
-        <span className={joinTWClass("text-2xl text-white")}>prashant</span>
+        <span className={joinTWClass("text-2xl text-white")}>{text}</span>
       </InfoPanel>
       <InfoPanel
         {...timeProps}
         className={twMerge(
           joinTWClass(
-            "w-[30%]",
+            "min-w-[30%] w-[20%]",
             "text-white text-5xl",
             "border-1 border-solid border-gray-500",
           ),
           timeProps.className,
         )}
       >
-        1:00
+        {formatMiliSeconds(clockTime)}
       </InfoPanel>
     </div>
   );
@@ -210,20 +221,17 @@ function SideInfoPanels({ timeProps = {}, className, ...a }) {
  * @param {ChessBoardProps} p
  */
 export function ChessArena({ className, ...a }) {
-  // const [player_turn, setTurn] = useState(true);
-  // const [player_clock,setPlayerClock] = useState();
+  const [refresh, setRefresh] = useState(0);
   const premove = useSelector((state) => state.settings.premove);
   const opponent_clock_element = useRef();
   const player_clock_element = useRef();
-  // const start = () => {
-  //   const clock_reduction_ele = player_turn
-  //     ? player_clock_element
-  //     : opponent_clock_element;
-  //   const interval_id = setInterval(() => {}, 100);
-  // };
-  // const stop = () => {
-  //   clearInterval(interval_id);
-  // };
+  // setTimeout(() => {
+  //   setRefresh(refresh + 1);
+  //   console.log(refresh);
+  // }, 1000);
+  /*
+   * for user information - text(username + rating) - clockTime in ms
+   * */
   return (
     <div
       {...a}
@@ -237,11 +245,17 @@ export function ChessArena({ className, ...a }) {
       )}
     >
       <SideInfoPanels
+        text="prashant (1899)"
+        clockTime={min2ms(1.24)}
         timeProps={{ ref: opponent_clock_element }}
         className="items-end"
       />
       <ChessBoard premove={premove} {...a} />
-      <SideInfoPanels timeProps={{ ref: player_clock_element }} />
+      <SideInfoPanels
+        text="nishant (1899)"
+        clockTime={min2ms(0.04)}
+        timeProps={{ ref: player_clock_element }}
+      />
     </div>
   );
 }
