@@ -85,6 +85,7 @@ export const NavButton = ({ className = "", to = "#", children, ...rest }) => {
           "flex items-center justify-center",
           "hover:text-index-primary",
           "hover:bg-position-[0_0%]",
+          "active:scale-[0.96]",
           "NavButton",
         ),
         className,
