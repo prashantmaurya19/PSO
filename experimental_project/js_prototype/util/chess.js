@@ -1,104 +1,166 @@
 /**
+ * @typedef {[number,number]} BoardCellIndex
+ * @typedef {1|-1|0} MotionIndex
+ * @typedef {[MotionIndex,MotionIndex]} MotionArray
+ * @typedef {Array<FenChar|"">} MotionPathArray
+ * @typedef {{path:MotionPathArray,placeable:boolean,check:boolean}} MotionPathInfo
+ * @typedef {"b"|"w"} ChessColor
  * @typedef {string} ChessMove
+ * @typedef {string} FenPiecePosition
  * @typedef {string} FenString
+ * @typedef {string} FenCastlingString
  * @typedef {"k"|"b"|"n"|"r"|"q"|"p"|"K"|"B"|"N"|"R"|"Q"|"P"} FenChar
  * @typedef {string} FenRow
  * @typedef {Array<Array<FenChar|"">>} FenBoard
- * @typedef {{rows:Array<FenRow>,board:FenBoard}} FenInfo
- * @typedef {Array<FenChar|"">} FenRowInfo
  * @typedef {Array<Array<number>>} PossibleMoveList
  * @typedef {{piece:FenChar|"",index:number,space:{before:number,after:number}}} FenIndexInfo
+ * @typedef {{piece:FenChar|"",en_passant:boolean}} CaptureInfo
+ * @typedef {{capture:CaptureInfo,check:boolean,checkmate:boolean,fen:FenPiecePosition}} TransitionInfo
+ * @typedef {{b:{k:boolean,q:boolean},w:{k:boolean,q:boolean}}} FenCastlingInfo
+ * @typedef {{position:FenPiecePosition,color:ChessColor,en_passant:ChessMove,hall_moves:number,full_moves:number,castling:FenCastlingInfo}} FenInfo
  */
 
 import { indexOfNthOccurrence, splice } from "./astring.js";
 
 const EMPTY_FEN_CHAR = "";
+const HYPHEN_FEN_CHAR = "-";
 
-class ChessPieceMotionHelper {
+class MotionPath {
   /**
-   * @param {number} x
-   * @param {number} y
-   * @param {PossibleMoveList} res
+   * @param {number} a - from axis
+   * @param {number} b - to axis
+   * @return {number}
    */
-  static pushIfNotOutOfBound(x, y, res) {
-    if (!isOutOfBound(x, y)) res.push([x, y]);
+  static getMotionFromToAxis(a, b) {
+    // return (b - a) / Math.abs(b - a);
+    // return b - a - 1 + Math.abs(b - a);
+    return b - a > 0 ? 1 : b - a < 0 ? -1 : 0;
   }
 
-  static pushDiagonalMove(x, y, res) {
-    for (let i = x, j = y; !isOutOfBound(i, j); i++, j++) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i--, j++) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i--, j--) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i++, j--) {
-      res.push([i, j]);
-    }
+  /**
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @returns {MotionArray}
+   */
+  static getMotionFromTo(from, to) {
+    return [
+      MotionPath.getMotionFromToAxis(from[0], to[0]),
+      MotionPath.getMotionFromToAxis(from[1], to[1]),
+    ];
   }
 
-  // NOTE: improvment [ insted of i++ or j++ i+=-1 or i+=1]
-  static pushStraigthMove(x, y, res) {
-    for (let i = x, j = y; !isOutOfBound(i, j); i, j++) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i, j--) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i++, j) {
-      res.push([i, j]);
-    }
-    for (let i = x, j = y; !isOutOfBound(i, j); i--, j) {
-      res.push([i, j]);
-    }
+  /** is motion is on x(col axis) axis or y axis
+   * @param {MotionArray} motion
+   * @returns {boolean}
+   */
+  static isForwardPathY(motion) {
+    return motion[1] > 0;
+  }
+
+  /** is motion is on x(col axis) axis or y axis
+   * @param {MotionArray} motion
+   * @returns {boolean}
+   */
+  static isForwardPathX(motion) {
+    return motion[1] > 0;
+  }
+
+  /** is motion is on x(col axis) axis or y axis
+   * @param {MotionArray} motion
+   * @returns {boolean}
+   */
+  static isPathY(motion) {
+    return motion[1] == 0;
+  }
+
+  /** is motion is on x(col axis) axis or y axis
+   * @param {MotionArray} motion
+   * @returns {boolean}
+   */
+  static isPathX(motion) {
+    return motion[0] == 0;
+  }
+
+  /**
+   * @param {MotionArray} motion
+   * @returns {boolean}
+   */
+  static isForwordStraightPath(motion) {
+    return (
+      (MotionPath.isPathX(motion) || MotionPath.isPathY(motion)) &&
+      (MotionPath.isForwardPathX(motion) || MotionPath.isForwardPathY(motion))
+    );
   }
 }
 
-/**
- * @typedef {function(number,number):PossibleMoveList} MotionFunction
- * @type {{k:MotionFunction,q:MotionFunction,n:MotionFunction,r:MotionFunction,b:MotionFunction,p:MotionFunction}}
- */
-export const ChessPieceMotion = {
-  k: (x, y) => {
-    const res = [];
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x + 1, y, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x - 1, y, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x, y - 1, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x, y + 1, res);
-    return res;
-  },
-  n: (x, y) => {
-    const res = [];
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x + 1, y - 2, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x - 1, y - 2, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x + 1, y + 2, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x - 1, y + 2, res);
+export class Motion {
+  /**
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @param {FenPiecePosition} fen
+   * @returns {MotionPathInfo}
+   */
+  static r(from, to, fen) {
+    const motion = MotionPath.getMotionFromTo(from, to);
+    if (!(MotionPath.isPathY(motion) || MotionPath.isPathX(motion))) {
+      return { placeable: false, check: false, path: [] };
+    }
+    return getPath(from, to, fen);
+  }
+}
 
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x + 2, y - 1, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x - 2, y - 1, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x + 2, y + 1, res);
-    ChessPieceMotionHelper.pushIfNotOutOfBound(x - 2, y + 1, res);
-    return res;
-  },
-  b: (x, y) => {
-    const res = [];
-    ChessPieceMotionHelper.pushDiagonalMove(x, y, res);
-    return res;
-  },
-  r: (x, y) => {
-    const res = [];
-    ChessPieceMotionHelper.pushStraigthMove(x, y, res);
-    return res;
-  },
-  q: (x, y) => {
-    const res = [];
-    ChessPieceMotionHelper.pushDiagonalMove(x, y, res);
-    ChessPieceMotionHelper.pushStraigthMove(x, y, res);
-    return res;
-  },
-};
+/** return ChessColor p
+ * @param {FenChar} p
+ * @returns {ChessColor|""}
+ */
+export function getColor(p) {
+  const code = p.charCodeAt(0);
+  return code > 64 && code < 91 ? "w" : code > 96 && code < 123 ? "b" : "";
+}
+
+/** return true if p1(piece 1) and p2(piece 2) is same color
+ * @param {FenChar} p1
+ * @param {FenChar} p2
+ * @returns {boolean}
+ */
+export function isSameColorPiece(p1, p2) {
+  return getColor(p1) == getColor(p2);
+}
+
+/**
+ * @param {BoardCellIndex} from
+ * @param {BoardCellIndex} to
+ * @param {FenPiecePosition} fen
+ * @returns {MotionPathInfo}
+ */
+export function getPath(from, to, fen) {
+  /**
+   * @type {MotionPathInfo}
+   */
+  const res = { path: [], placeable: false, check: false };
+  const [a, b] = MotionPath.getMotionFromTo(from, to);
+  const from_piece = getPieceAt(...from, fen);
+  let istralingspace = true,
+    piece = "";
+  for (let i = from[1] + b; !isAxisOutOfBound(i); i += b) {
+    for (let j = from[0] + a; !isAxisOutOfBound(j); j += a) {
+      piece = getPieceAt(j, i, fen);
+      res.path.push(piece);
+      if (piece != EMPTY_FEN_CHAR) {
+        istralingspace = false;
+      }
+      res.placeable =
+        (j == to[0] &&
+          i == to[1] &&
+          (istralingspace || !isSameColorPiece(from_piece, piece))) ||
+        res.placeable;
+      res.check = piece.toLowerCase() == "k" || res.check;
+      if (a == 0) break;
+    }
+    if (b == 0) break;
+  }
+  return res;
+}
 
 export function isOutOfBound(x, y) {
   return isAxisOutOfBound(y) || isAxisOutOfBound(x);
@@ -109,40 +171,62 @@ export function isAxisOutOfBound(x) {
 }
 
 /**
- * @param {FenRow} fen_row
- * @returns {FenRowInfo}
+ * @param {FenCastlingString} fen
+ * @returns {FenCastlingInfo}
  */
-export function parseFenRow(fen_row) {
-  const res = [];
-  for (let j = 0; j < fen_row.length; j++) {
-    const c = parseInt(fen_row.charAt(j));
-    if (Number.isInteger(c)) for (let i = 0; i < c; i++) res.push("");
-    else res.push(fen_row.charAt(j));
+export function parseCastlingStr(fen) {
+  if (fen == "-") {
+    return {
+      b: {
+        k: false,
+        q: false,
+      },
+      w: {
+        k: false,
+        q: false,
+      },
+    };
   }
-  return res;
+  return {
+    b: {
+      k: fen.indexOf("k") != -1,
+      q: fen.indexOf("q") != -1,
+    },
+    w: {
+      k: fen.indexOf("K") != -1,
+      q: fen.indexOf("Q") != -1,
+    },
+  };
 }
 
 /**
+ * @param {ChessMove} move
+ * @returns {ChessMove}
+ */
+export function parseEnPasent(move) {
+  return move.replace(HYPHEN_FEN_CHAR, "");
+}
+
+/** parsing the fen string
  * @param {FenString} fen
  * @returns {FenInfo}
  */
-export function parseFen(fen) {
-  const res = {
-    rows: fen.split("/"),
-    board: [],
+export function parse(fen) {
+  const parts = fen.split(" ");
+  return {
+    position: parts[0],
+    color: parts[1],
+    castling: parseCastlingStr(parts[2]),
+    en_passant: parseEnPasent(parts[3]),
+    hall_moves: parseInt(parts[4]),
+    full_moves: parseInt(parts[5]),
   };
-
-  for (const row of res.rows) {
-    res.board.push(parseFenRow(row));
-  }
-
-  return res;
 }
 
 /**
  * @param {number} x - col index
  * @param {number} y - row index
- * @param {FenString} fen
+ * @param {FenPiecePosition} fen
  * @returns {FenIndexInfo}
  */
 export function getFenIndexInfo(x, y, fen) {
@@ -172,19 +256,19 @@ export function getFenIndexInfo(x, y, fen) {
 /** NOTE not checking for index OutOfBound
  * @param {number} x - col index
  * @param {number} y - row index
- * @param {FenString} fen
+ * @param {FenPiecePosition} fen
  * @returns {FenChar|""}
  */
 export function getPieceAt(x, y, fen) {
   return getFenIndexInfo(x, y, fen).piece;
 }
 
-/** put a piece at x,y and return a new FenString
+/** put a piece at x,y and return a new FenPiecePosition
  * @param {FenChar} p
  * @param {number} x - col index
  * @param {number} y - row index
- * @param {FenString} fen
- * @returns {FenString}
+ * @param {FenPiecePosition} fen
+ * @returns {FenPiecePosition}
  */
 export function putPieceAt(p, x, y, fen) {
   const info = getFenIndexInfo(x, y, fen);
@@ -199,8 +283,8 @@ export function putPieceAt(p, x, y, fen) {
 /** remove piece from x,y and return new fen string
  * @param {number} x - col index
  * @param {number} y - row index
- * @param {FenString} fen
- * @returns {FenString}
+ * @param {FenPiecePosition} fen
+ * @returns {FenPiecePosition}
  */
 export function pickPieceAt(x, y, fen) {
   const info = getFenIndexInfo(x, y, fen);
@@ -225,43 +309,42 @@ export function pickPieceAt(x, y, fen) {
 /** return true if played moved is valid
  * @param {ChessMove} from - current cell name
  * @param {ChessMove} to - destination cell name
- * @param {FenString} position - current chess position
+ * @param {FenPiecePosition} position - current chess position
  */
 export function verifyPieceMoved(from, to, position) {
-  const [x, y] = fromMove2Index(from);
-  const [a, b] = fromMove2Index(to);
-  // TODO: check for collision
-  return ChessPieceMotion[getPieceAt(x, y, position).toLowerCase()](
-    x,
-    y,
-  ).reduce((p, c) => {
-    return (c[0] == a && c[1] == b) || p;
-  }, false);
+  return true;
 }
 
-/** NOTE: insted of doing getFenIndexInfo over and over do it
- * once and pass relsute everyware
+/**
  * @param {ChessMove} to - destination cell name
  * @param {ChessMove} from - current cell name
- * @param {FenString} fen - current chess fen
- * @returns {FenString}
+ * @param {FenPiecePosition} fen - current chess fen
+ * @returns {FenPiecePosition}
  */
 export function transition(from, to, fen) {
   const [x, y] = fromMove2Index(from);
   const [a, b] = fromMove2Index(to);
+  const info = parse(fen);
+  const info_from = getFenIndexInfo(x, y, fen);
+  info.en_passant;
+  /**
+   * @type {TransitionInfo}
+   */
+  const res = {
+    capture: {
+      en_passant: info.en_passant == to,
+      piece: info_from.piece == "p" ? "P" : "p",
+    },
+    // TODO: check for checks and checkmate
+  };
 
   if (!verifyPieceMoved(from, to, fen)) return fen;
 
-  return putPieceAt(
-    getFenIndexInfo(x, y, fen).piece,
-    a,
-    b,
-    pickPieceAt(x, y, fen),
-  );
+  return putPieceAt(info_from.piece, a, b, pickPieceAt(x, y, info.position));
 }
 
 /** print the fen string
- * @param {FenString} position
+ * @param {FenPiecePosition} position
  * @returns {string}
  */
 export function printFen(position) {
@@ -306,7 +389,7 @@ export function index2Move(x, y, flip = false) {
 /** return a tuple(array of 2 element x,y) where x is col and y is row number
  * @param {ChessMove} m
  * @param {boolean} flip - if board is fliped
- * @returns {Array<Number>}
+ * @returns {BoardCellIndex}
  */
 export function fromMove2Index(m, flip = false) {
   return [
