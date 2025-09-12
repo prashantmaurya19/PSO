@@ -8,9 +8,7 @@ import { emit, Events } from "../../../util/event";
  * @typedef {Object} InitState
  * @property {PlayersData} players_data
  * @property {PlayerType} turn
- * @property {number} clock_refresh
- * @property {number} player_refresh
- * @property {string} chess_position
+ * @property {import("../../../util/chess").BoardInfo} chess_position
  * @property {FlipTypes} flip
  */
 
@@ -21,7 +19,7 @@ const players_data = {
   p: {
     name: "xyz",
     address: "1234:xyz",
-    side: "b",
+    side: "w",
     rating: 100,
     clockTime: min2ms(1),
     picture,
@@ -29,7 +27,7 @@ const players_data = {
   o: {
     name: "abc",
     address: "5678:abc",
-    side: "w",
+    side: "b",
     rating: 100,
     clockTime: min2ms(1),
     picture,
@@ -40,10 +38,14 @@ const players_data = {
  * @type {InitState}
  */
 const initialState = {
-  data: new ChessData(),
   players_data,
   flip: "normal",
-  chess_position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+  chess_position: {
+    // fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    fen: "r4bnr/ppR2ppp/3ppk2/2p5/8/8/PPPPPPPP/1NBQKBNR w KQkq - 0 1",
+    // kings: { b: [4, 0], w: [4, 7] },
+    kings: { b: [5, 2], w: [4, 7] },
+  },
   turn: "p",
 };
 
@@ -54,24 +56,37 @@ export const chessBoardSlice = createSlice({
     updatePlayerData: (state, action) => {
       copy(action.payload, state.players_data);
       if (action.payload["p"] != undefined)
-        emit(Events.PLAYER_DATA_UPDATED, { p: state.action.payload["p"] });
+        emit("PLAYER_DATA_UPDATED", { p: action.payload["p"] });
       if (action.payload["o"] != undefined)
-        emit(Events.PLAYER_OPONENT_DATA_UPDATED, {
-          o: state.action.payload["o"],
+        emit("PLAYER_OPONENT_DATA_UPDATED", {
+          o: action.payload["o"],
         });
     },
-    toggle: (state, _) => {},
+    updatePosition: (state, action) => {
+      state.chess_position = action.payload;
+    },
+    setTurn: (state, action) => {
+      for (const i in state.players_data) {
+        if (state.players_data[i].side == action.payload) {
+	  //@ts-ignore
+          state.turn = i;
+        }
+      }
+    },
+    toggleTurn: (state, _) => {
+      state.turn = state.turn == "o" ? "p" : "o";
+    },
   },
 });
 
-export const { updatePlayerData, toggle } = chessBoardSlice.actions;
+export const { setTurn, updatePlayerData, toggleTurn, updatePosition } =
+  chessBoardSlice.actions;
 export const chessBoardSliceReducer = chessBoardSlice.reducer;
 
 /**
- * @typedef {"b"|"w"} PlayerSide
  * @typedef {"p"|"o"} PlayerType
- * @typedef {{name:string,side:PlayerSide,picture:string,rating:number,address:string,clockTime:number}} PlayerData
- * @typedef {{"p":PlayerData,"o":PlayerData}} PlayersData
+ * @typedef {{name:string,side:import("../../../util/chess").ChessColor,picture:string,rating:number,address:string,clockTime:number}} PlayerData
+ * @typedef {Record<PlayerType,PlayerData>} PlayersData
  * @typedef {"normal"|"board"|"perspective"} FlipTypes
  */
 export default {};

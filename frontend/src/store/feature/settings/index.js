@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { acache, CacheName } from "../../../util/cache";
 
-const initialState = acache(CacheName.APPLICATION_USER_SETTINGS)
-  .localstorage()
-  .getOrDefault({
-    premove: false,
-  });
+const initialState = {
+  premove: false,
+};
 
 export const settingSlice = createSlice({
   name: "setting-data",
@@ -16,11 +14,6 @@ export const settingSlice = createSlice({
     },
     premoveOff: (state, action) => {
       state.premove = true;
-    },
-    save: (state, action) => {
-      acache(CacheName.APPLICATION_USER_SETTINGS)
-        .localstorage()
-        .set(JSON.stringify(state));
     },
   },
 });

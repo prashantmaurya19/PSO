@@ -61,6 +61,12 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
   const { clockTime } = useSelector((s) => {
     return s.chess.players_data[pid];
   });
+
+  const turn = useSelector((s) => {
+    return s.chess.turn;
+  });
+
+  const disabled = pid != turn;
   return (
     <InfoPanel
       {...a}
@@ -69,6 +75,7 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
           "min-w-[30%] w-[20%]",
           "text-white text-5xl",
           "border-1 border-solid border-gray-500",
+          disabled ? "bg-gray-500/10 text-gray-400/80" : "",
         ),
         className,
       )}

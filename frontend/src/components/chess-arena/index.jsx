@@ -2,19 +2,17 @@ import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "../../util/tailwind";
 import { SideInfoPanel } from "./panels/player-panel";
 import { ChessBoard } from "./chess-board";
-import { emit, Events, listen } from "../../util/event";
+import { clear, emit, Events, listen, useListen } from "../../util/event";
+import { useEffect } from "react";
+import { pmlog } from "../../util/log";
 
 /**
  * @param {import("../../util/jjsx").JSXElement} p
  */
 export function ChessArena({ className, ...a }) {
-  listen(Events.GAME_INITIALIZED, () => {
-    console.log("listeninga GAME_INITIALIZED");
+  useListen("GAME_INITIALIZED", (e) => {
+    pmlog(e);
   });
-  listen(Events.BOARD_MOVE_PLAYED, (e) => {
-    console.log(e);
-  });
-  emit(Events.GAME_INITIALIZED, {});
   return (
     <div
       {...a}
@@ -26,9 +24,9 @@ export function ChessArena({ className, ...a }) {
         ),
       )}
     >
-      <SideInfoPanel className="items-end" />
+      <SideInfoPanel className="items-end" pid="o" />
       <ChessBoard />
-      <SideInfoPanel pid="o" />
+      <SideInfoPanel pid="p" />
     </div>
   );
 }

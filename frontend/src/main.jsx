@@ -6,9 +6,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { clearAll } from "./util/event.js";
 
 gsap.registerPlugin(useGSAP);
 
+clearAll();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>

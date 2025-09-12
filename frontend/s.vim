@@ -13,13 +13,13 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +6 src/components/chess-arena/index.jsx
-badd +20 src/pages/dashboard/dmain/ChessArenaGround.jsx
-badd +1 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/other.lua
-badd +37 src/components/chess-arena/panels/player-panel.jsx
+badd +5 src/components/chess-arena/chess-board/index.jsx
+badd +1 src/store/feature/chess-data/index.js
+badd +630 src/util/chess.js
+badd +13 jsconfig.json
 argglobal
 %argdel
-edit src/components/chess-arena/index.jsx
+edit src/components/chess-arena/chess-board/index.jsx
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -39,6 +39,7 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
 exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 argglobal
+balt src/store/feature/chess-data/index.js
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -49,19 +50,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 19) / 38)
+let s:l = 5 - ((4 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 6
-normal! 018|
+keepjumps 5
+normal! 039|
 wincmd w
 argglobal
-if bufexists(fnamemodify("src/components/chess-arena/panels/player-panel.jsx", ":p")) | buffer src/components/chess-arena/panels/player-panel.jsx | else | edit src/components/chess-arena/panels/player-panel.jsx | endif
+if bufexists(fnamemodify("jsconfig.json", ":p")) | buffer jsconfig.json | else | edit jsconfig.json | endif
 if &buftype ==# 'terminal'
-  silent file src/components/chess-arena/panels/player-panel.jsx
+  silent file jsconfig.json
 endif
-balt src/components/chess-arena/index.jsx
+balt src/components/chess-arena/chess-board/index.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -72,14 +73,14 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 37 - ((10 * winheight(0) + 19) / 38)
+let s:l = 13 - ((12 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 37
-normal! 015|
-lcd ~/Documents/coding/PSO/frontend
+keepjumps 13
+normal! 026|
 wincmd w
+2wincmd w
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
 exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 tabnext 1
