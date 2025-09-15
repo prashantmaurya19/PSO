@@ -1,13 +1,14 @@
 /**
+ * @typedef {"k"|"q"} CastlingSide
+ * @typedef {Array<MotionPathInfo>} MoveInfoList
  * @typedef {"diagonal"|"straight"|"knight"} MotionType
  * @typedef {Record<ChessColor,BoardCellIndex>} BoardKingsIndexInfo
- * @typedef {Record<ChessColor,{k:boolean,q:boolean}>} FenCastlingInfo
+ * @typedef {Record<ChessColor,boolean>} FenCastlingInfo
  * @typedef {Array<FenChar>} AttackingPieceList
  * @typedef {""} EmptyFen
  * @typedef {FenChar|EmptyFen} FenCharWithEmptyFen
  * @typedef {[number,number]} BoardCellIndex
- * @typedef {number} MotionIndex
- * @typedef {[MotionIndex,MotionIndex]} MotionArray
+ * @typedef {[number,number]} MotionIndex
  * @typedef {Array<FenCharWithEmptyFen>} MotionPathArray
  * @typedef {MotionMap<Object<string,MotionPathInfo>> & {piece:FenCharWithEmptyFen}} IndexInfo
  * @typedef {"b"|"w"} ChessColor
@@ -31,10 +32,19 @@
  * @property {AttackingPieceList} list
  */
 /**
+ * @typedef {Object} AttackingPieceInfoWithMotionInfo
+ * @property {FenChar} piece
+ * @property {MotionPathInfo} motion_info
+ */
+/**
  * @template T
  * @typedef {Record<MotionType,T>} MotionMap
  */
-
+/**
+ * @typedef {Object} BoardStateInfo
+ * @property {FenInfo} fen_info
+ * @property {BoardKingsIndexInfo} king_info
+ */
 /**
  * @typedef {object} PieceMotionInfo
  * @property {BoardCellIndex} from The starting board cell index.
@@ -71,7 +81,6 @@
  * @property {CastlingInfo} castling - Information about castling rights.
  */
 /**
- *
  * @typedef {Object} FenInfo
  * @property {FenCastlingInfo} castling
  * @property {number} full_moves
@@ -85,7 +94,7 @@
  * @property {BoardCellIndex} [ en_passant ]
  * @property {BoardCellIndex} [ from ]
  * @property {BoardCellIndex} [ to ]
- * @property {MotionArray} [ motion ]
+ * @property {MotionIndex} [ motion ]
  * @property {Object<string,object|CastlingInfo>} cases
  * @property {BoardCellIndexInfo} [ blocking_piece ]
  * @property {object} [ debug ]
@@ -94,14 +103,14 @@
  * @property {number} empty_space
  */
 
-import { putIfUndefined } from "./aobject.js";
+import { clone, combine, copy, putIfUndefined } from "@pso/util/aobject.js";
 import {
   indexOfNthOccurrence,
   isLowerCase,
   isUpperCase,
   splice,
 } from "./astring.js";
-import { log, pmlog } from "./log.js";
+import { log, logCheckPoint, pmlog } from "@pso/util/log.js";
 
 export const EMPTY_FEN_CHAR = "";
 export const HYPHEN_FEN_CHAR = "-";
@@ -148,8 +157,8 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
-   * @returns {MotionArray}
+   * @param {MotionIndex} motion
+   * @returns {MotionIndex}
    */
   static absoluteMotion2UnitMotion(motion) {
     return [
@@ -170,7 +179,7 @@ export class MotionPath {
   /**
    * @param {BoardCellIndex} from
    * @param {BoardCellIndex} to
-   * @returns {MotionArray}
+   * @returns {MotionIndex}
    */
   static getMotionFromTo(from, to) {
     return [
@@ -180,7 +189,7 @@ export class MotionPath {
   }
 
   /** is motion is on y(row axis) axis
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isForwardPathY(motion) {
@@ -188,7 +197,7 @@ export class MotionPath {
   }
 
   /** forward motion in x(col axis) axis
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isForwardPathX(motion) {
@@ -196,7 +205,7 @@ export class MotionPath {
   }
 
   /** is motion is on x(col axis)
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPathX(motion) {
@@ -204,7 +213,7 @@ export class MotionPath {
   }
 
   /** is motion is on y(row axis)
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPathY(motion) {
@@ -212,7 +221,7 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isForwordStraightPath(motion) {
@@ -223,7 +232,7 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isDiagonal(motion) {
@@ -239,7 +248,7 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isKingPath(motion) {
@@ -249,7 +258,7 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isCastling(motion) {
@@ -257,7 +266,7 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isKnightPath(motion) {
@@ -269,7 +278,7 @@ export class MotionPath {
 
   /**
    * @param {BoardCellIndex} from
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPawnMoveP(from, motion) {
@@ -281,7 +290,7 @@ export class MotionPath {
 
   /**
    * @param {BoardCellIndex} from
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPawnMovep(from, motion) {
@@ -292,19 +301,35 @@ export class MotionPath {
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPawnCapturep(motion) {
-    return this.isDiagonal(motion) && this.isForwardPathY(motion);
+    return (
+      this.isDiagonal(motion) &&
+      this.isForwardPathY(motion) &&
+      Math.abs(motion[0]) == 1
+    );
   }
 
   /**
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @returns {boolean}
    */
   static isPawnCaptureP(motion) {
-    return this.isDiagonal(motion) && !this.isForwardPathY(motion);
+    return (
+      this.isDiagonal(motion) &&
+      !this.isForwardPathY(motion) &&
+      Math.abs(motion[0]) == 1
+    );
+  }
+
+  /**
+   * @param {MotionIndex} motion
+   * @returns {CastlingSide}
+   */
+  static getCastlingSide(motion) {
+    return motion[0] > 0 ? "k" : "q";
   }
 
   /** get path for knight according to index
@@ -346,19 +371,31 @@ export class Motion {
    * @param {BoardCellIndex} from
    * @param {BoardCellIndex} to
    * @param {FenInfo} info
-   * @param {MotionArray} motion
+   * @param {MotionIndex} motion
    * @param {boolean} not_verify
    * @returns {MotionPathInfo}
    */
   static #getPathHelper(from, to, info, motion, not_verify) {
-    return not_verify
-      ? this.getEmptyMovePathInfo()
-      : getPathInfoByMotion(
-          from,
-          to,
-          MotionPath.absoluteMotion2UnitMotion(motion),
-          info.position,
-        );
+    if (not_verify) return this.getEmptyMovePathInfo();
+    const res = getPathInfoByMotion(
+      from,
+      to,
+      MotionPath.absoluteMotion2UnitMotion(motion),
+      info.position,
+      { from: false, to: true, infinite: false },
+    );
+    putIfUndefined(res.cases, "not_king_move", {});
+    return res;
+  }
+
+  /**
+   * @param {BoardCellIndex} index
+   * @param {MotionIndex} motion
+   * @returns {BoardCellIndex}
+   */
+  static applyMotion(index, motion) {
+    //@ts-ignore
+    return index.map((v, i) => v + motion[i]);
   }
 
   /**
@@ -372,7 +409,13 @@ export class Motion {
     if (!MotionPath.isKnightPath(motion)) {
       return this.getEmptyMovePathInfo();
     }
-    return getKnightPathInfo(from, to, info.position);
+    const res = getPathInfoByMotion(from, to, motion, info.position, {
+      from: false,
+      to: true,
+      infinite: false,
+    });
+    putIfUndefined(res.cases, "not_king_move", {});
+    return res;
   }
 
   /**
@@ -383,30 +426,19 @@ export class Motion {
    */
   static k(from, to, info) {
     const motion = MotionPath.getMotionFromTo(from, to);
-    if (
-      !(
-        (MotionPath.isCastling(motion) || MotionPath.isKingPath(motion)) &&
-        pmlog(
-          isSafeForPiece(getPieceAt(...from, info.position), to, info.position),
-        )
-      )
-    ) {
+    if (!(MotionPath.isCastling(motion) || MotionPath.isKingPath(motion))) {
       return this.getEmptyMovePathInfo();
     }
     const res = getKingPathInfo(from, to, info.position);
     putIfUndefined(res.cases, "king_move", { to });
-    if (
-      MotionPath.isCastling(motion) &&
-      isSafePathForPiece(res.piece, from, to, info.position, {
-        from: false,
-        to: false,
-      })
-    ) {
-      putIfUndefined(res.cases, "castling", {});
-      if (motion[0] > 0 && info.castling[info.color].k) {
-        res.cases.castling.rook = Handler.CASTLING_ROOK_INDEX[res.piece]().k;
-      } else if (motion[0] < 0 && info.castling[info.color].q) {
-        res.cases.castling.rook = Handler.CASTLING_ROOK_INDEX[res.piece]().q;
+    putIfUndefined(res.cases, "king_check", { from, to });
+    if (MotionPath.isCastling(motion)) {
+      const castling_side = MotionPath.getCastlingSide(motion);
+      pmlog(motion, castling_side, info);
+      if (info.castling[info.color]) {
+        putIfUndefined(res.cases, "castling", {
+          rook: Handler.CASTLING_ROOK_INDEX[res.piece]()[castling_side],
+        });
       }
     }
     return res;
@@ -587,7 +619,7 @@ export function isSameColorPiece(p1, p2) {
 
 class Handler {
   /**
-   * @type {Record<"k"|"K",function():{ k: { from: [number, number], to: [number, number] }, q: { to: [number, number], from: [number, number] } }>}
+   * @type {Record<"k"|"K",function():Record<CastlingSide,{ to: [number, number], from: [number, number] }>>}
    */
   static CASTLING_ROOK_INDEX = {
     k: function () {
@@ -605,44 +637,50 @@ class Handler {
   };
 
   /**
-   * @type {Object<string,function({from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,fen_info:FenInfo,new_fen_info:FenInfo,transition_info:TransitionInfo,king_info:BoardKingsIndexInfo,info:object|CastlingInfo}):void|"failed">}
+   * @type {Object<string,function({from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,next:BoardStateInfo,prev:BoardStateInfo,transition_info:TransitionInfo,info:object|CastlingInfo}):void|"failed">}
    */
   static PLAYED_MOTION_PATH_INFO = {
-    place: function ({ move_info, fen_info, king_info, new_fen_info }) {
+    king_check: function ({ next, move_info }) {
       if (
-        move_info == undefined ||
-        !move_info.placeable ||
-        fen_info.color != getColor(move_info.piece)
+        !isSafeForPiece(move_info.piece, move_info.to, next.fen_info.position)
       ) {
         return "failed";
       }
-      const new_position = pickAndPutPieceAt(
-        move_info.from,
-        move_info.to,
-        fen_info.position,
-      );
+    },
+    not_king_move: function ({ prev, next }) {
       if (
-        (move_info.piece.toLowerCase() != "k" &&
-          !isSafeForPiece(
-            move_info.piece,
-            king_info[fen_info.color],
-            new_position,
-          )) ||
-        new_position == fen_info.position
+        !InspectPiece.isSafeAt(
+          prev.king_info[prev.fen_info.color],
+          combine(prev.fen_info, { position: next.fen_info.position }),
+        )
       ) {
         return "failed";
       }
-      new_fen_info.position = new_position;
     },
-    king_move: function ({ fen_info, new_fen_info, king_info, info }) {
-      new_fen_info.castling[new_fen_info.color] = { k: false, q: false };
-      king_info[fen_info.color] = info.to;
+    place: function ({ prev, next, from, to }) {},
+    king_move: function ({ prev, next, info }) {
+      next.fen_info.castling[prev.fen_info.color] = false;
+      next.king_info[prev.fen_info.color] = info.to;
     },
-    castling: function ({ new_fen_info, info }) {
-      new_fen_info.position = pickAndPutPieceAt(
+    castling: function ({ next, move_info, prev, info }) {
+      if (
+        !isSafePathForPiece(
+          move_info.piece,
+          move_info.from,
+          move_info.to,
+          prev.fen_info.position,
+          {
+            from: false,
+            to: false,
+          },
+        )
+      ) {
+        return "failed";
+      }
+      next.fen_info.position = pickAndPutPieceAt(
         info.rook.from,
         info.rook.to,
-        new_fen_info.position,
+        next.fen_info.position,
       );
     },
   };
@@ -651,28 +689,14 @@ class Handler {
    * @type {MotionMap<function({motion_type:MotionType,color:ChessColor,info:MotionPathInfo}):undefined|FenChar>}
    */
   static IS_PIECE_ATTACKING = {
-    knight: function ({ motion_type, color, info }) {
+    knight: function ({ info }) {
       const piece = info.blocking_piece?.piece.toLowerCase();
-      if (piece == undefined || piece == EMPTY_FEN_CHAR) return;
-      //@ts-ignore
-      if (getColor(info.blocking_piece?.piece) == color) return;
-      pmlog(
-        getColor(info.blocking_piece?.piece),
-        info.blocking_piece?.piece,
-        color,
-        info.from,
-        info.to,
-        info.motion,
-      );
       if (piece == "n") {
         return info.blocking_piece?.piece;
       }
     },
-    diagonal: function ({ color, info }) {
+    diagonal: function ({ info }) {
       const piece = info.blocking_piece?.piece.toLowerCase();
-      if (piece == undefined || piece == EMPTY_FEN_CHAR) return;
-      //@ts-ignore
-      if (getColor(info.blocking_piece?.piece) == color) return;
       if (piece == "q" || piece == "b") {
         return info.blocking_piece?.piece;
       } else if (piece == "k" && info.empty_space == 0) {
@@ -695,11 +719,8 @@ class Handler {
       //   ](info.motion),
       // );
     },
-    straight: function ({ color, info }) {
+    straight: function ({ info }) {
       const piece = info.blocking_piece?.piece.toLowerCase();
-      if (piece == undefined || piece == EMPTY_FEN_CHAR) return;
-      //@ts-ignore
-      if (getColor(info.blocking_piece?.piece) == color) return;
       if (
         piece == "q" ||
         piece == "r" ||
@@ -711,37 +732,247 @@ class Handler {
   };
 }
 
+/** return object of attack and defend piece list
+ * @param {FenInfo} fen_info
+ * @param {IndexInfo} index_info
+ * @returns {{attack:MoveInfoList,defend:MoveInfoList}}
+ */
+export function getLegalMoveInfo(fen_info, index_info) {
+  /** @type {{attack:MoveInfoList,defend:MoveInfoList}} */
+  const res = { attack: [], defend: [] };
+  /** @type {MotionPathInfo} */
+  let info = null;
+  /** @type {MotionPathInfo} */
+  let move_info = null;
+
+  for (const motion_type in Handler.IS_PIECE_ATTACKING) {
+    for (const i in index_info[motion_type]) {
+      info = index_info[motion_type][i];
+      // if (motion_type == "knight") pmlog(motion_type, i, info, fen_info.color);
+
+      const piece = info.blocking_piece?.piece.toLowerCase();
+      if (piece == undefined || piece == EMPTY_FEN_CHAR) continue;
+      if (info.blocking_piece == undefined || info.from == undefined) continue;
+
+      move_info = getMoveInfo(info.blocking_piece.index, info.from, fen_info);
+
+      if (!move_info.placeable) continue;
+      res[
+        getColor(info.blocking_piece.piece) == fen_info.color
+          ? "defend"
+          : "attack"
+      ].push(move_info);
+    }
+  }
+  return res;
+}
+
+/** return array of piecies that can attack or reach
+ * @param {ChessColor|EmptyFen} player_color
+ * @param {IndexInfo} index_info
+ * @returns {Array<AttackingPieceInfoWithMotionInfo>}
+ */
+export function getAttackPiece(player_color, index_info) {
+  /**
+   * @type {Array<AttackingPieceInfoWithMotionInfo>}
+   */
+  const res = [];
+  let info = null;
+  for (const motion_type in Handler.IS_PIECE_ATTACKING) {
+    for (const i in index_info[motion_type]) {
+      info = index_info[motion_type][i];
+      const piece = info.blocking_piece?.piece.toLowerCase();
+      if (piece == undefined || piece == EMPTY_FEN_CHAR) continue;
+      //@ts-ignore
+      if (getColor(info.blocking_piece?.piece) == player_color) continue;
+      const attack_piece = Handler.IS_PIECE_ATTACKING[motion_type]({
+        motion_type,
+        color: player_color,
+        info,
+      });
+      if (attack_piece) res.push({ piece: attack_piece, motion_info: info });
+    }
+  }
+  return res;
+}
+
 /** return array of piecies that can attack or reach
  * @param {ChessColor|EmptyFen} player_color
  * @param {IndexInfo} index_info
  * @returns {AttackingPieceInfo}
  */
 export function getAllAttackPiece(player_color, index_info) {
-  /**
-   * @type {AttackingPieceList}
-   */
-  const res = [];
-  for (const motion_type in Handler.IS_PIECE_ATTACKING) {
-    for (const i in index_info[motion_type]) {
-      const attack_piece = Handler.IS_PIECE_ATTACKING[motion_type]({
-        motion_type,
-        color: player_color,
-        info: index_info[motion_type][i],
-      });
-      if (attack_piece) res.push(attack_piece);
-    }
-  }
   return {
-    list: res,
+    list: getAttackPiece(player_color, index_info).map((v) => v.piece),
     piece: index_info.piece,
   };
 }
 
-/**  
- * 
-*/
-export function isCheckMate(){
+/** piece must present on given index
+ * @param {BoardCellIndex} index
+ * @param {FenPiecePosition} position
+ * @returns {boolean}
+ */
+export function isSafeAtIndex(index, position) {
+  return isSafeForPiece(getPieceAt(...index, position), index, position);
+}
 
+/** king must present on given index
+ * @param {BoardCellIndex} index
+ * @param {FenInfo} info
+ * @returns {boolean}
+ */
+export function isCheckMate(index, info) {
+  const king = getPieceAt(...index, info.position);
+  const all_motion_index_info = getIndexInfoInAllMotion(index, info.position);
+  const attack_piece = getLegalMoveInfo(info, all_motion_index_info);
+  if (attack_piece.attack.length == 0) {
+    // pmlog(attack_piece.attack.length,king, index, info.position);
+    return false;
+  }
+  if (
+    attack_piece.attack.length == 1 &&
+    !isSafeAtIndex(attack_piece.attack[0].blocking_piece.index, info.position)
+  ) {
+    // pmlog(king, index, info.position);
+    return false;
+  }
+
+  // pmlog(
+  //   king,
+  //   color,
+  //   attack_piece[0].motion_info.blocking_piece,
+  //   isSafeAtIndex(attack_piece[0].motion_info.blocking_piece.index, position),
+  // );
+
+  for (const motion of MotionPath.PATHS.diagonal) {
+    // @ts-ignore
+    if (isOutOfBound(...Motion.applyMotion(index, motion))) {
+      continue;
+    }
+    if (
+      //@ts-ignore
+      isSafeForPiece(king, Motion.applyMotion(index, motion), info.position) &&
+      //@ts-ignore
+      getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
+        .placeable
+    ) {
+      ////@ts-ignore
+      //pmlog(
+      //  "diagonal",
+      //  //@ts-ignore
+      //  isSafeForPiece(king, Motion.applyMotion(index, motion), info.position),
+      //  //@ts-ignore
+      //  Motion.applyMotion(index, motion),
+      //  index,
+      //  motion,
+
+      //  //@ts-ignore
+      //  getPieceAt(...Motion.applyMotion(index, motion), info.position),
+      //  //@ts-ignore
+      //  getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
+      //    .placeable,
+      //);
+      return false;
+    }
+  }
+  for (const motion of MotionPath.PATHS.straight) {
+    // @ts-ignore
+    if (isOutOfBound(...Motion.applyMotion(index, motion))) {
+      continue;
+    }
+    if (
+      //@ts-ignore
+      isSafeForPiece(king, Motion.applyMotion(index, motion), info.position) &&
+      //@ts-ignore
+      getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
+        .placeable
+    ) {
+      //pmlog(
+      //  "straight",
+      //  //@ts-ignore
+      //  isSafeForPiece(king, Motion.applyMotion(index, motion), info.position),
+      //  //@ts-ignore
+      //  Motion.applyMotion(index, motion),
+      //  index,
+      //  motion,
+      //  //@ts-ignore
+      //  getPieceAt(...Motion.applyMotion(index, motion), info.position),
+
+      //  //@ts-ignore
+      //  getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
+      //    .placeable,
+      //);
+      return false;
+    }
+  }
+
+  for (const att_piece of attack_piece.attack) {
+    if (
+      att_piece.blocking_piece.piece.toLowerCase() == "n" ||
+      att_piece.empty_space == 0
+    ) {
+      return true;
+    }
+  }
+
+  // means there is only one attacking piece left to checkmate
+
+  if (attack_piece.attack.length > 1)
+    console.warn("here is isCheckMate having a problem");
+
+  // here need to check for block check
+  // pmlog(attack_piece.attack.length);
+
+  let safe = true;
+  streamFenIndexInfoFromTo(
+    index,
+    attack_piece.attack[0].blocking_piece.index,
+    attack_piece.attack[0].motion,
+    (i, j) => {
+      const all_motion_index_info = getIndexInfoInAllMotion(
+        [i, j],
+        info.position,
+      );
+      const legal_moves = getLegalMoveInfo(info, all_motion_index_info);
+      for (const m of legal_moves.defend) {
+        if (m.blocking_piece.piece == king) continue;
+        const new_position = pickAndPutPieceAt(
+          m.blocking_piece.index,
+          [i, j],
+          info.position,
+        );
+        if (isSafeAtIndex(index, new_position)) {
+          // pmlog(info.position, new_position);
+          safe = false;
+          return "break";
+        }
+      }
+    },
+    {
+      from: false,
+      to: false,
+      infinite: false,
+    },
+  );
+  return safe;
+}
+
+class InspectPiece {
+  /**
+   * @param {BoardCellIndex} index
+   * @param {FenInfo} fen_info
+   */
+  static isSafeAt(index, fen_info) {
+    return (
+      pmlog(
+        getLegalMoveInfo(
+          fen_info,
+          getIndexInfoInAllMotion(index, fen_info.position),
+        ).attack,
+      ).length == 0
+    );
+  }
 }
 
 /**
@@ -829,9 +1060,7 @@ export function isSafeForPiece(piece, index, position) {
  * @returns {IndexInfo}
  */
 export function getIndexInfoInAllMotion(index, fen, exclude_motion_type = {}) {
-  /**
-   * @type {IndexInfo}
-   */
+  /** @type {IndexInfo} */
   const res = { diagonal: {}, straight: {}, knight: {}, piece: "" };
   /**
    * @type {BoardCellIndex}
@@ -890,7 +1119,7 @@ export function getKingPathInfo(from, to, fen) {
  * @param {MotionType} motion_type
  * @param {BoardCellIndex} from
  * @param {BoardCellIndex} to
- * @param {MotionArray} motion
+ * @param {MotionIndex} motion
  * @param {FenPiecePosition} fen
  * @returns {MotionPathInfo}
  */
@@ -901,23 +1130,38 @@ export function getPathInfoByMotionType(motion_type, from, to, motion, fen) {
     }
     case "straight":
       return getPathInfoByMotion(from, to, motion, fen);
-    case "knight":
-      return getKnightPathInfo(from, to, fen);
+    case "knight": {
+      return getPathInfoByMotion(
+        from,
+        Motion.applyMotion(from, motion),
+        motion,
+        fen,
+        { from: false, to: true, infinite: false },
+      );
+    }
   }
 }
 
 /**
  * @param {BoardCellIndex} from
  * @param {BoardCellIndex} to
- * @param {MotionArray} motion
+ * @param {MotionIndex} motion
  * @param {FenPiecePosition} fen
+ * @param {Partial<{from:boolean,to:boolean,infinite:boolean}>} [include_from_to]
  * @returns {MotionPathInfo}
  */
-export function getPathInfoByMotion(from, to, motion, fen) {
+export function getPathInfoByMotion(
+  from,
+  to,
+  motion,
+  fen,
+  include_from_to = {
+    from: false,
+    to: true,
+    infinite: true,
+  },
+) {
   const from_piece = getPieceAt(...from, fen);
-  /**
-   * @type {MotionPathInfo}
-   */
   const res = Motion.getEmptyMovePathInfo();
   res.from = from;
   res.to = to;
@@ -936,10 +1180,14 @@ export function getPathInfoByMotion(from, to, motion, fen) {
     function (i, j) {
       piece = getPieceAt(i, j, fen);
       res.placeable =
-        (i == to[0] && j == to[1] && !isSameColorPiece(from_piece, piece)) ||
+        (IndexCoordinator.isSameBoardCellIndex([i, j], to) &&
+          !isSameColorPiece(from_piece, piece)) ||
         res.placeable;
       res.empty_space++;
-      if (piece != EMPTY_FEN_CHAR) {
+      if (
+        piece != EMPTY_FEN_CHAR &&
+        !IndexCoordinator.isSameBoardCellIndex(from, [i, j])
+      ) {
         putIfUndefined(res, "blocking_piece", {});
         res.blocking_piece.piece = piece;
         res.blocking_piece.index = [i, j];
@@ -947,19 +1195,23 @@ export function getPathInfoByMotion(from, to, motion, fen) {
         return "break";
       }
     },
-    {
-      from: false,
-      to: true,
-      infinite: true,
-    },
+    include_from_to,
   );
   return res;
 }
 
+/** return true if invalid index given otherwise false
+ * @param {number} x
+ * @param {number} y
+ */
 export function isOutOfBound(x, y) {
   return isAxisOutOfBound(y) || isAxisOutOfBound(x);
 }
 
+/**
+ * @param {number} x
+ * @returns {boolean}
+ */
 export function isAxisOutOfBound(x) {
   return x < 0 || x > 7;
 }
@@ -971,25 +1223,13 @@ export function isAxisOutOfBound(x) {
 export function parseCastlingStr(fen) {
   if (fen == "-") {
     return {
-      b: {
-        k: false,
-        q: false,
-      },
-      w: {
-        k: false,
-        q: false,
-      },
+      b: false,
+      w: false,
     };
   }
   return {
-    b: {
-      k: fen.indexOf("k") != -1,
-      q: fen.indexOf("q") != -1,
-    },
-    w: {
-      k: fen.indexOf("K") != -1,
-      q: fen.indexOf("Q") != -1,
-    },
+    b: fen.indexOf("k") != -1 || fen.indexOf("q") != -1,
+    w: fen.indexOf("K") != -1 || fen.indexOf("Q") != -1,
   };
 }
 
@@ -1023,7 +1263,7 @@ export function parse(fen) {
  * @param {FenCastlingInfo} info
  */
 export function stringifyCastlingStr(info) {
-  return `${info.b.k ? "k" : ""}${info.b.q ? "q" : ""}${info.w.k ? "K" : ""}${info.w.q ? "Q" : ""}`;
+  return `${info.b ? "kq" : ""}${info.w ? "KQ" : ""}`;
 }
 
 /**
@@ -1118,9 +1358,9 @@ export function streamFenIndexInfo(position, callback) {
  * @template T
  * @param {BoardCellIndex} from
  * @param {BoardCellIndex} to
- * @param {MotionArray} motion
+ * @param {MotionIndex} motion
  * @param {function(number,number):T|"break"} callback
- * @param {{from:boolean,to:boolean,infinite:boolean}} include
+ * @param {Partial<{from:boolean,to:boolean,infinite:boolean}>} include
  * @returns {Array<T>}
  */
 export function streamFenIndexInfoFromTo(
@@ -1242,19 +1482,26 @@ export function pickAndPutPieceAt(from, to, position) {
 export function transition(from, to, fen) {
   const info = parse(fen.fen);
   const move_info = getMoveInfo(from, to, info);
-  const new_info = {
-    position: "",
-    en_passant: EMPTY_FEN_CHAR,
-    castling: info.castling,
-    color: toggleColor(info.color),
-    hall_moves: info.hall_moves + toggleColor(info.color) == "b" ? 1 : 0,
-    full_moves: info.full_moves + toggleColor(info.color) == "w" ? 1 : 0,
+  const prev = {
+    fen_info: info,
+    king_info: fen.kings,
+  };
+  const next = {
+    fen_info: {
+      position: "",
+      en_passant: EMPTY_FEN_CHAR,
+      castling: info.castling,
+      color: toggleColor(info.color),
+      hall_moves: info.hall_moves + (toggleColor(info.color) == "b" ? 1 : 0),
+      full_moves: info.full_moves + (toggleColor(info.color) == "w" ? 1 : 0),
+    },
+    king_info: clone(fen.kings),
   };
   const res = {
     transition_info: {
       capture: {
-        en_passant: info.en_passant == "",
-        piece: move_info.piece == "p" ? "P" : "p",
+        en_passant: false,
+        piece: "",
       },
       check: false,
       checkmate: false,
@@ -1262,33 +1509,44 @@ export function transition(from, to, fen) {
       castling: undefined,
     },
     board_info: {
-      kings: { ...fen.kings },
+      kings: null,
     },
   };
   const props = {
     from,
     to,
     move_info,
-    fen_info: info,
-    new_fen_info: new_info,
-    //@ts-ignore
+    prev,
+    next,
     transition_info: res.transition_info,
-    king_info: res.board_info.kings,
   };
+  if (
+    move_info == undefined ||
+    !move_info.placeable ||
+    prev.fen_info.color != getColor(move_info.piece)
+  ) {
+    return {
+      board_info: fen,
+      transition_info: undefined,
+    };
+  }
+
+  next.fen_info.position = pickAndPutPieceAt(from, to, prev.fen_info.position);
   for (const c in Handler.PLAYED_MOTION_PATH_INFO) {
     if (move_info.cases[c] == undefined) continue;
 
     props.info = move_info.cases[c];
     //@ts-ignore
     if (Handler.PLAYED_MOTION_PATH_INFO[c](props) == "failed") {
+      pmlog("failed", props);
       return {
         board_info: fen,
         transition_info: undefined,
       };
     }
   }
-  // pmlog(new_info);
-  res.board_info.fen = stringify(new_info);
+  res.board_info.fen = stringify(next.fen_info);
+  res.board_info.kings = next.king_info;
   // @ts-ignore
   return res;
 }
@@ -1364,6 +1622,22 @@ export function printFenBoard(board) {
     .join("\n");
 }
 
+/**
+ * @param {Partial<FenInfo>} [opt={}]
+ * @returns {FenInfo}
+ */
+export function getEmptyFenInfo(opt = {}) {
+  return {
+    castling: undefined,
+    full_moves: 0,
+    hall_moves: 0,
+    en_passant: "",
+    color: "b",
+    position: "",
+    ...opt,
+  };
+}
+
 /** return string of chess notation of cell
  * eg 5,3 => e3 ...etc
  * @param {number} x - col number
@@ -1385,4 +1659,31 @@ export function fromMove2Index(m, flip = false) {
     (flip ? -7 : 0) + m.charCodeAt(0) - 97,
     (flip ? -7 : 0) + parseInt(m.charAt(1)) - 1,
   ];
+}
+
+export class IndexCoordinator {
+  /** return true if a and b index  is same
+   * @param {BoardCellIndex} a
+   * @param {BoardCellIndex} b
+   * @returns {boolean}
+   */
+  static isSameBoardCellIndex(a, b) {
+    return a.reduce((p, c, i) => p && c == b[i], true);
+  }
+
+  /**
+   * @param {number} i - col number
+   * @param {number} j - row number
+   */
+  static flatTwoDimensionalIndex(i, j) {
+    return j * 8 + i;
+  }
+
+  /**
+   * @param {BoardCellIndex} index
+   * @returns {number}
+   */
+  static flatBoardCellIndex(index) {
+    return this.flatTwoDimensionalIndex(...index);
+  }
 }

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { DataGoverner } from "./app-data";
 
 const initialState = {
-  data: new DataGoverner(),
+  data: new DataGoverner({}),
   refreshCount: 0,
 };
 
@@ -16,5 +16,5 @@ export const appDataSlice = createSlice({
   },
 });
 
-export const {refresh} = appDataSlice.actions;
+export const { refresh } = appDataSlice.actions;
 export const appDataSliceReducer = appDataSlice.reducer;

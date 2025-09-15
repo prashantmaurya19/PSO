@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { settingSliceReducer } from "./feature/settings";
-import { chessBoardSliceReducer } from "./feature/chess-data";
+import { settingSliceReducer } from "@pso/store/feature/settings";
+import { chessBoardSliceReducer } from "@pso/store/feature/chess-data";
+import { componentDataSliceReducer } from "@pso/store/feature/component-data";
 
 export const store = configureStore({
   reducer: {
     settings: settingSliceReducer,
     chess: chessBoardSliceReducer,
+    component_data: componentDataSliceReducer,
   },
 });

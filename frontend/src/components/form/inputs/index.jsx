@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 export function RememberMe({ className = "" }) {
   return (
@@ -10,7 +10,7 @@ export function RememberMe({ className = "" }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement  & {inputProp:import("../../../util/jjsx").JSXElement}} p
+ * @param {import("../../../util/jjsx").JSXProps  & {inputProp:import("../../../util/jjsx").JSXProps}} p
  */
 export function UsernameField(p) {
   return (
@@ -33,7 +33,7 @@ export function UsernameField(p) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement  & {inputProp:import("../../../util/jjsx").JSXElement}} p
+ * @param {import("../../../util/jjsx").JSXProps  & {inputProp:import("../../../util/jjsx").JSXProps}} p
  */
 export function PasswordField(p) {
   return (

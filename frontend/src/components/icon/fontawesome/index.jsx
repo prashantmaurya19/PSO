@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 /**
  * @typedef {"k"|"b"|"n"|"r"|"q"|"p"|"K"|"B"|"N"|"R"|"Q"|"P"} FenChar
  * @param {{fenChar:FenChar,iconProps:Partial<FontAwesomeIconProp>} & ReactImgProps } p0

@@ -1,9 +1,9 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 import { FaChevronDown } from "react-icons/fa";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p
+ * @param {import("../../../util/jjsx").JSXProps} p
  */
 export function BotPlayFormSubmitButton({ children, className, ...a }) {
   return (
@@ -28,7 +28,7 @@ export function BotPlayFormSubmitButton({ children, className, ...a }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p
+ * @param {import("../../../util/jjsx").JSXProps} p
  */
 export function DropDownButton({ className = "", children, ...a }) {
   return (

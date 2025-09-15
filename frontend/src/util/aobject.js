@@ -1,6 +1,23 @@
-import { isTypeOf } from "./types.js";
+import { isTypeOf } from "@pso/util/types.js";
+
+/** return combined from and to object
+ * @param {object} from
+ * @param {object} to
+ * @returns {object}
+ */
+export function combine(from, to) {
+  return { ...from, ...to };
+}
+
+/**
+ * @param {object} from
+ */
+export function clone(from) {
+  return structuredClone(from);
+}
 
 /** copy values from object a to b
+ * [NOTE: array is not copied insted same array shared the reference]
  * @param {object} a
  * @param {object} b
  */

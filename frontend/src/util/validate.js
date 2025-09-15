@@ -1,4 +1,4 @@
-import { isTypeOf } from "./types";
+import { isTypeOf } from "@pso/util/types";
 
 /**
  * @typedef {boolean|string|number} ValidationTypes

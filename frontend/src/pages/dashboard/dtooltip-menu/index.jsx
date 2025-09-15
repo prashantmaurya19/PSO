@@ -1,5 +1,5 @@
 /**
- * @param {import("../../../util/jjsx").JSXElement}
+ * @param {import("../../../util/jjsx").JSXProps}
  */
 export function DToolTipMenusHolder({ children }) {
   return <div className="relative ">{children}</div>;

@@ -4,6 +4,7 @@
  */
 
 import gsap from "gsap";
+// @ts-nocheck
 
 /**
  * @typedef {"from"|"to"} AnimationDirectionLiterals
@@ -22,7 +23,7 @@ import gsap from "gsap";
 
 /**
  * @typedef {Array.<AnimationObject|AnimationTimeline>} AnimationBlock
- * @typedef {Array.<AnimationBlock>} AnimationExecutionList
+ * @typedef {Array<AnimationBlock>} AnimationExecutionList
  */
 
 /** get last element
@@ -48,7 +49,7 @@ class AnimeHandler {
   }
 
   /**
-   * @type {AnimationExecutionList}
+   * @returns {AnimationExecutionList}
    */
   get() {
     return this.animations;
@@ -148,6 +149,7 @@ class AnimeExecutor {
    */
   static executeAnimationObject(e, tl) {
     let g = tl == null ? gsap : tl;
+
     if (e.direction == "to") {
       if (tl == null) return g.to(e.e, e.animation);
       g = g.to(e.e, e.animation);
@@ -320,7 +322,7 @@ class Anime {
           opacity: 0,
           duration: 1,
           stagger: 0.2,
-	  ease:"circ"
+          ease: "circ",
         },
         user_animation,
       ),

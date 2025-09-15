@@ -1,8 +1,8 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
- * @param {{text:string,textProps:import("../../../util/jjsx").JSXElement,icon:import("../../../util/jjsx").JSXElement} & import("../../../util/jjsx").JSXElement} p0
+ * @param {{text:string,textProps:import("@pso/util/jjsx").JSXProps,icon:import("@pso/util/jjsx").JSXProps} & import("@pso/util/jjsx").JSXProps} p0
  */
 export function ToolTipButton({
   textProps = {},

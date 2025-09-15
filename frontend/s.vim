@@ -13,13 +13,32 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +5 src/components/chess-arena/chess-board/index.jsx
-badd +1 src/store/feature/chess-data/index.js
-badd +630 src/util/chess.js
-badd +13 jsconfig.json
+badd +659 src/util/chess.js
+badd +58 src/util/chess.test.js
+badd +52 src/store/feature/chess-data/index.js
+badd +33 src/components/chess-arena/chess-board/index.jsx
+badd +74 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/remaps.lua
+badd +25 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/luasnip.lua
+badd +30 src/components/chess-arena/index.jsx
+badd +4 src/store/feature/component-data/index.js
+badd +1 src/store/feature/app-data/index.js
+badd +14 jsconfig.json
+badd +1 src/store/index.js
+badd +6 src/util/aobject.js
+badd +1 src/components/chess-arena/chess-board/promotion-piece-overlay.jsx
+badd +1 src/components/chess-arena/chess-board/piece-render.jsx
+badd +9 src/components/chess-arena/chess-board/board.jsx
+badd +27 src/components/debug/overlay/fen-overlay/index.jsx
+badd +1 src/util/tailwind.js
+badd +4 src/util/jjsx.js
+badd +5 src/components/loader/chess-board/index.jsx
+badd +10 src/pages/dashboard/dmain/GameDurationMenu.jsx
+badd +57 src/util/cache.js
+badd +2 src/store/feature/settings/index.js
+badd +21 src/util/time.js
 argglobal
 %argdel
-edit src/components/chess-arena/chess-board/index.jsx
+edit src/pages/dashboard/dmain/GameDurationMenu.jsx
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -50,19 +69,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 5 - ((4 * winheight(0) + 19) / 38)
+let s:l = 9 - ((8 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 5
-normal! 039|
+keepjumps 9
+normal! 0
+lcd ~/Documents/coding/PSO/frontend
 wincmd w
 argglobal
-if bufexists(fnamemodify("jsconfig.json", ":p")) | buffer jsconfig.json | else | edit jsconfig.json | endif
+if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/util/time.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/util/time.js | else | edit ~/Documents/coding/PSO/frontend/src/util/time.js | endif
 if &buftype ==# 'terminal'
-  silent file jsconfig.json
+  silent file ~/Documents/coding/PSO/frontend/src/util/time.js
 endif
-balt src/components/chess-arena/chess-board/index.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -73,12 +92,13 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 13 - ((12 * winheight(0) + 19) / 38)
+let s:l = 21 - ((18 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 13
-normal! 026|
+keepjumps 21
+normal! 03|
+lcd ~/Documents/coding/PSO/frontend
 wincmd w
 2wincmd w
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)

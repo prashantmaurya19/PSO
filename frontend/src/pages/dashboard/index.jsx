@@ -1,5 +1,5 @@
-import NavBar from "../../components/header/navbar";
-import { PageContentLayout, PageLayout } from "../../components/page/section";
+import NavBar from "@pso/components/header/navbar";
+import { PageContentLayout, PageLayout } from "@pso/components/page/section";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export function DashBoard() {

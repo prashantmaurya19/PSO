@@ -3,7 +3,7 @@
  */
 
 /**
- * @typedef {import("react").HTMLProps & import("react").HTMLAttributes} JSXElement
+ * @typedef {import("react").HTMLProps & import("react").HTMLAttributes} JSXProps
  */
 
 /** this function dosn't set a atrribute value

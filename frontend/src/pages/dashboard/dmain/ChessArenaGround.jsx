@@ -1,10 +1,10 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
-import { ContextContainer } from "../../../components/page/context-container";
-import { ChessArena } from "../../../components/chess-arena";
+import { joinTWClass } from "@pso/util/tailwind";
+import { ContextContainer } from "@pso/components/page/context-container";
+import { ChessArena } from "@pso/components/chess-arena";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p0
+ * @param {import("@pso/util/jjsx").JSXProps} p0
  */
 export function ChessArenaGround({ className = "", ...a }) {
   return (

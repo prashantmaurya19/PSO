@@ -1,11 +1,11 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
-import { DropDownButton } from "../../buttons/bot-play-menu";
+import { joinTWClass } from "@pso/util/tailwind";
+import { DropDownButton } from "@pso/components/buttons/bot-play-menu";
 import React, { useRef } from "react";
-import { toggleJsxAtrribute } from "../../../util/jjsx";
+import { toggleJsxAtrribute } from "@pso/util/jjsx";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p
+ * @param {import("@pso/util/jjsx").JSXProps} p
  */
 export function DropDownItem({ className = "", children, ...a }) {
   return (
@@ -28,7 +28,7 @@ export function DropDownItem({ className = "", children, ...a }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement}
+ * @param {import("@pso/util/jjsx").JSXProps}
  */
 function DropDownContent({ children, className = "", ...a }) {
   return (
@@ -59,7 +59,7 @@ function DropDownContent({ children, className = "", ...a }) {
 }
 
 /**
- * @param {{itemList:Array.<string>,initSelect:number}&import("../../../util/jjsx").JSXElement} p
+ * @param {{itemList:Array.<string>,initSelect:number}&import("@pso/util/jjsx").JSXProps} p
  */
 export function DropDownMenu({
   itemList = [],

@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
  * @param {import("react").HTMLProps & import("react").HTMLAttributes} p0

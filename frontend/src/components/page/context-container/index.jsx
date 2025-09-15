@@ -1,8 +1,8 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p0
+ * @param {import("../../../util/jjsx").JSXProps} p0
  */
 export function ContextContainer({ children, className, ...a }) {
   return (

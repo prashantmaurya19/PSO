@@ -1,12 +1,12 @@
-import IndexPage from "./pages/main";
+import IndexPage from "@pso/pages/main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/login";
-import RegistrationPage from "./pages/register";
-import { DashBoard } from "./pages/dashboard";
-import { StartUpMenu } from "./pages/dashboard/dmain";
-import { GameDurationMenu } from "./pages/dashboard/dmain/GameDurationMenu";
-import { BotPlayCreateMenu } from "./pages/dashboard/dmain/BotPlayCreateMenu";
-import { ChessArenaGround } from "./pages/dashboard/dmain/ChessArenaGround";
+import LoginPage from "@pso/pages/login";
+import RegistrationPage from "@pso/pages/register";
+import { DashBoard } from "@pso/pages/dashboard";
+import { StartUpMenu } from "@pso/pages/dashboard/dmain";
+import { GameDurationMenu } from "@pso/pages/dashboard/dmain/GameDurationMenu";
+import { BotPlayCreateMenu } from "@pso/pages/dashboard/dmain/BotPlayCreateMenu";
+import { ChessArenaGround } from "@pso/pages/dashboard/dmain/ChessArenaGround";
 
 function App() {
   return (

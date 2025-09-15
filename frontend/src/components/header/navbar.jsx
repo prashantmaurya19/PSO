@@ -1,4 +1,4 @@
-import { joinTWClass } from "../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 import "react";
 import React from "react";
 import { twMerge } from "tailwind-merge";

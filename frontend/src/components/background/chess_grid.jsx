@@ -1,8 +1,9 @@
 import { twMerge } from "tailwind-merge";
-import { join, joinTWClass } from "../../util/tailwind";
-import { PieceProvider } from "../../stereotype/piece_provider";
-import { FontAwesomeChessPieceProvider } from "../../impl/chess_piece_providers";
-import { getRandomElement } from "../../util/math";
+import { join, joinTWClass } from "@pso/util/tailwind";
+import { PieceProvider } from "@pso/stereotype/piece_provider";
+import { FontAwesomeChessPieceProvider } from "@pso/impl/chess_piece_providers";
+import { getRandomElement } from "@pso/util/math";
+import { combine } from "@pso/util/aobject";
 
 /**
  * @param {{className:string,chessPieceProvider:PieceProvider}}

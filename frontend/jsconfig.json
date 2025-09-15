@@ -1,14 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "app/*": ["./src/*"],
+      "@pso/*": ["./*"]
     },
-    "moduleResolution": "node",
-    "checkJs": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "moduleResolution": "bundler",
     "target": "ESNext",
     "module": "ESNext",
-    "resolveJsonModule": true
+    "allowJs": true,
+    "checkJs": true,
+    "resolveJsonModule": true,
+    "strict": false,
   },
-  "exclude": ["src/components","src/pages","node_modules", "docs", "thinking"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "docs",
+    "thinking",
+    "dist"
+  ]
 }

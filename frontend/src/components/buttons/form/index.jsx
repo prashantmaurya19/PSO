@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
  * @typedef {{text:string} & import("react").ButtonHTMLAttributes} SubmitButtonProps

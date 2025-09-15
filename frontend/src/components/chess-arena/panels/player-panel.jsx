@@ -1,12 +1,13 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
-import { Avatar } from "../../profile/avatar";
+import { joinTWClass } from "@pso/util/tailwind";
+import { Avatar } from "@pso/components/profile/avatar";
 import { useSelector } from "react-redux";
-import { formatMiliSeconds } from "../../../util/time";
+import { formatMiliSeconds } from "@pso/util/time";
 
 /**
- * @typedef {{pid:import("../../../store/feature/chess-data").PlayerType}} InfoProp
- * @param {import("../../../util/jjsx").JSXElement}
+ * @typedef {{pid:import("@pso/store/feature/chess-data").PlayerType}} InfoProp
+ * @param {import("@pso/util/jjsx").JSXProps}
  */
 function InfoPanel({ className, children, ...a }) {
   return (
@@ -27,12 +28,12 @@ function InfoPanel({ className, children, ...a }) {
 }
 
 /**
- * @typedef {InfoProp & import("../../../util/jjsx").JSXElement} PlayerInfoPanelProps
+ * @typedef {InfoProp & import("@pso/util/jjsx").JSXProps} PlayerInfoPanelProps
  * @param {PlayerInfoPanelProps} p
  */
 function PlayerInfoPanel({ pid = "p", ...a }) {
   /**
-   * @type {import("../../../store/feature/chess-data").PlayerData}
+   * @type {import("@pso/store/feature/chess-data").PlayerData}
    */
   const { picture, name, rating } = useSelector((s) => {
     return s.chess.players_data[pid];
@@ -52,11 +53,11 @@ function PlayerInfoPanel({ pid = "p", ...a }) {
 }
 
 /**
- * @param {InfoProp & import("../../../util/jjsx").JSXElement}
+ * @param {InfoProp & import("@pso/util/jjsx").JSXProps}
  */
 function ClockInfoPanel({ pid = "p", className, ...a }) {
   /**
-   * @type {import("../../../store/feature/chess-data").PlayerData}
+   * @type {import("@pso/store/feature/chess-data").PlayerData}
    */
   const { clockTime } = useSelector((s) => {
     return s.chess.players_data[pid];
@@ -86,9 +87,9 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
 }
 
 /**
- * @param {InfoProp&{playerProps:PlayerInfoPanelProps,timeProps:import("../../../util/jjsx").JSXElement}&import("../../../util/jjsx").JSXElement}
+ * @param {InfoProp&{playerProps:PlayerInfoPanelProps,timeProps:import("@pso/util/jjsx").JSXProps}&import("@pso/util/jjsx").JSXProps}
  */
-export function SideInfoPanel({
+export function PlayerPanel({
   pid = "p",
   playerProps = {},
   timeProps = {},

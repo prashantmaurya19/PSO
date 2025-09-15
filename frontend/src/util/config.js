@@ -1,4 +1,4 @@
-import { FontAwesomeChessPieceProvider } from "../impl/chess_piece_providers";
+import { FontAwesomeChessPieceProvider } from "@pso/impl/chess_piece_providers";
 
 export class StorageManager {
   /**

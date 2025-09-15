@@ -1,11 +1,12 @@
-import NavBar from "../../components/header/navbar";
-import { LoginButton, NavButton } from "../../components/buttons/navbutton";
-import { RegistrationForm } from "../../components/form/registration";
-import { anime } from "../../util/anime";
-import { useNavigate } from "react-router-dom"; import { SelfContainedLoader } from "../../components/loader/form";
+import NavBar from "@pso/components/header/navbar";
+import { LoginButton, NavButton } from "@pso/components/buttons/navbutton";
+import { RegistrationForm } from "@pso/components/form/registration";
+import { anime } from "@pso/util/anime";
+import { useNavigate } from "react-router-dom";
+import { SelfContainedLoader } from "@pso/components/loader/form";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
-import { PageLayout, PageContentLayout } from "../../components/page/section";
+import { PageLayout, PageContentLayout } from "@pso/components/page/section";
 
 export default function RegistrationPage() {
   const container = useRef();

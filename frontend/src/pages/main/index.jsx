@@ -1,10 +1,11 @@
-import { LoginButton, SignUpButton } from "../../components/buttons/navbutton";
-import { LeftSection, RightSlogan } from "./sections";
+// @ts-nocheck
+import { LoginButton, SignUpButton } from "@pso/components/buttons/navbutton";
+import { LeftSection, RightSlogan } from "@pso/pages/main/sections";
 import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
-import { getAnimation } from "../../util/animator";
-import NavBar from "../../components/header/navbar";
-import { anime } from "../../util/anime";
+import { getAnimation } from "@pso/util/animator";
+import NavBar from "@pso/components/header/navbar";
+import { anime } from "@pso/util/anime";
 import { useRef } from "react";
 
 export default function IndexPage() {

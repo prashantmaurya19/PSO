@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { join } from "../../../util/tailwind";
+import { join } from "@pso/util/tailwind";
 
 /**
  * @param {{text:string} & import("react").HtmlHTMLAttributes} param0

@@ -1,4 +1,4 @@
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 import "react";
 import React from "react";
 import { twMerge } from "tailwind-merge";
@@ -56,7 +56,7 @@ export function LoginButton({ className, text = "demo", ...opt }) {
 }
 
 /**
- * @typedef {import("../../../util/jjsx").JSXElement} NavButtonProps
+ * @typedef {import("../../../util/jjsx").JSXProps} NavButtonProps
  */
 
 /**

@@ -1,8 +1,8 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
- * @param {{avatarProps:import("../../../util/jjsx").JSXElement} & import("../../../util/jjsx").JSXElement} p0
+ * @param {{avatarProps:import("../../../util/jjsx").JSXProps} & import("../../../util/jjsx").JSXProps} p0
  */
 export function AvatarCircle({ avatarProps, className = "", ...a }) {
   return (

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { acache, CacheName } from "../../../util/cache";
+import { acache } from "@pso/util/cache";
 
 const initialState = {
   premove: false,
@@ -18,5 +18,5 @@ export const settingSlice = createSlice({
   },
 });
 
-export const { refresh } = settingSlice.actions;
+export const { premoveOff, premoveOn } = settingSlice.actions;
 export const settingSliceReducer = settingSlice.reducer;

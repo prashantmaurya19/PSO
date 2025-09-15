@@ -55,3 +55,12 @@ const t = transition([5, 2], [6, 2], {
 });
 log(t.board_info.fen);
 log(print(t.board_info.fen));
+
+const res = {
+  res(...a) {
+    log(...a);
+  },
+};
+
+log(res);
+res.res(1, 2, 3, 4);

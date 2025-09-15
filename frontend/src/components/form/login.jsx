@@ -1,13 +1,13 @@
 import { twMerge } from "tailwind-merge";
-import { join } from "../../util/tailwind";
+import { join } from "@pso/util/tailwind";
 import { useGSAP } from "@gsap/react";
-import { PasswordField, UsernameField } from "./inputs";
-import { LoginButton } from "../buttons/form";
-import { FormTitle } from "./title";
-import { anime } from "../../util/anime";
-import { validate } from "../../util/validate";
+import { PasswordField, UsernameField } from "@pso/components/form/inputs";
+import { LoginButton } from "@pso/components/buttons/form";
+import { FormTitle } from "@pso/components/form/title";
+import { anime } from "@pso/util/anime";
+import { validate } from "@pso/util/validate";
 import { useRef } from "react";
-import { request, response } from "../../util/requests";
+import { request, response } from "@pso/util/requests";
 import { useNavigate } from "react-router-dom";
 
 /**

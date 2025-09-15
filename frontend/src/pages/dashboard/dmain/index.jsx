@@ -1,15 +1,15 @@
 import { twMerge } from "tailwind-merge";
-import { ContextContainer } from "../../../components/page/context-container";
-import { joinTWClass } from "../../../util/tailwind";
+import { ContextContainer } from "@pso/components/page/context-container";
+import { joinTWClass } from "@pso/util/tailwind";
 import {
   BliztPlayMenuButton,
   NewBotPlayMenuButon,
   NewGamePlayMenuButon,
-} from "../../../components/buttons/dmenu-button";
+} from "@pso/components/buttons/dmenu-button";
 import { useNavigate } from "react-router-dom";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function StartUpMenu({ className = "", ...opt }) {
   const navigate = useNavigate();

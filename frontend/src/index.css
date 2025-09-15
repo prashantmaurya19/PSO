@@ -13,6 +13,7 @@
   --color-index-forth: #d60229;
   --font-DM_Sans: DM Sans;
   --font-Roboto: Roboto;
+  --animate-text-trailing-flashing: text_trailing_flashing infinite;
 }
 
 * {
@@ -49,14 +50,11 @@ body {
   height: 100%;
 }
 
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(4px);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+@keyframes text_trailing_flashing {
+  0% {
+    color: var(--color-gray-800);
   }
-  50% {
-    transform: none;
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  100% {
+    color: var(--color-white);
   }
 }

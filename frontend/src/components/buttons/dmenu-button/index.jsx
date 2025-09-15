@@ -1,14 +1,14 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 import {
   BlitzChessIcon,
   PawnIcon,
   RobotHeadIcon,
   SettingGearIcon,
-} from "../../icon/dashboard";
+} from "@pso/components/icon/dashboard";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function NewBotPlayMenuButon({...a}) {
   return (
@@ -28,7 +28,7 @@ export function NewBotPlayMenuButon({...a}) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function NewGamePlayMenuButon({...a}) {
   return (
@@ -48,7 +48,7 @@ export function NewGamePlayMenuButon({...a}) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function BliztPlayMenuButton({...a}) {
   return (
@@ -68,7 +68,7 @@ export function BliztPlayMenuButton({...a}) {
 }
 
 /**
- * @param {{text:string,icon:import("react").JSX.Element} & import("../../../util/jjsx").JSXElement} o
+ * @param {{text:string,icon:import("react").JSX.Element} & import("@pso/util/jjsx").JSXProps} o
  */
 export function IconStartUpMenuButton({
   text = "Default",
@@ -88,7 +88,7 @@ export function IconStartUpMenuButton({
 }
 
 /**
- * @param {{text:string} & import("../../../util/jjsx").JSXElement} p0
+ * @param {{text:string} & import("@pso/util/jjsx").JSXProps} p0
  */
 export function StartUpMenuRectButton({ children, className = "", ...opt }) {
   return (

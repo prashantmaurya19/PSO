@@ -1,4 +1,4 @@
-import { toggleJsxAtrribute } from "../../../util/jjsx";
+import { toggleJsxAtrribute } from "@pso/util/jjsx";
 
 export class ContextManager {
   constructor() {

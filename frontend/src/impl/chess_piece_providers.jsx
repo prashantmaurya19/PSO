@@ -1,5 +1,5 @@
-import { PieceProvider } from "../stereotype/piece_provider";
-import { getRandomElement } from "../util/math";
+import { PieceProvider } from "@pso/stereotype/piece_provider";
+import { getRandomElement } from "@pso/util/math";
 
 /**
  * @interface

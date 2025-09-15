@@ -1,12 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+import App from "@pso/App.jsx";
+import "@pso/index.css";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Provider } from "react-redux";
-import { store } from "./store";
-import { clearAll } from "./util/event.js";
+import { store } from "@pso/store";
+import { clearAll } from "@pso/util/event.js";
 
 gsap.registerPlugin(useGSAP);
 

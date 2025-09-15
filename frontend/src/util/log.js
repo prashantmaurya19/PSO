@@ -9,7 +9,19 @@ export function getTrace() {
 }
 
 /**
+ * @returns {function(...object):void}
+ */
+export function logCheckPoint() {
+  let count = 0;
+  return (...a) => {
+    log(`${count}: checkpoint`, ...a);
+    count++;
+  };
+}
+
+/**
  * @param {object} data
+ * @param {...object} args
  */
 export function pmlog(data, ...args) {
   // i know name is rediculas
@@ -17,6 +29,7 @@ export function pmlog(data, ...args) {
   args.forEach((v, i) => {
     log(`${i + 1}: pmlog => `, v);
   });
+  log(`------>debug end<------------`);
   return data;
 }
 

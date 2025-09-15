@@ -1,8 +1,8 @@
-import NavBar from "../../components/header/navbar";
-import LoginForm from "../../components/form/login";
+import NavBar from "@pso/components/header/navbar";
+import LoginForm from "@pso/components/form/login";
 import { useNavigate } from "react-router-dom";
-import { NavButton, SignUpButton } from "../../components/buttons/navbutton";
-import { anime } from "../../util/anime";
+import { NavButton, SignUpButton } from "@pso/components/buttons/navbutton";
+import { anime } from "@pso/util/anime";
 import { useGSAP } from "@gsap/react";
 
 export default function LoginPage() {

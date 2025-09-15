@@ -1,14 +1,22 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
-import { ContextContainer } from "../../../components/page/context-container";
+import { joinTWClass } from "@pso/util/tailwind";
+import { ContextContainer } from "@pso/components/page/context-container";
+import { pmlog } from "@pso/util/log";
+import { acache } from "@pso/util/cache";
+import { min2ms } from "@pso/util/time";
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} p0
+ * @param {{duration:import("@pso/util/time").DurationCache}&import("@pso/util/jjsx").JSXProps} p0
  */
-function GridCell({ className, children, ...a }) {
+function DurationButton({ duration = null, className, children, ...a }) {
   return (
     <button
       {...a}
+      onClick={(e) => {
+        if (duration == null) return;
+        acache("LAST_GAME_DURATION").localstorage().set().json(duration);
+      }}
       className={twMerge(
         joinTWClass(
           "h-1/2 aspect-square ",
@@ -29,7 +37,7 @@ function GridCell({ className, children, ...a }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 function GridContainer({ className = "", children, ...a }) {
   return (
@@ -51,9 +59,11 @@ function GridContainer({ className = "", children, ...a }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXElement} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function GameDurationMenu({ className = "", ...opt }) {
+  const set_cache = acache("LAST_GAME_DURATION").localstorage().set();
+  const click = () => {};
   return (
     <ContextContainer
       {...opt}
@@ -66,12 +76,65 @@ export function GameDurationMenu({ className = "", ...opt }) {
         Select Game Duration
       </span>
       <GridContainer>
-        <GridCell>1 Min</GridCell>
-        <GridCell>2 Min</GridCell>
-        <GridCell>2+1 Min</GridCell>
-        <GridCell>3 Min</GridCell>
-        <GridCell>5 Min</GridCell>
-        <GridCell>10 Min</GridCell>
+        <DurationButton
+          duration={{
+            type: "bullet",
+            time: min2ms(1),
+            rules: {},
+          }}
+        >
+          1 Min
+        </DurationButton>
+        <DurationButton
+          duration={{
+            type: "bullet",
+            time: min2ms(2),
+            rules: {},
+          }}
+        >
+          2 Min
+        </DurationButton>
+        <DurationButton
+          duration={{
+            type: "bullet",
+            time: min2ms(2),
+            rules: {
+              1000: {
+                move: 1,
+                threshold: 1000,
+              },
+            },
+          }}
+        >
+          2Min+1
+        </DurationButton>
+        <DurationButton
+          duration={{
+            time: min2ms(3),
+            type: "rapid",
+            rules: {},
+          }}
+        >
+          3 Min
+        </DurationButton>
+        <DurationButton
+          duration={{
+            time: min2ms(5),
+            type: "rapid",
+            rules: {},
+          }}
+        >
+          5 Min
+        </DurationButton>
+        <DurationButton
+          duration={{
+            time: min2ms(10),
+            type: "rapid",
+            rules: {},
+          }}
+        >
+          10 Min
+        </DurationButton>
       </GridContainer>
     </ContextContainer>
   );

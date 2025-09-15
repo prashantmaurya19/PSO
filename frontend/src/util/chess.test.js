@@ -1,10 +1,13 @@
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   index2Move,
   fromMove2Index,
   getIndexInfoInAllMotion,
   getAllAttackPiece,
   getPieceAt,
+  isCheckMate,
+  getEmptyFenInfo,
+  parse,
 } from "./chess";
 
 describe("chess util testing", () => {
@@ -46,5 +49,44 @@ describe("chess util testing", () => {
       "R3kbnr/p2r2pp/4pp2/3p4/4P3/8/PPPP1PPP/RNBQKBN1",
     );
     expect(piece).toBe("R");
+  });
+
+  it("isCheckMate testing", () => {
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("rnbqkbnr/ppp1p1pp/3N1p2/7Q/8/4P3/PPPP1PPP/RNB1KB1R b - - 0 1"),
+      ),
+    ).toBeFalsy();
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("rnbqkbnr/ppppp1pp/3N1p2/7Q/8/4P3/PPPP1PPP/RNB1KB1R b - - 0 1"),
+      ),
+    ).toBeTruthy();
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("rnbqkbnr/ppppp1pp/5p2/7Q/8/4P3/PPPP1PPP/RNB1KBNR b - - 0 1"),
+      ),
+    ).toBeFalsy();
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("R3kbnr/pppp1ppp/4p3/8/8/BP6/P1PPPPPP/RN1QKBN1 b - - 0 1"),
+      ),
+    ).toBeTruthy();
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("R3kbnr/pppp1ppp/4p3/8/8/8/PPPPPPPP/RNBQKBN1 b - - 0 1"),
+      ),
+    ).toBeFalsy();
+    expect(
+      isCheckMate(
+        [4, 0],
+        parse("R3kbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1 b - - 0 1"),
+      ),
+    ).toBeTruthy();
   });
 });

@@ -1,8 +1,8 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
- * @param {{lineProp:import("../../../util/jjsx").JSXElement} &import("../../../util/jjsx").JSXElement} param0
+ * @param {{lineProp:import("../../../util/jjsx").JSXProps} &import("../../../util/jjsx").JSXProps} param0
  */
 export function ToolTipSolidSeparator({ lineProp = {}, className = "", ...a }) {
   return (

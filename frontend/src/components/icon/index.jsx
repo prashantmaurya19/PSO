@@ -1,8 +1,8 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../util/tailwind";
+import { joinTWClass } from "@pso/util/tailwind";
 
 /**
- * @typedef {{pathProp:import("../../util/jjsx").JSXElement}&import("../../util/jjsx").JSXElement} IconProps
+ * @typedef {{pathProp:import("@pso/util/jjsx").JSXProps}&import("@pso/util/jjsx").JSXProps} IconProps
  */
 
 /**

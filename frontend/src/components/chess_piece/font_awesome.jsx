@@ -1,4 +1,4 @@
-import c from "../../util/config";
+import c from "@pso/util/config";
 const provider = c.provider.chess_piece.font_awesome;
 
 /**

@@ -1,14 +1,14 @@
 import { twMerge } from "tailwind-merge";
-import { join } from "../../util/tailwind";
-import { anime } from "../../util/anime";
+import { join } from "@pso/util/tailwind";
+import { anime } from "@pso/util/anime";
 import { useGSAP } from "@gsap/react";
-import { InputField, UsernameField } from "./inputs";
-import { SingupButton } from "../buttons/form";
-import { PasswordField } from "./inputs";
-import { FormTitle } from "./title";
-import { request, response } from "../../util/requests";
+import { InputField, UsernameField } from "@pso/components/form/inputs";
+import { SingupButton } from "@pso/components/buttons/form";
+import { PasswordField } from "@pso/components/form/inputs";
+import { FormTitle } from "@pso/components/form/title";
+import { request, response } from "@pso/util/requests";
 import { useRef } from "react";
-import { validate } from "../../util/validate";
+import { validate } from "@pso/util/validate";
 import { useNavigate } from "react-router-dom";
 
 /** all fields has class RegistrationFormFields

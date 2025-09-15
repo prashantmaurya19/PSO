@@ -1,12 +1,12 @@
 import { twMerge } from "tailwind-merge";
-import { joinTWClass } from "../../util/tailwind";
-import { DropDownMenu } from "../dropdown/bot-play-menu";
+import { joinTWClass } from "@pso/util/tailwind";
+import { DropDownMenu } from "@pso/components/dropdown/bot-play-menu";
 import { useRef } from "react";
-import { PawnIcon } from "../icon/dashboard";
-import { BotPlayFormSubmitButton } from "../buttons/bot-play-menu";
+import { PawnIcon } from "@pso/components/icon/dashboard";
+import { BotPlayFormSubmitButton } from "@pso/components/buttons/bot-play-menu";
 
 /**
- * @param {{radioProps:import("../../util/jjsx").JSXElement,iconProps:import("../icon").IconProps} & import("../../util/jjsx").JSXElement} p
+ * @param {{radioProps:import("@pso/util/jjsx").JSXProps,iconProps:import("@pso/components/icon").IconProps} & import("@pso/util/jjsx").JSXProps} p
  */
 function BlackAndWhiteCheckBox({
   radioProps = {},
@@ -48,7 +48,7 @@ function BlackAndWhiteCheckBox({
 }
 
 /**
- * @param {import("../../util/jjsx").JSXElement} p
+ * @param {import("../../util/jjsx").JSXProps} p
  */
 function BlackAndWhiteSideSelection({ className = "", ...a }) {
   return (
@@ -85,7 +85,7 @@ function BlackAndWhiteSideSelection({ className = "", ...a }) {
 }
 
 /**
- * @param {{maxValue:number,minValue:number}&import("../../util/jjsx").JSXElement}
+ * @param {{maxValue:number,minValue:number}&import("../../util/jjsx").JSXProps}
  */
 function RangeSlider({
   defaultValue = 10,
@@ -124,7 +124,7 @@ function RangeSlider({
 }
 
 /**
- * @param {import("../../util/jjsx").JSXElement} p
+ * @param {import("../../util/jjsx").JSXProps} p
  */
 function BotIconBanner({ className = "", ...a }) {
   return (
@@ -143,7 +143,7 @@ function BotIconBanner({ className = "", ...a }) {
 }
 
 /**
- * @param {import("../../util/jjsx").JSXElement} p
+ * @param {import("../../util/jjsx").JSXProps} p
  */
 export function BotPlayForm({ className = "", ...a }) {
   // fetch data for available engine

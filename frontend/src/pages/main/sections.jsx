@@ -32,7 +32,7 @@ export function RightSlogan() {
 }
 
 /**
- * @param {import("../../util/jjsx").JSXElement} param0
+ * @param {import("../../util/jjsx").JSXProps} param0
  */
 export function LeftSection({ ...a }) {
   return (

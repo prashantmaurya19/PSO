@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from "react";
-import { pmlog } from "./log";
+import { pmlog } from "@pso/util/log";
 
 /**
  * @type {Record<EventName,string>}

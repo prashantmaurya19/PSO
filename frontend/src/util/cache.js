@@ -1,11 +1,8 @@
 import { isTypeOf } from "./types";
 
 /**
- * @enum
+ * @typedef {"LAST_GAME_DURATION"|"APPLICATION_USER_SETTINGS"} CacheName
  */
-export const CacheName = {
-  APPLICATION_USER_SETTINGS: "application_user_settings",
-};
 
 class StorageHandler {
   #att_name;
@@ -19,18 +16,19 @@ class StorageHandler {
     this.#storage = storage;
   }
 
-  /** set data
-   * @param {string} value
+  /**
+   * @param {object} value
    */
-  set(value) {
-    if (isTypeOf(value, Object)) {
-      value = JSON.stringify(value);
-    }
-    this.#storage.setItem(this.#att_name, `${value}`);
+  setItem(value) {
+    this.#storage.setItem(this.#att_name, value);
+  }
+
+  set() {
+    return new CacheSetHelper(this);
   }
 
   /** get data from localStorage
-   * @returns {string}
+   * @returns {CacheGetHelper}
    */
   get() {
     return new CacheGetHelper(this.#storage.getItem(this.#att_name));
@@ -50,6 +48,26 @@ class StorageHandler {
    */
   exists() {
     return this.get() != null;
+  }
+}
+
+class CacheSetHelper {
+  #storage;
+  /**
+   * @param {StorageHandler} v
+   */
+  constructor(v) {
+    this.#storage = v;
+  }
+
+  /**
+   * @param {object} value
+   */
+  json(value) {
+    if (isTypeOf(value, Object)) {
+      value = JSON.stringify(value);
+    }
+    this.#storage.setItem(`${value}`);
   }
 }
 
@@ -124,7 +142,7 @@ class Cache {
 }
 
 /**
- * @param {string} name - name of cache
+ * @param {CacheName} name - name of cache
  */
 export function acache(name) {
   return new Cache(name);
