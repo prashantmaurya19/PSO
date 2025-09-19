@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { joinTWClass } from "@pso/util/tailwind";
 import { useSelector } from "react-redux";
 import { FontAwesomeChessPiece } from "@pso/components/icon/fontawesome";
@@ -8,7 +9,10 @@ import {
   streamFenIndexInfo,
 } from "@pso/util/chess";
 import { pmlog } from "@pso/util/log";
-import { ChessBoardCell, ChessBoardGrid } from "@pso/components/chess-arena/chess-board/board";
+import {
+  ChessBoardCell,
+  ChessBoardGrid,
+} from "@pso/components/chess-arena/chess-board/board";
 
 /**
  * @param {import("@pso/util/jjsx").JSXProps} p
@@ -31,7 +35,7 @@ export function PromotionPieceOverlay({ className = "", ...a }) {
           const ele = (
             <ChessBoardCell
               onClick={(e) => {
-                pmlog(e.target.getAttribute("data-piecename"));
+		pmlog(e.target.getAttribute("data-piecename"));
                 emit("BOARD_PROMOTION_PIECE_SELECTED", {
                   selected_piece: e.target.getAttribute("data-piecename"),
                   index: from,

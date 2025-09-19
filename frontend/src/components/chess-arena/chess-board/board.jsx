@@ -19,12 +19,12 @@ export function ChessBoardGrid({ className = "", children, ...a }) {
     <div
       {...a}
       className={twMerge(
-        className,
         joinTWClass(
           "w-full h-full",
           "grid grid-cols-8 grid-rows-8",
           "absolute",
         ),
+        className,
       )}
     >
       {children}

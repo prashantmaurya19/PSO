@@ -31,3 +31,10 @@ export function Icon({ className = "", pathProp = { className: "" }, ...a }) {
     </svg>
   );
 }
+
+/**
+ * @param {import("@pso/util/jjsx").JSXProps} p
+ */
+export function IconWraper({ children, ...a }) {
+  return <div {...a}>{children}</div>;
+}

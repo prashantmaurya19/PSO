@@ -3,6 +3,8 @@
  * here
  */
 
+import { pmlog } from "./log";
+
 /**
  * @typedef {-1} EmptyThreshold
  * @typedef {number} Minute
@@ -15,10 +17,11 @@
  * @typedef {Object} DurationTransformationRule
  * @property {number} move
  * @property {MiliSecond} threshold
+ * @property {MiliSecond} time
  */
 
 /**
- * @typedef {Record<MiliSecond,DurationTransformationRule>} DurationTransformationRuleList
+ * @typedef {Array<DurationTransformationRule>} DurationTransformationRuleList
  */
 
 /**
@@ -57,8 +60,17 @@ export function ms2sec(ms) {
 
 /** formate ms to display nice
  * @param {MiliSecond} ms
+ * @param {MiliSecond} [threshold=10000]
  * @returns {string}
  */
-export function formatMiliSeconds(ms) {
-  return `${ms2min(ms)}:${String((ms % 60000) / 1000).padStart(2, "0")}`;
+export function formatMiliSeconds(ms, threshold = 10000) {
+  const remin_ms = ms % 60000;
+  return `${ms2min(ms)}:${String(ms2sec(remin_ms)).padStart(2, "0")}${
+    ms <= threshold
+      ? "." +
+        String(remin_ms % 1000)
+          .substring(0, 2)
+          .padStart(2, "0")
+      : ""
+  }`;
 }

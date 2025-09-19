@@ -2,6 +2,9 @@ import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "@pso/util/tailwind";
 import { ContextContainer } from "@pso/components/page/context-container";
 import { ChessArena } from "@pso/components/chess-arena";
+import { MoveListPanel } from "@pso/components/chess-arena/move-list-panel";
+import { FenOverlay } from "@pso/components/debug/overlay/fen-overlay";
+import { DurationOverlay } from "@pso/components/debug/overlay/duration-overlay";
 
 /**
  * @param {import("@pso/util/jjsx").JSXProps} p0
@@ -17,11 +20,16 @@ export function ChessArenaGround({ className = "", ...a }) {
     >
       <div
         className={joinTWClass(
-          "h-[97%] aspect-[0.8]",
+          "h-[97%] w-[60%] debug",
+          "flex justify-center items-center",
+          "transform-[translate(18%,0)]",
         )}
       >
         <ChessArena />
+        <MoveListPanel />
       </div>
+      <FenOverlay />
+      <DurationOverlay />
     </ContextContainer>
   );
 }

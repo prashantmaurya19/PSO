@@ -2,8 +2,13 @@
 import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "@pso/util/tailwind";
 import { Avatar } from "@pso/components/profile/avatar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formatMiliSeconds } from "@pso/util/time";
+import { useEffect } from "react";
+import { changeChessBoardPlayerClockTime } from "@pso/store/feature/component-data";
+import { pmlog } from "@pso/util/log";
+import { emit } from "@pso/util/event";
+import { setDataChessBoardGameState } from "@pso/store/feature/chess-data";
 
 /**
  * @typedef {{pid:import("@pso/store/feature/chess-data").PlayerType}} InfoProp
@@ -56,18 +61,45 @@ function PlayerInfoPanel({ pid = "p", ...a }) {
  * @param {InfoProp & import("@pso/util/jjsx").JSXProps}
  */
 function ClockInfoPanel({ pid = "p", className, ...a }) {
-  /**
-   * @type {import("@pso/store/feature/chess-data").PlayerData}
-   */
-  const { clockTime } = useSelector((s) => {
-    return s.chess.players_data[pid];
+  /** @type {import("@pso/store/feature/chess-data").PlayerData} */
+  const players_clock_data = useSelector((s) => {
+    return s.component_data.chess_board.clock_info_panel[pid];
   });
+
+  const clockTime = players_clock_data.clock;
 
   const turn = useSelector((s) => {
     return s.chess.turn;
   });
 
+  /** @type {import("@pso/util/chess").GameStateName} */
+  const state = useSelector((s) => {
+    return s.chess.game_state;
+  });
+
+  const clock_info = useSelector((s) => {
+    return s.component_data.chess_board.clock_info_panel;
+  });
+  const duration = clock_info.duration;
+  const dec_time = clock_info.time_decrement_in_interval;
+
   const disabled = pid != turn;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (duration == undefined || state == "end" || disabled) return;
+    if (clockTime + dec_time < 0) {
+      emit("GAME_ENDED", {});
+      dispatch(setDataChessBoardGameState("end"));
+      return;
+    }
+    const id = setTimeout(() => {
+      dispatch(changeChessBoardPlayerClockTime({ duration: dec_time, turn }));
+    }, Math.abs(dec_time));
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [turn, clockTime]);
   return (
     <InfoPanel
       {...a}
@@ -100,7 +132,11 @@ export function PlayerPanel({
     <div
       {...a}
       className={twMerge(
-        joinTWClass("flex justify-between items-start grow-1", "w-full"),
+        joinTWClass(
+          "flex justify-between items-start w-full aspect-[7]",
+          "w-full",
+        ),
+
         className,
       )}
     >

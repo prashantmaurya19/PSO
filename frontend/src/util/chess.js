@@ -1,4 +1,8 @@
 /**
+ * @typedef {{motion:MotionPathInfo}} ChessMoveNotationInfo
+ * @typedef {{capture:boolean,check:boolean,checkmate:boolean,castling:CastlingSide}} TransitionEventInfo
+ * @typedef {{from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,next:BoardStateInfo,prev:BoardStateInfo,info:object|CastlingInfo,notation_info:TransitionEventInfo}} MotionPathInfoHandlerProp
+ * @typedef {"playing"|"start"|"end"} GameStateName
  * @typedef {"k"|"q"} CastlingSide
  * @typedef {Array<MotionPathInfo>} MoveInfoList
  * @typedef {"diagonal"|"straight"|"knight"} MotionType
@@ -9,10 +13,12 @@
  * @typedef {FenChar|EmptyFen} FenCharWithEmptyFen
  * @typedef {[number,number]} BoardCellIndex
  * @typedef {[number,number]} MotionIndex
+ * @typedef {[number,number]} RealChessIndex
  * @typedef {Array<FenCharWithEmptyFen>} MotionPathArray
  * @typedef {MotionMap<Object<string,MotionPathInfo>> & {piece:FenCharWithEmptyFen}} IndexInfo
  * @typedef {"b"|"w"} ChessColor
  * @typedef {string} ChessMove
+ * @typedef {string} ChessMoveNotation
  * @typedef {string} FenPiecePosition
  * @typedef {string} FenString
  * @typedef {string} FenCastlingString
@@ -73,14 +79,6 @@
  * @property {BoardKingsIndexInfo} kings An object containing the board cell index for the white and black kings.
  */
 /**
- * @typedef {object} TransitionInfo
- * @property {CaptureInfo} capture - Information about a capture, if any occurred.
- * @property {boolean} check - Indicates if the move results in a check.
- * @property {boolean} checkmate - Indicates if the move results in a checkmate.
- * @property {FenPiecePosition} fen - The FEN position of the piece after the move.
- * @property {CastlingInfo} castling - Information about castling rights.
- */
-/**
  * @typedef {Object} FenInfo
  * @property {FenCastlingInfo} castling
  * @property {number} full_moves
@@ -97,6 +95,7 @@
  * @property {MotionIndex} [ motion ]
  * @property {Object<string,object|CastlingInfo>} cases
  * @property {BoardCellIndexInfo} [ blocking_piece ]
+ * @property {FenCharWithEmptyFen} captured_piece
  * @property {object} [ debug ]
  * @property {FenCharWithEmptyFen} piece
  * @property {boolean} placeable
@@ -111,7 +110,12 @@ import {
   splice,
 } from "./astring.js";
 import { log, logCheckPoint, pmlog } from "@pso/util/log.js";
+import { isTypeOf } from "./types.js";
 
+export const CHESS_NOTATION_CHECK_CHAR = "+";
+export const CHESS_NOTATION_CHECKMATE_CHAR = "#";
+export const CHESS_NOTATION_PROMOTION_PREFIX_CHAR = "=";
+export const CHESS_NOTATION_CAPTURE_CHAR = "x";
 export const EMPTY_FEN_CHAR = "";
 export const HYPHEN_FEN_CHAR = "-";
 /**
@@ -121,7 +125,7 @@ export const PROMOTION_PIECES = ["q", "r", "b", "n"];
 
 export class MotionPath {
   /**
-   * @type {MotionMap<Array<Array<number>>>}
+   * @type {MotionMap<Array<MotionIndex>>}
    */
   static PATHS = {
     diagonal: [
@@ -284,8 +288,17 @@ export class MotionPath {
   static isPawnMoveP(from, motion) {
     return (
       this.isPathY(motion) &&
-      ((from[1] == 6 && motion[1] == -2) || motion[1] == -1)
+      (this.isEnPassentP(from, motion) || motion[1] == -1)
     );
+  }
+
+  /**
+   * @param {BoardCellIndex} from
+   * @param {MotionIndex} motion
+   * @returns {boolean}
+   */
+  static isEnPassentP(from, motion) {
+    return from[1] == 6 && motion[1] == -2;
   }
 
   /**
@@ -296,8 +309,17 @@ export class MotionPath {
   static isPawnMovep(from, motion) {
     return (
       this.isPathY(motion) &&
-      ((from[1] == 1 && motion[1] == 2) || motion[1] == 1)
+      (this.isEnPassentp(from, motion) || motion[1] == 1)
     );
+  }
+
+  /**
+   * @param {BoardCellIndex} from
+   * @param {MotionIndex} motion
+   * @returns {boolean}
+   */
+  static isEnPassentp(from, motion) {
+    return from[1] == 1 && motion[1] == 2;
   }
 
   /**
@@ -364,6 +386,7 @@ export class Motion {
       piece: EMPTY_FEN_CHAR,
       empty_space: 0,
       cases: { place: {} },
+      captured_piece: "",
     };
   }
 
@@ -434,10 +457,13 @@ export class Motion {
     putIfUndefined(res.cases, "king_check", { from, to });
     if (MotionPath.isCastling(motion)) {
       const castling_side = MotionPath.getCastlingSide(motion);
-      pmlog(motion, castling_side, info);
+      // pmlog(motion, castling_side, info, info.castling[info.color]);
       if (info.castling[info.color]) {
         putIfUndefined(res.cases, "castling", {
-          rook: Handler.CASTLING_ROOK_INDEX[res.piece]()[castling_side],
+          rook: ChessEventHandler.CASTLING_ROOK_INDEX[res.piece]()[
+            castling_side
+          ],
+          castling_side,
         });
       }
     }
@@ -471,18 +497,7 @@ export class Motion {
    * @returns {MotionPathInfo}
    */
   static P(from, to, info) {
-    const motion = MotionPath.getMotionFromTo(from, to);
-    return Motion.#getPathHelper(
-      from,
-      to,
-      info,
-      motion,
-      !(
-        MotionPath.isPawnMoveP(from, motion) ||
-        (MotionPath.isPawnCaptureP(motion) &&
-          getPieceAt(...to, info.position) != EMPTY_FEN_CHAR)
-      ),
-    );
+    return this.p(from, to, info);
   }
 
   /**
@@ -493,17 +508,46 @@ export class Motion {
    */
   static p(from, to, info) {
     const motion = MotionPath.getMotionFromTo(from, to);
-    return Motion.#getPathHelper(
+    const piece = getPieceAt(...from, info.position);
+    if (
+      !(
+        (MotionPath[`isPawnMove${piece}`](from, motion) &&
+          getPieceAt(...to, info.position) == EMPTY_FEN_CHAR) ||
+        MotionPath[`isPawnCapture${piece}`](motion)
+      )
+    )
+      return this.getEmptyMovePathInfo();
+
+    const res = getPathInfoByMotion(
       from,
       to,
-      info,
-      motion,
-      !(
-        MotionPath.isPawnMovep(from, motion) ||
-        (MotionPath.isPawnCapturep(motion) &&
-          getPieceAt(...to, info.position) != EMPTY_FEN_CHAR)
-      ),
+      MotionPath.absoluteMotion2UnitMotion(motion),
+      info.position,
+      { from: false, to: true, infinite: false },
     );
+    putIfUndefined(res.cases, "not_king_move", {});
+    if (MotionPath[`isPawnCapture${piece}`](motion)) {
+      if (
+        info.en_passant ==
+        IndexCoordinator.fromBoardCellIndexToChessNotationIndex(to)
+      ) {
+        putIfUndefined(res.cases, "en_passant_capture", {});
+        // becuse getPathInfoByMotion will reture placeable false
+        res.placeable = true;
+        delete res.cases.place;
+      } else if (res.captured_piece == EMPTY_FEN_CHAR) {
+        res.placeable = false;
+      }
+    }
+    if (MotionPath[`isEnPassent${piece}`](from, motion))
+      putIfUndefined(res.cases, "en_passant", {
+        piece,
+        color: getColor(piece),
+        from,
+        motion: MotionPath.absoluteMotion2UnitMotion(motion),
+        to,
+      });
+    return res;
   }
 
   /**
@@ -617,7 +661,20 @@ export function isSameColorPiece(p1, p2) {
   return getColor(p1) == getColor(p2);
 }
 
-class Handler {
+export class ChessEventHandler {
+  /**
+   * @param {FenInfo} fen_info
+   * @param {BoardKingsIndexInfo} king_info
+   * @returns {TransitionEventInfo}
+   */
+  static getCheckAndCheckmateInfo(fen_info, king_info) {
+    // @ts-ignore
+    return {
+      check: !InspectPiece.isSafeAt(king_info[fen_info.color], fen_info),
+      checkmate: InspectPiece.isCheckMate(king_info[fen_info.color], fen_info),
+    };
+  }
+
   /**
    * @type {Record<"k"|"K",function():Record<CastlingSide,{ to: [number, number], from: [number, number] }>>}
    */
@@ -637,43 +694,73 @@ class Handler {
   };
 
   /**
-   * @type {Object<string,function({from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,next:BoardStateInfo,prev:BoardStateInfo,transition_info:TransitionInfo,info:object|CastlingInfo}):void|"failed">}
+   * @type {Object<string,function(MotionPathInfoHandlerProp):void|"failed">}
    */
   static PLAYED_MOTION_PATH_INFO = {
-    king_check: function ({ next, move_info }) {
+    king_check: function ({ next, move_info, prev }) {
+      // pmlog(next, move_info, prev);
       if (
-        !isSafeForPiece(move_info.piece, move_info.to, next.fen_info.position)
-      ) {
-        return "failed";
-      }
-    },
-    not_king_move: function ({ prev, next }) {
-      if (
-        !InspectPiece.isSafeAt(
-          prev.king_info[prev.fen_info.color],
-          combine(prev.fen_info, { position: next.fen_info.position }),
+        !InspectPiece.isSafeAtByColor(
+          prev.fen_info.color,
+          move_info.to,
+          next.fen_info,
         )
       ) {
         return "failed";
       }
     },
-    place: function ({ prev, next, from, to }) {},
+    not_king_move: function ({ prev, next, notation_info }) {
+      copy(
+        ChessEventHandler.getCheckAndCheckmateInfo(
+          next.fen_info,
+          next.king_info,
+        ),
+        notation_info,
+      );
+      // notation_info.check = !InspectPiece.isSafeAt(
+      //   next.king_info[next.fen_info.color],
+      //   next.fen_info,
+      // );
+      // notation_info.checkmate = InspectPiece.isCheckMate(
+      //   next.king_info[next.fen_info.color],
+      //   next.fen_info,
+      // );
+      if (
+        !InspectPiece.isSafeAtByColor(
+          prev.fen_info.color,
+          prev.king_info[prev.fen_info.color],
+          next.fen_info,
+        )
+      ) {
+        return "failed";
+      }
+    },
+    en_passant({ next, info }) {
+      info.from[1] += info.motion[1];
+      next.fen_info.en_passant =
+        IndexCoordinator.fromBoardCellIndexToChessNotationIndex(info.from);
+    },
+    place: function ({ move_info, notation_info }) {
+      notation_info.capture = move_info.captured_piece != EMPTY_FEN_CHAR;
+    },
     king_move: function ({ prev, next, info }) {
       next.fen_info.castling[prev.fen_info.color] = false;
       next.king_info[prev.fen_info.color] = info.to;
     },
-    castling: function ({ next, move_info, prev, info }) {
+    en_passant_capture({ next, to, move_info, notation_info }) {
+      next.fen_info.position = pickPieceAt(
+        ...Motion.applyMotion(to, [0, move_info.motion[1] * -1]),
+        next.fen_info.position,
+      ).position;
+      notation_info.capture = true;
+    },
+    castling: function ({ next, move_info, prev, info, notation_info }) {
+      // pmlog(move_info);
       if (
-        !isSafePathForPiece(
-          move_info.piece,
-          move_info.from,
-          move_info.to,
-          prev.fen_info.position,
-          {
-            from: false,
-            to: false,
-          },
-        )
+        !InspectPiece.isSafePath(move_info.from, move_info.to, prev.fen_info, {
+          from: false,
+          to: false,
+        })
       ) {
         return "failed";
       }
@@ -682,6 +769,7 @@ class Handler {
         info.rook.to,
         next.fen_info.position,
       );
+      notation_info.castling = info.castling_side;
     },
   };
 
@@ -745,7 +833,7 @@ export function getLegalMoveInfo(fen_info, index_info) {
   /** @type {MotionPathInfo} */
   let move_info = null;
 
-  for (const motion_type in Handler.IS_PIECE_ATTACKING) {
+  for (const motion_type in MotionPath.PATHS) {
     for (const i in index_info[motion_type]) {
       info = index_info[motion_type][i];
       // if (motion_type == "knight") pmlog(motion_type, i, info, fen_info.color);
@@ -757,300 +845,220 @@ export function getLegalMoveInfo(fen_info, index_info) {
       move_info = getMoveInfo(info.blocking_piece.index, info.from, fen_info);
 
       if (!move_info.placeable) continue;
-      res[
-        getColor(info.blocking_piece.piece) == fen_info.color
-          ? "defend"
-          : "attack"
-      ].push(move_info);
+      if (getColor(info.blocking_piece.piece) != fen_info.color) {
+        res.attack.push(move_info);
+      } else if (info.blocking_piece.piece.toLowerCase() != "k") {
+        res.defend.push(move_info);
+      }
     }
   }
   return res;
 }
 
-/** return array of piecies that can attack or reach
- * @param {ChessColor|EmptyFen} player_color
- * @param {IndexInfo} index_info
- * @returns {Array<AttackingPieceInfoWithMotionInfo>}
- */
-export function getAttackPiece(player_color, index_info) {
-  /**
-   * @type {Array<AttackingPieceInfoWithMotionInfo>}
+export class InspectPiece {
+  /** king must present on given index
+   * @param {ChessColor} color
+   * @param {BoardCellIndex} index
+   * @param {FenInfo} info
+   * @returns {boolean}
    */
-  const res = [];
-  let info = null;
-  for (const motion_type in Handler.IS_PIECE_ATTACKING) {
-    for (const i in index_info[motion_type]) {
-      info = index_info[motion_type][i];
-      const piece = info.blocking_piece?.piece.toLowerCase();
-      if (piece == undefined || piece == EMPTY_FEN_CHAR) continue;
-      //@ts-ignore
-      if (getColor(info.blocking_piece?.piece) == player_color) continue;
-      const attack_piece = Handler.IS_PIECE_ATTACKING[motion_type]({
-        motion_type,
-        color: player_color,
-        info,
-      });
-      if (attack_piece) res.push({ piece: attack_piece, motion_info: info });
-    }
-  }
-  return res;
-}
-
-/** return array of piecies that can attack or reach
- * @param {ChessColor|EmptyFen} player_color
- * @param {IndexInfo} index_info
- * @returns {AttackingPieceInfo}
- */
-export function getAllAttackPiece(player_color, index_info) {
-  return {
-    list: getAttackPiece(player_color, index_info).map((v) => v.piece),
-    piece: index_info.piece,
-  };
-}
-
-/** piece must present on given index
- * @param {BoardCellIndex} index
- * @param {FenPiecePosition} position
- * @returns {boolean}
- */
-export function isSafeAtIndex(index, position) {
-  return isSafeForPiece(getPieceAt(...index, position), index, position);
-}
-
-/** king must present on given index
- * @param {BoardCellIndex} index
- * @param {FenInfo} info
- * @returns {boolean}
- */
-export function isCheckMate(index, info) {
-  const king = getPieceAt(...index, info.position);
-  const all_motion_index_info = getIndexInfoInAllMotion(index, info.position);
-  const attack_piece = getLegalMoveInfo(info, all_motion_index_info);
-  if (attack_piece.attack.length == 0) {
-    // pmlog(attack_piece.attack.length,king, index, info.position);
-    return false;
-  }
-  if (
-    attack_piece.attack.length == 1 &&
-    !isSafeAtIndex(attack_piece.attack[0].blocking_piece.index, info.position)
-  ) {
-    // pmlog(king, index, info.position);
-    return false;
+  static isCheckMateByColor(color, index, info) {
+    return this.isCheckMate(index, combine(info, { color }));
   }
 
-  // pmlog(
-  //   king,
-  //   color,
-  //   attack_piece[0].motion_info.blocking_piece,
-  //   isSafeAtIndex(attack_piece[0].motion_info.blocking_piece.index, position),
-  // );
-
-  for (const motion of MotionPath.PATHS.diagonal) {
-    // @ts-ignore
-    if (isOutOfBound(...Motion.applyMotion(index, motion))) {
-      continue;
-    }
-    if (
-      //@ts-ignore
-      isSafeForPiece(king, Motion.applyMotion(index, motion), info.position) &&
-      //@ts-ignore
-      getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
-        .placeable
-    ) {
-      ////@ts-ignore
-      //pmlog(
-      //  "diagonal",
-      //  //@ts-ignore
-      //  isSafeForPiece(king, Motion.applyMotion(index, motion), info.position),
-      //  //@ts-ignore
-      //  Motion.applyMotion(index, motion),
-      //  index,
-      //  motion,
-
-      //  //@ts-ignore
-      //  getPieceAt(...Motion.applyMotion(index, motion), info.position),
-      //  //@ts-ignore
-      //  getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
-      //    .placeable,
-      //);
+  /** king must present on given index
+   * @param {BoardCellIndex} index
+   * @param {FenInfo} info
+   * @returns {boolean}
+   */
+  static isCheckMate(index, info) {
+    const all_motion_index_info = getIndexInfoInAllMotion(index, info.position);
+    const attack_piece = getLegalMoveInfo(info, all_motion_index_info);
+    // pmlog(all_motion_index_info, attack_piece);
+    if (attack_piece.attack.length == 0) {
+      // pmlog(attack_piece.attack.length, king, index, info.position);
       return false;
     }
-  }
-  for (const motion of MotionPath.PATHS.straight) {
-    // @ts-ignore
-    if (isOutOfBound(...Motion.applyMotion(index, motion))) {
-      continue;
-    }
     if (
-      //@ts-ignore
-      isSafeForPiece(king, Motion.applyMotion(index, motion), info.position) &&
-      //@ts-ignore
-      getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
-        .placeable
+      attack_piece.attack.length == 1 &&
+      !InspectPiece.isSafeAt(
+        attack_piece.attack[0].blocking_piece.index,
+        combine(info, { color: toggleColor(info.color) }),
+      )
     ) {
-      //pmlog(
-      //  "straight",
-      //  //@ts-ignore
-      //  isSafeForPiece(king, Motion.applyMotion(index, motion), info.position),
-      //  //@ts-ignore
-      //  Motion.applyMotion(index, motion),
-      //  index,
-      //  motion,
-      //  //@ts-ignore
-      //  getPieceAt(...Motion.applyMotion(index, motion), info.position),
-
-      //  //@ts-ignore
-      //  getKingPathInfo(index, Motion.applyMotion(index, motion), info.position)
-      //    .placeable,
-      //);
       return false;
     }
-  }
 
-  for (const att_piece of attack_piece.attack) {
-    if (
-      att_piece.blocking_piece.piece.toLowerCase() == "n" ||
-      att_piece.empty_space == 0
-    ) {
-      return true;
+    // pmlog(
+    //   king,
+    //   color,
+    //   attack_piece[0].motion_info.blocking_piece,
+    // );
+
+    let piece_at = null,
+      safe_index = null;
+
+    for (const motion_type in MotionPath.PATHS) {
+      if (motion_type == "knight") continue;
+      for (const motion of MotionPath.PATHS[motion_type]) {
+        if (isOutOfBound(...Motion.applyMotion(index, motion))) {
+          continue;
+        }
+        piece_at = getPieceAt(
+          ...Motion.applyMotion(index, motion),
+          info.position,
+        );
+        safe_index = Motion.applyMotion(index, motion);
+
+        if (
+          (InspectPiece.isSafeAt(safe_index, info) &&
+            piece_at == EMPTY_FEN_CHAR) ||
+          (piece_at != EMPTY_FEN_CHAR &&
+            InspectPiece.isSafeAtByColor(
+              toggleColor(info.color),
+              Motion.applyMotion(index, motion),
+              info,
+            ) &&
+            getColor(piece_at) != info.color)
+        ) {
+          // pmlog(
+          //   "diagonal",
+          //   info.position,
+          //   index,
+          //   motion,
+          //   safe_index,
+          //   piece_at != EMPTY_FEN_CHAR &&
+          //     InspectPiece.isSafeAtByColor(
+          //       toggleColor(info.color),
+          //       Motion.applyMotion(index, motion),
+          //       info,
+          //     ),
+          // );
+          return false;
+        }
+      }
     }
-  }
+    for (const att_piece of attack_piece.attack) {
+      if (
+        att_piece.blocking_piece.piece.toLowerCase() == "n" ||
+        att_piece.empty_space == 0
+      ) {
+        return true;
+      }
+    }
 
-  // means there is only one attacking piece left to checkmate
+    // means there is only one attacking piece left to checkmate
 
-  if (attack_piece.attack.length > 1)
-    console.warn("here is isCheckMate having a problem");
+    if (attack_piece.attack.length > 1)
+      console.warn("here is isCheckMate having a problem");
 
-  // here need to check for block check
-  // pmlog(attack_piece.attack.length);
+    // here need to check for block check
+    // pmlog(attack_piece.attack.length);
 
-  let safe = true;
-  streamFenIndexInfoFromTo(
-    index,
-    attack_piece.attack[0].blocking_piece.index,
-    attack_piece.attack[0].motion,
-    (i, j) => {
-      const all_motion_index_info = getIndexInfoInAllMotion(
-        [i, j],
-        info.position,
-      );
-      const legal_moves = getLegalMoveInfo(info, all_motion_index_info);
-      for (const m of legal_moves.defend) {
-        if (m.blocking_piece.piece == king) continue;
-        const new_position = pickAndPutPieceAt(
-          m.blocking_piece.index,
+    let safe = true;
+    streamFenIndexInfoFromTo(
+      attack_piece.attack[0].from,
+      attack_piece.attack[0].to,
+      attack_piece.attack[0].motion,
+      (i, j) => {
+        const all_motion_index_info = getIndexInfoInAllMotion(
           [i, j],
           info.position,
         );
-        if (isSafeAtIndex(index, new_position)) {
-          // pmlog(info.position, new_position);
+        const legal_moves = getLegalMoveInfo(info, all_motion_index_info);
+        // pmlog(legal_moves);
+        for (const m of legal_moves.defend) {
+          const new_position = pickAndPutPieceAt(m.from, m.to, info.position);
+          if (
+            InspectPiece.isSafeAt(
+              index,
+              combine(info, { position: new_position }),
+            )
+          ) {
+            // pmlog(
+            //   InspectPiece.isSafeAt(
+            //     index,
+            //     combine(info, { position: new_position }),
+            //   ),
+            //   index,
+            //   new_position,
+            // );
+            safe = false;
+            return "break";
+          }
+        }
+      },
+      {
+        from: false,
+        to: false,
+        infinite: false,
+      },
+    );
+    // pmlog("safe", safe, attack_piece.attack[0]);
+    return safe;
+  }
+
+  /**
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @param {FenInfo} fen_info
+   * @param {{from:boolean,to:boolean}} include
+   * @returns {boolean}
+   */
+  static isSafePath(from, to, fen_info, include = { from: false, to: true }) {
+    const motion = MotionPath.absoluteMotion2UnitMotion(
+      MotionPath.getMotionFromTo(from, to),
+    );
+    let safe = true;
+    streamFenIndexInfoFromTo(
+      from,
+      to,
+      motion,
+      (i, j) => {
+        if (!InspectPiece.isSafeAt([i, j], fen_info)) {
+          pmlog("not a safe index", [i, j]);
           safe = false;
           return "break";
         }
-      }
-    },
-    {
-      from: false,
-      to: false,
-      infinite: false,
-    },
-  );
-  return safe;
-}
+      },
+      {
+        ...include,
+        infinite: false,
+      },
+    );
+    return safe;
+  }
 
-class InspectPiece {
+  /**
+   * @param {FenChar} piece
+   * @param {BoardCellIndex} index
+   * @param {FenInfo} fen_info
+   */
+  static isSafeAtByPiece(piece, index, fen_info) {
+    return this.isSafeAt(index, combine(fen_info, { color: getColor(piece) }));
+  }
+
+  /**
+   * @param {ChessColor} color
+   * @param {BoardCellIndex} index
+   * @param {FenInfo} fen_info
+   */
+  static isSafeAtByColor(color, index, fen_info) {
+    return this.isSafeAt(index, combine(fen_info, { color }));
+  }
+
   /**
    * @param {BoardCellIndex} index
    * @param {FenInfo} fen_info
    */
   static isSafeAt(index, fen_info) {
     return (
-      pmlog(
-        getLegalMoveInfo(
-          fen_info,
-          getIndexInfoInAllMotion(index, fen_info.position),
-        ).attack,
-      ).length == 0
+      getLegalMoveInfo(
+        fen_info,
+        getIndexInfoInAllMotion(index, fen_info.position),
+      ).attack.length == 0
     );
   }
-}
-
-/**
- * @param {FenCharWithEmptyFen} piece
- * @param {BoardCellIndex} from
- * @param {BoardCellIndex} to
- * @param {FenPiecePosition} position
- * @param {{from:boolean,to:boolean}} include
- * @returns {boolean}
- */
-export function isSafePathForPiece(
-  piece,
-  from,
-  to,
-  position,
-  include = { from: false, to: true },
-) {
-  return isSafePathByColor(getColor(piece), from, to, position, include);
-}
-
-/**
- * @param {ChessColor|EmptyFen} color
- * @param {BoardCellIndex} from
- * @param {BoardCellIndex} to
- * @param {FenPiecePosition} position
- * @param {{from:boolean,to:boolean}} include
- * @returns {boolean}
- */
-export function isSafePathByColor(
-  color,
-  from,
-  to,
-  position,
-  include = { from: false, to: true },
-) {
-  const motion = MotionPath.absoluteMotion2UnitMotion(
-    MotionPath.getMotionFromTo(from, to),
-  );
-  let safe = true;
-  streamFenIndexInfoFromTo(
-    from,
-    to,
-    motion,
-    (i, j) => {
-      if (!isSafeAtByColor(color, [i, j], position)) {
-        safe = false;
-        return "break";
-      }
-    },
-    {
-      ...include,
-      infinite: false,
-    },
-  );
-  return safe;
-}
-
-/**
- * @param {ChessColor|EmptyFen} color
- * @param {BoardCellIndex} index
- * @param {FenPiecePosition} position
- * @returns {boolean}
- */
-export function isSafeAtByColor(color, index, position) {
-  return (
-    getAllAttackPiece(color, getIndexInfoInAllMotion(index, position)).list
-      .length == 0
-  );
-}
-
-/** return true if given is safe at index otherwise false
- * @param {FenCharWithEmptyFen} piece
- * @param {BoardCellIndex} index
- * @param {FenPiecePosition} position
- * @returns {boolean}
- */
-export function isSafeForPiece(piece, index, position) {
-  return isSafeAtByColor(getColor(piece), index, position);
 }
 
 /** return info about the oponent pieces who can reach and attack
@@ -1142,7 +1150,7 @@ export function getPathInfoByMotionType(motion_type, from, to, motion, fen) {
   }
 }
 
-/**
+/** [NOTE: it does not check piece placeable rules]
  * @param {BoardCellIndex} from
  * @param {BoardCellIndex} to
  * @param {MotionIndex} motion
@@ -1179,10 +1187,14 @@ export function getPathInfoByMotion(
     motion,
     function (i, j) {
       piece = getPieceAt(i, j, fen);
-      res.placeable =
-        (IndexCoordinator.isSameBoardCellIndex([i, j], to) &&
-          !isSameColorPiece(from_piece, piece)) ||
-        res.placeable;
+      if (
+        IndexCoordinator.isSameBoardCellIndex([i, j], to) &&
+        !isSameColorPiece(from_piece, piece)
+      ) {
+        res.placeable = true;
+        res.captured_piece = piece;
+      }
+
       res.empty_space++;
       if (
         piece != EMPTY_FEN_CHAR &&
@@ -1473,11 +1485,127 @@ export function pickAndPutPieceAt(from, to, position) {
   return putPieceAt(pick_info.piece, ...to, pick_info.position);
 }
 
+export class ChessNotation {
+  /** return piece name according to the ChessNotation
+   * @param {FenChar} piece
+   * @returns {FenCharWithEmptyFen}
+   */
+  static getPieceName(piece) {
+    // @ts-ignore
+    return piece.toUpperCase() == "P" ? "" : piece.toUpperCase();
+  }
+
+  /** returns common and uncommon chars
+   * @param {ChessMove} a
+   * @param {ChessMove} b
+   * @returns {ChessMove}
+   */
+  static getUnCommon(a, b) {
+    return a.charAt(0) != b.charAt(0)
+      ? a.charAt(0)
+      : a.charAt(1) != b.charAt(1)
+        ? a.charAt(1)
+        : a;
+  }
+
+  /** return array of pieces with can land to index
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @param {FenInfo} fen_info
+   * @returns {ChessMove}
+   */
+  static findPieceWithCommonDestination(from, to, fen_info) {
+    const piece = getPieceAt(...from, fen_info.position);
+    const index_info = getIndexInfoInAllMotion(to, fen_info.position);
+    const legal_moves = getLegalMoveInfo(fen_info, index_info);
+    let res = "";
+    let k = null,
+      count = 1;
+    for (k of legal_moves.defend) {
+      if (
+        k.piece == piece &&
+        !IndexCoordinator.isSameBoardCellIndex(k.from, from)
+      ) {
+        if (count == 1) {
+          res = this.getUnCommon(
+            IndexCoordinator.fromBoardCellIndexToChessNotationIndex(from),
+            IndexCoordinator.fromBoardCellIndexToChessNotationIndex(k.from),
+          );
+          count++;
+        } else {
+          res = IndexCoordinator.fromBoardCellIndexToChessNotationIndex(to);
+          break;
+        }
+      }
+    }
+    return res;
+  }
+
+  /** return special events like promotion check capture
+   * @param {TransitionEventInfo} transition_event
+   */
+  static getChessAndCheckmateNotationChar(transition_event) {
+    if (transition_event.checkmate) return "#";
+    else if (transition_event.check) return "+";
+    else return "";
+  }
+
+  /** NOTE:pawn and EMPTY_FEN_CHAR not expected
+   * it is a half notation and first is expected
+   * to be genrated in just previously
+   * by getChessNotation
+   * this function takes the previous notation and piece
+   * and creates a complete notation
+   * @param {ChessMoveNotation} previous_notation
+   * @param {FenChar} piece
+   * @param {TransitionEventInfo} transition_info
+   * @returns {string}
+   */
+  static getChessNotationWithPromotion(
+    previous_notation,
+    piece,
+    transition_info,
+  ) {
+    return `${previous_notation}${CHESS_NOTATION_PROMOTION_PREFIX_CHAR}${piece.toUpperCase()}${this.getChessAndCheckmateNotationChar(transition_info)}`;
+  }
+
+  /**
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @param {FenInfo} fen_info
+   * @param {TransitionEventInfo} transition_event
+   * @returns {ChessMoveNotation}
+   */
+  static getChessNotation(from, to, fen_info, transition_event) {
+    if (transition_event.castling == "k") {
+      return "o-o";
+    } else if (transition_event.castling == "q") {
+      return "o-o-o";
+    }
+    const piece = getPieceAt(...from, fen_info.position);
+    // @ts-ignore
+    return `${this.getPieceName(piece)}${this.findPieceWithCommonDestination(from, to, fen_info)}${transition_event.capture ? CHESS_NOTATION_CAPTURE_CHAR : ""}${IndexCoordinator.fromBoardCellIndexToChessNotationIndex(to)}${this.getChessAndCheckmateNotationChar(transition_event)}`;
+  }
+
+  /** parse the chess notation based on
+   * current fen_info
+   * @param {ChessMoveNotation} notation
+   * @param {FenInfo} fen_info
+   * @returns {ChessMoveNotationInfo}
+   */
+  static parse(notation, fen_info) {
+    /**  @type {ChessMoveNotationInfo} */
+    // @ts-ignore
+    const res = { motion: {} };
+    return res;
+  }
+}
+
 /**
  * @param {BoardCellIndex} to - destination cell name
  * @param {BoardCellIndex} from - current cell name
  * @param {BoardInfo} fen - current chess fen
- * @returns {{board_info:BoardInfo,transition_info:TransitionInfo|undefined}}
+ * @returns {{board_info:BoardInfo,chess_notation:ChessMoveNotation,cancel:boolean}}
  */
 export function transition(from, to, fen) {
   const info = parse(fen.fen);
@@ -1497,28 +1625,30 @@ export function transition(from, to, fen) {
     },
     king_info: clone(fen.kings),
   };
-  const res = {
-    transition_info: {
-      capture: {
-        en_passant: false,
-        piece: "",
-      },
-      check: false,
-      checkmate: false,
-      fen: "",
-      castling: undefined,
-    },
+  /** @type {{board_info:BoardInfo,chess_notation:ChessMoveNotation,cancel:boolean}} */
+  let res = {
+    // @ts-ignore
     board_info: {
       kings: null,
     },
+    chess_notation: "",
+    cancel: false,
   };
+  /**  @type {MotionPathInfoHandlerProp} */
   const props = {
     from,
     to,
     move_info,
     prev,
     next,
-    transition_info: res.transition_info,
+    info: undefined,
+    notation_info: {
+      capture: false,
+      check: false,
+      checkmate: false,
+      // @ts-ignore
+      castling: "",
+    },
   };
   if (
     move_info == undefined ||
@@ -1527,27 +1657,32 @@ export function transition(from, to, fen) {
   ) {
     return {
       board_info: fen,
-      transition_info: undefined,
+      chess_notation: "",
+      cancel: true,
     };
   }
 
   next.fen_info.position = pickAndPutPieceAt(from, to, prev.fen_info.position);
-  for (const c in Handler.PLAYED_MOTION_PATH_INFO) {
+
+  for (const c in ChessEventHandler.PLAYED_MOTION_PATH_INFO) {
     if (move_info.cases[c] == undefined) continue;
 
     props.info = move_info.cases[c];
-    //@ts-ignore
-    if (Handler.PLAYED_MOTION_PATH_INFO[c](props) == "failed") {
-      pmlog("failed", props);
+    if (ChessEventHandler.PLAYED_MOTION_PATH_INFO[c](props) == "failed")
       return {
         board_info: fen,
-        transition_info: undefined,
+        chess_notation: "",
+        cancel: true,
       };
-    }
   }
   res.board_info.fen = stringify(next.fen_info);
   res.board_info.kings = next.king_info;
-  // @ts-ignore
+  res.chess_notation = ChessNotation.getChessNotation(
+    from,
+    to,
+    prev.fen_info,
+    props.notation_info,
+  );
   return res;
 }
 
@@ -1685,5 +1820,50 @@ export class IndexCoordinator {
    */
   static flatBoardCellIndex(index) {
     return this.flatTwoDimensionalIndex(...index);
+  }
+
+  /** return string of chess notation of cell
+   * eg 5,3 => e3 ...etc
+   * @param {number} x - col index
+   * @param {number} y - row index
+   * @returns {ChessMove}
+   */
+  static fromRealChessIndexToChessNotionIndex(x, y) {
+    return `${String.fromCharCode(97 + (x - 1))}${y}`;
+  }
+
+  /**
+   * @param {ChessMove} m
+   * @returns {BoardCellIndex}
+   */
+  fromChessNotionIndexToBoardCellIndex(m) {
+    return [m.charCodeAt(0) - 97, parseInt(m.charAt(1)) - 1];
+  }
+
+  /**
+   * @param {BoardCellIndex} index
+   * @returns {ChessMove}
+   */
+  static fromBoardCellIndexToChessNotationIndex(index) {
+    return this.fromRealChessIndexToChessNotionIndex(
+      ...this.fromBoardCellIndexToRealChessIndex(index),
+    );
+  }
+
+  /** return real chess board index
+   * @param {BoardCellIndex} index
+   * @returns {RealChessIndex}
+   */
+  static fromBoardCellIndexToRealChessIndex(index) {
+    return this.fromTwoDimensionalIndexToRealChessIndex(...index);
+  }
+
+  /** return real chess board index
+   * @param {number} x - col number
+   * @param {number} y - row number
+   * @returns {RealChessIndex}
+   */
+  static fromTwoDimensionalIndexToRealChessIndex(x, y) {
+    return [x + 1, 8 - y];
   }
 }

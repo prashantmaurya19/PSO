@@ -4,7 +4,7 @@ import { joinTWClass } from "@pso/util/tailwind";
 import { useSelector } from "react-redux";
 
 /**
- * @param {{lengthlenght:number,index:number,text:string}&import("../../../util/jjsx").JSXProps} param0
+ * @param {{lengthlenght:number,index:number,text:string}&import("@pso/util/jjsx").JSXProps} p
  */
 export function LoadingTextChar({
   length,

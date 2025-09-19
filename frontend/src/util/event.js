@@ -4,12 +4,11 @@
  */
 
 import { useEffect } from "react";
-import { pmlog } from "@pso/util/log";
 
 /**
- * @type {Record<EventName,string>}
+ * @type {Record<EventName,EventName>}
  */
-export const Events = {
+const Events = {
   PLAYER_OPONENT_DATA_UPDATED: "PLAYER_OPONENT_DATA_UPDATED",
   PLAYER_DATA_UPDATED: "PLAYER_DATA_UPDATED",
   SOCKET_GAME_EVENT_RECIVED: "SOCKET_GAME_EVENT_RECIVED",
@@ -17,12 +16,13 @@ export const Events = {
   SOCKET_GAME_REQUEST_SENDED: "SOCKET_GAME_REQUEST_SENDED",
   GAME_INITIALIZED: "GAME_INITIALIZED",
   GAME_STARTED: "GAME_STARTED",
+  GAME_ENDED: "GAME_ENDED",
   BOARD_MOVE_PLAYED: "BOARD_MOVE_PLAYED",
   BOARD_PROMOTION_PIECE_SELECTED: "BOARD_PROMOTION_PIECE_SELECTED",
 };
 
 /**
- * @typedef {"PLAYER_OPONENT_DATA_UPDATED"|"PLAYER_DATA_UPDATED"|"SOCKET_GAME_EVENT_RECIVED"|"SOCKET_GAME_EVENT_SENDED"|"SOCKET_GAME_REQUEST_SENDED"|"GAME_INITIALIZED"|"GAME_STARTED"|"BOARD_PROMOTION_PIECE_SELECTED"|"BOARD_MOVE_PLAYED"} EventName
+ * @typedef {"PLAYER_OPONENT_DATA_UPDATED"|"PLAYER_DATA_UPDATED"|"SOCKET_GAME_EVENT_RECIVED"|"SOCKET_GAME_EVENT_SENDED"|"SOCKET_GAME_REQUEST_SENDED"|"GAME_INITIALIZED"|"GAME_STARTED"|"GAME_ENDED"|"BOARD_PROMOTION_PIECE_SELECTED"|"BOARD_MOVE_PLAYED"} EventName
  */
 
 /**
@@ -83,13 +83,14 @@ class EventManager {
   #initEvents() {
     for (const i in Events) {
       // use this.init(i) method if existens check is requried
+      // @ts-ignore
       this.add(i);
     }
   }
 
   constructor() {
     /**
-     * @type {Array<Event>}
+     * @type {Object<EventName,Event>}
      */
     this.events = {};
     this.#initEvents();

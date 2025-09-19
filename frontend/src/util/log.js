@@ -1,4 +1,15 @@
 export const log = console.log;
+const option = {
+  logging: true,
+};
+
+/** pass true for turn on logging
+ * and false for off
+ * @param {boolean} log
+ */
+export function setLogging(log) {
+  option.logging = log;
+}
 
 /**
  * @returns {string}

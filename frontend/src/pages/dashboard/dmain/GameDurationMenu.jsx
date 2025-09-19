@@ -62,8 +62,6 @@ function GridContainer({ className = "", children, ...a }) {
  * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function GameDurationMenu({ className = "", ...opt }) {
-  const set_cache = acache("LAST_GAME_DURATION").localstorage().set();
-  const click = () => {};
   return (
     <ContextContainer
       {...opt}
@@ -80,7 +78,7 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             type: "bullet",
             time: min2ms(1),
-            rules: {},
+            rules: [],
           }}
         >
           1 Min
@@ -89,7 +87,7 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             type: "bullet",
             time: min2ms(2),
-            rules: {},
+            rules: [],
           }}
         >
           2 Min
@@ -98,12 +96,13 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             type: "bullet",
             time: min2ms(2),
-            rules: {
-              1000: {
+            rules: [
+              {
                 move: 1,
                 threshold: 1000,
+                time: 1000,
               },
-            },
+            ],
           }}
         >
           2Min+1
@@ -112,7 +111,7 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             time: min2ms(3),
             type: "rapid",
-            rules: {},
+            rules: [],
           }}
         >
           3 Min
@@ -121,7 +120,7 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             time: min2ms(5),
             type: "rapid",
-            rules: {},
+            rules: [],
           }}
         >
           5 Min
@@ -130,7 +129,7 @@ export function GameDurationMenu({ className = "", ...opt }) {
           duration={{
             time: min2ms(10),
             type: "rapid",
-            rules: {},
+            rules: [],
           }}
         >
           10 Min
