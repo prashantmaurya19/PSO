@@ -3,7 +3,11 @@ import { joinTWClass } from "@pso/util/tailwind";
 import { twMerge } from "tailwind-merge";
 import { VersesBanner } from "@pso/components/chess-arena/move-list-panel/verses-banner";
 import { MoveListTable } from "@pso/components/chess-arena/move-list-panel/move-list-table";
-import { MoveListFunctionButtons } from "@pso/components/chess-arena/move-list-panel/move-list-function-button";
+import {
+  GameStateViceMoveListFunctionButtons,
+  MoveListFunctionButtons,
+  MoveListTableFunctionButtons,
+} from "@pso/components/chess-arena/move-list-panel/move-list-function-button";
 import { OponentRequestField } from "./oponent-request";
 import { useSelector } from "react-redux";
 
@@ -19,7 +23,7 @@ export function MoveListPanel({ className = "", ...a }) {
       {...a}
       className={twMerge(
         joinTWClass(
-          "grow-1 h-[50%]",
+          "grow-1 h-[60%]",
           "border-2 border-emerald-800 border-solid",
           "ml-1",
           "*:border-b-gray-500 *:border-solid *:border-b-2",
@@ -32,7 +36,8 @@ export function MoveListPanel({ className = "", ...a }) {
         oponent_name={player_info.o.name}
       />
       <MoveListTable table_data={option.move_list} />
-      <MoveListFunctionButtons />
+      <MoveListTableFunctionButtons />
+      <GameStateViceMoveListFunctionButtons />
       <OponentRequestField title={option.request.title} />
     </div>
   );

@@ -139,7 +139,12 @@ export function RenderChessBoard({}) {
     );
   });
   useListen("SOCKET_GAME_EVENT_RECIVED", (e) => {
-    pmlog(e);
+    // ChessNotation.enrichedParse(e.move, fen_info);
+    if (state != "playing") dispatch(setDataChessBoardGameState("playing"));
+
+    emit("BOARD_MOVE_PLAYED", {
+      ...ChessNotation.enrichedParse(e.test.move, fen_info),
+    });
   });
   useListen("BOARD_PROMOTION_PIECE_SELECTED", (e) => {
     fen_info.position = putPieceAt(

@@ -13,7 +13,7 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +78 src/components/chess-arena/chess-board/index.jsx
+badd +11 src/components/chess-arena/chess-board/index.jsx
 badd +34 src/components/chess-arena/move-list-panel/index.jsx
 badd +7 src/components/chess-arena/move-list-panel/move-list-table.jsx
 badd +43 src/components/chess-arena/move-list-panel/verses-banner.jsx
@@ -22,28 +22,32 @@ badd +56 src/components/chess-arena/move-list-panel/move-list-function-button.js
 badd +1 src/pages/dashboard/dmain/ChessArenaGround.jsx
 badd +38 src/components/icon/index.jsx
 badd +92 src/components/chess-arena/move-list-panel/oponent-request.jsx
-badd +876 src/util/chess.js
-badd +100 src/util/chess.test.js
-badd +25 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/remaps.lua
+badd +1612 src/util/chess.js
+badd +222 src/util/chess.test.js
+badd +146 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/remaps.lua
 badd +29 src/store/feature/component-data/index.js
-badd +93 src/components/chess-arena/chess-board/piece-render.jsx
-badd +27 src/components/chess-arena/chess-board/board.jsx
+badd +150 src/components/chess-arena/chess-board/piece-render.jsx
+badd +6 src/components/chess-arena/chess-board/board.jsx
 badd +27 src/components/icon/fontawesome/index.jsx
 badd +38 src/components/chess-arena/chess-board/promotion-piece-overlay.jsx
 badd +53 src/components/chess-arena/chess-board/winner-banner-overlay.jsx
 badd +57 src/components/loader/chess-board/index.jsx
 badd +31 src/components/chess-arena/index.jsx
-badd +106 src/store/feature/chess-data/index.js
+badd +42 src/store/feature/chess-data/index.js
 badd +1 src/store/index.js
-badd +85 src/components/chess-arena/player-panel/index.jsx
-badd +69 src/util/time.js
+badd +94 src/components/chess-arena/player-panel/index.jsx
+badd +72 src/util/time.js
 badd +26 src/util/log.js
-badd +9 src/components/debug/overlay/duration-overlay/index.jsx
+badd +72 src/components/debug/overlay/duration-overlay/index.jsx
 badd +13 jsconfig.json
 badd +8 src/components/debug/overlay/fen-overlay/index.jsx
+badd +7 src/util/event.js
+badd +6 src/util/astring.js
+badd +19 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/telescope.lua
+badd +1680 node_modules/@types/react/index.d.ts
 argglobal
 %argdel
-edit src/components/chess-arena/player-panel/index.jsx
+edit src/util/chess.js
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -63,7 +67,7 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
 exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 argglobal
-balt src/util/chess.js
+balt src/components/chess-arena/chess-board/piece-render.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -74,20 +78,20 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 87 - ((15 * winheight(0) + 19) / 38)
+let s:l = 1626 - ((15 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 87
-normal! 05|
+keepjumps 1626
+normal! 017|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
 argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/util/time.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/util/time.js | else | edit ~/Documents/coding/PSO/frontend/src/util/time.js | endif
+if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/util/chess.test.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/util/chess.test.js | else | edit ~/Documents/coding/PSO/frontend/src/util/chess.test.js | endif
 if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/frontend/src/util/time.js
+  silent file ~/Documents/coding/PSO/frontend/src/util/chess.test.js
 endif
-balt ~/Documents/coding/PSO/frontend/src/components/chess-arena/index.jsx
+balt ~/Documents/coding/PSO/frontend/src/util/chess.js
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -98,12 +102,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 72 - ((21 * winheight(0) + 19) / 38)
+let s:l = 219 - ((14 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 72
-normal! 026|
+keepjumps 219
+normal! 024|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)

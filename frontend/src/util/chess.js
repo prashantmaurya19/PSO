@@ -1,5 +1,4 @@
 /**
- * @typedef {{motion:MotionPathInfo}} ChessMoveNotationInfo
  * @typedef {{capture:boolean,check:boolean,checkmate:boolean,castling:CastlingSide}} TransitionEventInfo
  * @typedef {{from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,next:BoardStateInfo,prev:BoardStateInfo,info:object|CastlingInfo,notation_info:TransitionEventInfo}} MotionPathInfoHandlerProp
  * @typedef {"playing"|"start"|"end"} GameStateName
@@ -26,6 +25,16 @@
  * @typedef {string} FenRow
  * @typedef {Array<Array<FenCharWithEmptyFen>>} FenBoard
  * @typedef {Array<Array<number>>} PossibleMoveList
+ */
+/**
+ * @typedef {Object} ChessMoveNotationInfo
+ * @property {FenCharWithEmptyFen} piece
+ * @property {Boolean} capture
+ * @property {BoardCellIndex} from
+ * @property {BoardCellIndex} to
+ * @property {FenChar} promotion
+ * @property {Boolean} check
+ * @property {boolean} checkmate
  */
 /**
  * @typedef {object} CastlingInfo
@@ -116,6 +125,8 @@ export const CHESS_NOTATION_CHECK_CHAR = "+";
 export const CHESS_NOTATION_CHECKMATE_CHAR = "#";
 export const CHESS_NOTATION_PROMOTION_PREFIX_CHAR = "=";
 export const CHESS_NOTATION_CAPTURE_CHAR = "x";
+export const CHESS_NOTATION_KING_SIDE_CASTLE = "o-o";
+export const CHESS_NOTATION_QUEEN_SIDE_CASTLE = "o-o-o";
 export const EMPTY_FEN_CHAR = "";
 export const HYPHEN_FEN_CHAR = "-";
 /**
@@ -297,6 +308,15 @@ export class MotionPath {
    * @param {MotionIndex} motion
    * @returns {boolean}
    */
+  static isEnPassentp(from, motion) {
+    return from[1] == 1 && motion[1] == 2;
+  }
+
+  /**
+   * @param {BoardCellIndex} from
+   * @param {MotionIndex} motion
+   * @returns {boolean}
+   */
   static isEnPassentP(from, motion) {
     return from[1] == 6 && motion[1] == -2;
   }
@@ -314,14 +334,16 @@ export class MotionPath {
   }
 
   /**
-   * @param {BoardCellIndex} from
    * @param {MotionIndex} motion
    * @returns {boolean}
    */
-  static isEnPassentp(from, motion) {
-    return from[1] == 1 && motion[1] == 2;
+  static isPawnCaptureP(motion) {
+    return (
+      this.isDiagonal(motion) &&
+      !this.isForwardPathY(motion) &&
+      Math.abs(motion[0]) == 1
+    );
   }
-
   /**
    * @param {MotionIndex} motion
    * @returns {boolean}
@@ -330,18 +352,6 @@ export class MotionPath {
     return (
       this.isDiagonal(motion) &&
       this.isForwardPathY(motion) &&
-      Math.abs(motion[0]) == 1
-    );
-  }
-
-  /**
-   * @param {MotionIndex} motion
-   * @returns {boolean}
-   */
-  static isPawnCaptureP(motion) {
-    return (
-      this.isDiagonal(motion) &&
-      !this.isForwardPathY(motion) &&
       Math.abs(motion[0]) == 1
     );
   }
@@ -532,7 +542,6 @@ export class Motion {
         IndexCoordinator.fromBoardCellIndexToChessNotationIndex(to)
       ) {
         putIfUndefined(res.cases, "en_passant_capture", {});
-        // becuse getPathInfoByMotion will reture placeable false
         res.placeable = true;
         delete res.cases.place;
       } else if (res.captured_piece == EMPTY_FEN_CHAR) {
@@ -823,9 +832,14 @@ export class ChessEventHandler {
 /** return object of attack and defend piece list
  * @param {FenInfo} fen_info
  * @param {IndexInfo} index_info
+ * @param {boolean} [can_king_defend=false]
  * @returns {{attack:MoveInfoList,defend:MoveInfoList}}
  */
-export function getLegalMoveInfo(fen_info, index_info) {
+export function getLegalMoveInfo(
+  fen_info,
+  index_info,
+  can_king_defend = false,
+) {
   /** @type {{attack:MoveInfoList,defend:MoveInfoList}} */
   const res = { attack: [], defend: [] };
   /** @type {MotionPathInfo} */
@@ -836,7 +850,6 @@ export function getLegalMoveInfo(fen_info, index_info) {
   for (const motion_type in MotionPath.PATHS) {
     for (const i in index_info[motion_type]) {
       info = index_info[motion_type][i];
-      // if (motion_type == "knight") pmlog(motion_type, i, info, fen_info.color);
 
       const piece = info.blocking_piece?.piece.toLowerCase();
       if (piece == undefined || piece == EMPTY_FEN_CHAR) continue;
@@ -847,7 +860,10 @@ export function getLegalMoveInfo(fen_info, index_info) {
       if (!move_info.placeable) continue;
       if (getColor(info.blocking_piece.piece) != fen_info.color) {
         res.attack.push(move_info);
-      } else if (info.blocking_piece.piece.toLowerCase() != "k") {
+      } else if (
+        info.blocking_piece.piece.toLowerCase() != "k" ||
+        can_king_defend
+      ) {
         res.defend.push(move_info);
       }
     }
@@ -874,9 +890,8 @@ export class InspectPiece {
   static isCheckMate(index, info) {
     const all_motion_index_info = getIndexInfoInAllMotion(index, info.position);
     const attack_piece = getLegalMoveInfo(info, all_motion_index_info);
-    // pmlog(all_motion_index_info, attack_piece);
     if (attack_piece.attack.length == 0) {
-      // pmlog(attack_piece.attack.length, king, index, info.position);
+      // pmlog(attack_piece.attack.length, index, info.position);
       return false;
     }
     if (
@@ -886,14 +901,14 @@ export class InspectPiece {
         combine(info, { color: toggleColor(info.color) }),
       )
     ) {
+      // pmlog(
+      //   !InspectPiece.isSafeAt(
+      //     attack_piece.attack[0].blocking_piece.index,
+      //     combine(info, { color: toggleColor(info.color) }),
+      //   ),
+      // );
       return false;
     }
-
-    // pmlog(
-    //   king,
-    //   color,
-    //   attack_piece[0].motion_info.blocking_piece,
-    // );
 
     let piece_at = null,
       safe_index = null;
@@ -911,7 +926,7 @@ export class InspectPiece {
         safe_index = Motion.applyMotion(index, motion);
 
         if (
-          (InspectPiece.isSafeAt(safe_index, info) &&
+          (InspectPiece.isSafeAtIfMovedTo(index, safe_index, info) &&
             piece_at == EMPTY_FEN_CHAR) ||
           (piece_at != EMPTY_FEN_CHAR &&
             InspectPiece.isSafeAtByColor(
@@ -922,11 +937,12 @@ export class InspectPiece {
             getColor(piece_at) != info.color)
         ) {
           // pmlog(
-          //   "diagonal",
+          //   motion_type,
           //   info.position,
           //   index,
           //   motion,
           //   safe_index,
+          //   piece_at,
           //   piece_at != EMPTY_FEN_CHAR &&
           //     InspectPiece.isSafeAtByColor(
           //       toggleColor(info.color),
@@ -1048,8 +1064,23 @@ export class InspectPiece {
   }
 
   /**
+   * @param {BoardCellIndex} from
+   * @param {BoardCellIndex} to
+   * @param {FenInfo} fen_info
+   */
+  static isSafeAtIfMovedTo(from, to, fen_info) {
+    return this.isSafeAt(
+      to,
+      combine(fen_info, {
+        position: pickAndPutPieceAt(from, to, fen_info.position),
+      }),
+    );
+  }
+
+  /**
    * @param {BoardCellIndex} index
    * @param {FenInfo} fen_info
+   * @returns {boolean}
    */
   static isSafeAt(index, fen_info) {
     return (
@@ -1485,7 +1516,23 @@ export function pickAndPutPieceAt(from, to, position) {
   return putPieceAt(pick_info.piece, ...to, pick_info.position);
 }
 
+/** return true if a is a file char
+ * @param {string} a
+ */
+export function isRankChar(a) {
+  const n = parseInt(a);
+  return Number.isInteger(n) && n < 9 && 0 < n;
+}
+
+/** return true if a is a file char
+ * @param {string} a
+ */
+export function isFileChar(a) {
+  return isLowerCase(a) && a.charCodeAt(0) < 105;
+}
+
 export class ChessNotation {
+  static PIECE_NOTATION = PROMOTION_PIECES.concat(["k"]);
   /** return piece name according to the ChessNotation
    * @param {FenChar} piece
    * @returns {FenCharWithEmptyFen}
@@ -1578,13 +1625,49 @@ export class ChessNotation {
    */
   static getChessNotation(from, to, fen_info, transition_event) {
     if (transition_event.castling == "k") {
-      return "o-o";
+      return CHESS_NOTATION_KING_SIDE_CASTLE;
     } else if (transition_event.castling == "q") {
-      return "o-o-o";
+      return CHESS_NOTATION_QUEEN_SIDE_CASTLE;
     }
     const piece = getPieceAt(...from, fen_info.position);
     // @ts-ignore
     return `${this.getPieceName(piece)}${this.findPieceWithCommonDestination(from, to, fen_info)}${transition_event.capture ? CHESS_NOTATION_CAPTURE_CHAR : ""}${IndexCoordinator.fromBoardCellIndexToChessNotationIndex(to)}${this.getChessAndCheckmateNotationChar(transition_event)}`;
+  }
+
+  /** enrich the parsed ChessMoveNotationInfo
+   * by adding from index location for
+   * proper use
+   * @param {ChessMoveNotationInfo} notation_info
+   * @param {FenInfo} fen_info
+   */
+  static enrich(notation_info, fen_info) {
+    const index_info = getIndexInfoInAllMotion(
+      notation_info.to,
+      fen_info.position,
+    );
+    const moves = getLegalMoveInfo(fen_info, index_info, true);
+    let m = null;
+    if (IndexCoordinator.isSameBoardCellIndex([-1, -1], notation_info.from)) {
+      m = moves.defend.filter((value) => notation_info.piece == value.piece);
+      if (m.length == 1) {
+        m = m[0];
+        notation_info.from = m.from;
+        return notation_info;
+      }
+    } else {
+      for (m of moves.defend) {
+        if (
+          notation_info.piece == m.piece &&
+          ((notation_info.from[0] != -1 &&
+            notation_info.from[0] == m.from[0]) ||
+            (notation_info.from[1] != -1 && notation_info.from[1] == m.from[1]))
+        ) {
+          notation_info.from = m.from;
+          return notation_info;
+        }
+      }
+    }
+    return notation_info;
   }
 
   /** parse the chess notation based on
@@ -1594,10 +1677,91 @@ export class ChessNotation {
    * @returns {ChessMoveNotationInfo}
    */
   static parse(notation, fen_info) {
-    /**  @type {ChessMoveNotationInfo} */
+    const res = {
+      piece: "",
+      capture: false,
+      from: [-1, -1],
+      to: [-1, -1],
+      promotion_piece: "",
+      check: false,
+      checkmate: false,
+    };
+    if (
+      notation.toLowerCase() == CHESS_NOTATION_KING_SIDE_CASTLE ||
+      notation.toLowerCase() == CHESS_NOTATION_QUEEN_SIDE_CASTLE
+    ) {
+      res.from[0] = 4;
+      res.to[0] = CHESS_NOTATION_QUEEN_SIDE_CASTLE == notation ? 2 : 6;
+      res.from[1] = fen_info.color == "w" ? 7 : 0;
+      res.to[1] = fen_info.color == "w" ? 7 : 0;
+      // @ts-ignore
+      return res;
+    }
+    let index = 0;
     // @ts-ignore
-    const res = { motion: {} };
+    if (this.PIECE_NOTATION.includes(notation.charAt(index).toLowerCase())) {
+      res.piece =
+        fen_info.color == "w"
+          ? notation.charAt(index)
+          : notation.charAt(index).toLowerCase();
+      index++;
+    } else {
+      res.piece = fen_info.color == "w" ? "P" : "p";
+    }
+    // check for destination and source
+    if (isFileChar(notation.charAt(index))) {
+      res.from[0] =
+        IndexCoordinator.fromFileChessNotionIndexToBoardCellIndexCol(
+          notation.charCodeAt(index),
+        );
+      index++;
+    }
+    if (isRankChar(notation.charAt(index))) {
+      res.from[1] =
+        IndexCoordinator.fromRankChessNotionIndexToBoardCellIndexRow(
+          notation.charAt(index),
+        );
+      index++;
+    }
+    //check for capture
+    if (notation.charAt(index) == CHESS_NOTATION_CAPTURE_CHAR) {
+      res.capture = true;
+      index++;
+    }
+    if (
+      isFileChar(notation.charAt(index)) &&
+      isRankChar(notation.charAt(index + 1))
+    ) {
+      res.to = IndexCoordinator.fromChessNotionIndexToBoardCellIndex(
+        notation.substring(index, index + 2),
+      );
+      index += 2;
+    } else {
+      res.to = res.from;
+      res.from = [-1, -1];
+    }
+    // check for special event
+    if (notation.charAt(index) == CHESS_NOTATION_PROMOTION_PREFIX_CHAR) {
+      res.promotion_piece = notation.charAt(index + 1);
+      index += 2;
+    }
+    if (notation.charAt(index) == CHESS_NOTATION_CHECKMATE_CHAR) {
+      res.checkmate = true;
+    }
+    if (notation.charAt(index) == CHESS_NOTATION_CHECK_CHAR) {
+      res.check = true;
+    }
+    // @ts-ignore
     return res;
+  }
+
+  /** return a enriched parsed ChessMoveNotationInfo
+   * NOTE: it combines the parse in enrich
+   * @param {ChessMoveNotation} notation
+   * @param {FenInfo} fen_info
+   */
+  static enrichedParse(notation, fen_info) {
+    return this.enrich(this.parse(notation, fen_info), fen_info);
   }
 }
 
@@ -1836,8 +2000,27 @@ export class IndexCoordinator {
    * @param {ChessMove} m
    * @returns {BoardCellIndex}
    */
-  fromChessNotionIndexToBoardCellIndex(m) {
-    return [m.charCodeAt(0) - 97, parseInt(m.charAt(1)) - 1];
+  static fromChessNotionIndexToBoardCellIndex(m) {
+    return [
+      this.fromFileChessNotionIndexToBoardCellIndexCol(m.charCodeAt(0)),
+      this.fromRankChessNotionIndexToBoardCellIndexRow(m.charAt(1)),
+    ];
+  }
+
+  /**
+   * @param {number} a - char code
+   * @returns {number}
+   */
+  static fromFileChessNotionIndexToBoardCellIndexCol(a) {
+    return a - 97;
+  }
+
+  /**
+   * @param {ChessMoveNotation} a
+   * @returns {number}
+   */
+  static fromRankChessNotionIndexToBoardCellIndexRow(a) {
+    return 8 - parseInt(a);
   }
 
   /**

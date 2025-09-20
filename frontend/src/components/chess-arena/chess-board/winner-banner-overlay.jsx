@@ -34,7 +34,6 @@ export function GameWinnerBannerOverlay({ ...a }) {
   const option = useSelector(
     (s) => s.component_data.chess_board.game_winner_banner_overlay,
   );
-  pmlog(option);
   if (!option.display) return <></>;
   return (
     <div

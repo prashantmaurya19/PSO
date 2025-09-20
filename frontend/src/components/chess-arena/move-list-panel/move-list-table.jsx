@@ -1,5 +1,7 @@
 //@ts-nocheck
+import { pmlog } from "@pso/util/log";
 import { joinTWClass } from "@pso/util/tailwind";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 /**
  * @param {{text:string}&import("@pso/util/jjsx").JSXProps} p
@@ -19,11 +21,32 @@ export function MoveRowData({ text = "", className, ...a }) {
 }
 
 /**
- * @param {{index:number,left_move:string,right_move:string}&import("@pso/util/jjsx").JSXProps} p
+ * @param {{curr_index:number,total:number,index:number,left_move:string,right_move:string}&import("@pso/util/jjsx").JSXProps} p
  */
-export function MoveRow({ index, left_move, right_move, className, ...a }) {
+export function MoveRow({
+  total,
+  index,
+  curr_index,
+  left_move,
+  right_move,
+  className,
+  ...a
+}) {
+  const endRef = useRef(null);
+  const [isEndVisible, setIsEndVisible] = useState(false);
+
+  useEffect(() => {
+    if (curr_index + 1 == total) {
+      endRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
+    }
+  }, [total]);
   return (
     <tr
+      ref={endRef}
       {...a}
       className={twMerge(
         joinTWClass(
@@ -54,7 +77,7 @@ export function MoveRow({ index, left_move, right_move, className, ...a }) {
  */
 export function MoveListTable({ table_data = [], className = "", ...a }) {
   return (
-    <table {...a} className={twMerge(joinTWClass("w-full h-[70%]"), className)}>
+    <table {...a} className={twMerge(joinTWClass("w-full h-[60%]"), className)}>
       <tbody
         className={joinTWClass(
           "w-full h-full",
@@ -68,6 +91,8 @@ export function MoveListTable({ table_data = [], className = "", ...a }) {
             res.push(
               <MoveRow
                 key={i}
+                curr_index={i}
+                total={data.length}
                 index={res.length + 1}
                 left_move={data[i]}
                 right_move={data[i + 1]}
