@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@pso/*": ["./src/*"]
+      "@pso/*": ["src/*"]
+      "@pso/components/*": ["src/components/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react",
@@ -19,7 +20,6 @@
   "exclude": [
     "node_modules",
     "docs",
-    "thinking",
     "dist"
   ]
 }

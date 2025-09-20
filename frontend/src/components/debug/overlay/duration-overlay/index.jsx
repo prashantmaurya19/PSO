@@ -66,6 +66,7 @@ export function DurationOverlay({}) {
   const duration = useSelector(
     (s) => s.component_data.chess_board.clock_info_panel.duration,
   );
+  const move_list_info = useSelector((s) => s.component_data.move_list_panel);
   const inputele = useRef();
   const dump = { move: moves[index] };
   useEffect(() => {
@@ -111,6 +112,9 @@ export function DurationOverlay({}) {
         }
         return JSON.stringify(d, null, " ");
       })(duration)}
+      <br />
+      Move_list_info:(active_index={move_list_info.active_move_index}),(moves=
+      {move_list_info.move_list.length})
     </div>
   );
 }

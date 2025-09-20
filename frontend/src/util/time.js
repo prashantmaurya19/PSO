@@ -3,8 +3,6 @@
  * here
  */
 
-import { pmlog } from "./log";
-
 /**
  * @typedef {-1} EmptyThreshold
  * @typedef {number} Minute
@@ -33,7 +31,56 @@ import { pmlog } from "./log";
  * @property {DurationType} type
  * @property {DurationTransformationRuleList} rules
  * @property {MiliSecond} time
+ * @property {string} label
  */
+
+/**
+ * @type {Array<DurationCache>}
+ */
+export const TIME_DURATION_CATAGORIES = [
+  {
+    label: "1 Min",
+    type: "bullet",
+    time: min2ms(1),
+    rules: [],
+  },
+  {
+    label: "2 Min",
+    type: "bullet",
+    time: min2ms(2),
+    rules: [],
+  },
+  {
+    label: "2Min+1",
+    type: "bullet",
+    time: min2ms(2),
+    rules: [
+      {
+        move: 1,
+        threshold: 1000,
+        time: 1000,
+      },
+    ],
+  },
+  {
+    label: "3 Min",
+    time: min2ms(3),
+    type: "rapid",
+    rules: [],
+  },
+  {
+    label: "5 Min",
+    time: min2ms(5),
+    type: "rapid",
+    rules: [],
+  },
+  {
+    label: "10 Min",
+    time: min2ms(10),
+    type: "rapid",
+    rules: [],
+  },
+];
 
 /** convert the ms to min
  * @param {Minute} ms

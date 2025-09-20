@@ -85,7 +85,7 @@ const onDrop = (e) => {
   e.stopPropagation();
 };
 /**
- * @param {import("../../../util/jjsx").JSXProps} p
+ * @param {import("@pso/util/jjsx").JSXProps} p
  */
 export function RenderChessBoard({}) {
   const state = useSelector((s) => s.chess.game_state);
@@ -96,7 +96,7 @@ export function RenderChessBoard({}) {
   const dispatch = useDispatch();
   const view_setting = useSelector((s) => s.component_data.chess_board.self);
   if (!view_setting.display) return <></>;
-  const position = view_setting.position;
+  const position = fen_info.position;
   useEffect(() => {
     dispatch(updateChessBoard({ display: true, position: fen_info.position }));
     dispatch(
@@ -114,6 +114,7 @@ export function RenderChessBoard({}) {
     if (t.cancel) return;
     const next_info = parse(t.board_info.fen);
     dispatch(setDataChessBoardPosition(t.board_info));
+    dispatch(updateChessBoard({ info: t.board_info }));
     dispatch(setDataChessBoardTurn(next_info.color));
     if (!getPromotionFor(fen_info.color, next_info.position)) {
       dispatch(pushChessNotationToMoveList(t.chess_notation));

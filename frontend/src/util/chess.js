@@ -388,19 +388,6 @@ export class MotionPath {
 
 export class Motion {
   /**
-   * @returns {MotionPathInfo}
-   */
-  static getEmptyMovePathInfo() {
-    return {
-      placeable: false,
-      piece: EMPTY_FEN_CHAR,
-      empty_space: 0,
-      cases: { place: {} },
-      captured_piece: "",
-    };
-  }
-
-  /**
    * @param {BoardCellIndex} from
    * @param {BoardCellIndex} to
    * @param {FenInfo} info
@@ -409,7 +396,7 @@ export class Motion {
    * @returns {MotionPathInfo}
    */
   static #getPathHelper(from, to, info, motion, not_verify) {
-    if (not_verify) return this.getEmptyMovePathInfo();
+    if (not_verify) return Creator.getNewMovePathInfo();
     const res = getPathInfoByMotion(
       from,
       to,
@@ -440,7 +427,7 @@ export class Motion {
   static n(from, to, info) {
     const motion = MotionPath.getMotionFromTo(from, to);
     if (!MotionPath.isKnightPath(motion)) {
-      return this.getEmptyMovePathInfo();
+      return Creator.getNewMovePathInfo();
     }
     const res = getPathInfoByMotion(from, to, motion, info.position, {
       from: false,
@@ -460,7 +447,7 @@ export class Motion {
   static k(from, to, info) {
     const motion = MotionPath.getMotionFromTo(from, to);
     if (!(MotionPath.isCastling(motion) || MotionPath.isKingPath(motion))) {
-      return this.getEmptyMovePathInfo();
+      return Creator.getNewMovePathInfo();
     }
     const res = getKingPathInfo(from, to, info.position);
     putIfUndefined(res.cases, "king_move", { to });
@@ -526,7 +513,7 @@ export class Motion {
         MotionPath[`isPawnCapture${piece}`](motion)
       )
     )
-      return this.getEmptyMovePathInfo();
+      return Creator.getNewMovePathInfo();
 
     const res = getPathInfoByMotion(
       from,
@@ -1100,7 +1087,7 @@ export class InspectPiece {
  */
 export function getIndexInfoInAllMotion(index, fen, exclude_motion_type = {}) {
   /** @type {IndexInfo} */
-  const res = { diagonal: {}, straight: {}, knight: {}, piece: "" };
+  const res = Creator.getNewIndexInfo();
   /**
    * @type {BoardCellIndex}
    */
@@ -1130,7 +1117,7 @@ export function getIndexInfoInAllMotion(index, fen, exclude_motion_type = {}) {
  * @returns {MotionPathInfo}
  */
 export function getKnightPathInfo(from, to, fen) {
-  const res = Motion.getEmptyMovePathInfo();
+  const res = Creator.getNewMovePathInfo();
   res.from = from;
   res.to = to;
   res.piece = getPieceAt(...from, fen);
@@ -1145,7 +1132,7 @@ export function getKnightPathInfo(from, to, fen) {
  * @returns {MotionPathInfo}
  */
 export function getKingPathInfo(from, to, fen) {
-  const res = Motion.getEmptyMovePathInfo();
+  const res = Creator.getNewMovePathInfo();
   res.from = from;
   res.to = to;
   res.piece = getPieceAt(...from, fen);
@@ -1201,7 +1188,7 @@ export function getPathInfoByMotion(
   },
 ) {
   const from_piece = getPieceAt(...from, fen);
-  const res = Motion.getEmptyMovePathInfo();
+  const res = Creator.getNewMovePathInfo();
   res.from = from;
   res.to = to;
   res.motion = motion;
@@ -1531,6 +1518,38 @@ export function isFileChar(a) {
   return isLowerCase(a) && a.charCodeAt(0) < 105;
 }
 
+export class Creator {
+  /**
+   * @returns {IndexInfo}
+   */
+  static getNewIndexInfo() {
+    return { diagonal: {}, straight: {}, knight: {}, piece: "" };
+  }
+
+  /**
+   * @returns {MotionPathInfo}
+   */
+  static getNewMovePathInfo() {
+    return {
+      placeable: false,
+      piece: EMPTY_FEN_CHAR,
+      empty_space: 0,
+      cases: { place: {} },
+      captured_piece: "",
+    };
+  }
+
+  /**
+   * @returns {BoardInfo}
+   */
+  static getNewChessPosition() {
+    return {
+      fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      kings: { b: [4, 0], w: [4, 7] },
+    };
+  }
+}
+
 export class ChessNotation {
   static PIECE_NOTATION = PROMOTION_PIECES.concat(["k"]);
   /** return piece name according to the ChessNotation
@@ -1763,6 +1782,28 @@ export class ChessNotation {
   static enrichedParse(notation, fen_info) {
     return this.enrich(this.parse(notation, fen_info), fen_info);
   }
+}
+
+/** return a fenstrng created by travering
+ * moves in movelist to to_index
+ * @param {number} to_index
+ * @param {Array<ChessMoveNotation>} move_list
+ * @returns {BoardInfo|void}
+ */
+export function travers(to_index, move_list) {
+  let b_info = Creator.getNewChessPosition();
+  if (to_index < 0) return b_info;
+  to_index++;
+  if (to_index >= move_list.length) to_index = move_list.length;
+  for (let i = 0, notation_info = null, l; i < to_index; i++) {
+    notation_info = ChessNotation.enrichedParse(
+      move_list[i],
+      parse(b_info.fen),
+    );
+    l = transition(notation_info.from, notation_info.to, b_info);
+    b_info = l.board_info;
+  }
+  return b_info;
 }
 
 /**

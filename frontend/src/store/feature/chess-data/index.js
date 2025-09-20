@@ -2,12 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { picture } from "./demo-pictures";
 import { copy } from "@pso/util/aobject";
 import { emit } from "@pso/util/event";
+import { Creator } from "@pso/util/chess";
 /**
  * @typedef {Object} InitState
- * @property {import("../../../util/chess").GameStateName} game_state
+ * @property {import("@pso/util/chess").GameStateName} game_state
  * @property {PlayersData} players_data
  * @property {PlayerType} turn
- * @property {import("../../../util/chess").BoardInfo} chess_position
+ * @property {import("@pso/util/chess").BoardInfo} chess_position
  * @property {FlipTypes} flip
  * @property {import("@pso/util/chess").ChessMoveNotation} [promotion_notation]
  */
@@ -39,10 +40,7 @@ const initialState = {
   game_state: "start",
   players_data,
   flip: "normal",
-  chess_position: {
-    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    kings: { b: [4, 0], w: [4, 7] },
-  },
+  chess_position: Creator.getNewChessPosition(),
   turn: "p",
   promotion_notation: "",
 };

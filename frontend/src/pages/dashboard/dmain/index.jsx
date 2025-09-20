@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 import { ContextContainer } from "@pso/components/page/context-container";
 import { joinTWClass } from "@pso/util/tailwind";
 import {
-  BliztPlayMenuButton,
+  DirectPlayMenuButton,
   NewBotPlayMenuButon,
   NewGamePlayMenuButon,
 } from "@pso/components/buttons/dmenu-button";
@@ -21,7 +21,7 @@ export function StartUpMenu({ className = "", ...opt }) {
         joinTWClass("flex justify-center items-center flex-col gap-7"),
       )}
     >
-      <BliztPlayMenuButton
+      <DirectPlayMenuButton
         onClick={() => {
           navigate("/dashboard/chess_arena", { state: { auth: true } });
         }}

@@ -4,18 +4,21 @@ import { joinTWClass } from "@pso/util/tailwind";
 import { ContextContainer } from "@pso/components/page/context-container";
 import { pmlog } from "@pso/util/log";
 import { acache } from "@pso/util/cache";
-import { min2ms } from "@pso/util/time";
+import { min2ms, TIME_DURATION_CATAGORIES } from "@pso/util/time";
+import { useNavigate } from "react-router-dom";
 
 /**
  * @param {{duration:import("@pso/util/time").DurationCache}&import("@pso/util/jjsx").JSXProps} p0
  */
 function DurationButton({ duration = null, className, children, ...a }) {
+  const navigate = useNavigate();
   return (
     <button
       {...a}
       onClick={(e) => {
         if (duration == null) return;
         acache("LAST_GAME_DURATION").localstorage().set().json(duration);
+        navigate("/dashboard/chess_arena", { state: { auth: true } });
       }}
       className={twMerge(
         joinTWClass(
@@ -74,66 +77,13 @@ export function GameDurationMenu({ className = "", ...opt }) {
         Select Game Duration
       </span>
       <GridContainer>
-        <DurationButton
-          duration={{
-            type: "bullet",
-            time: min2ms(1),
-            rules: [],
-          }}
-        >
-          1 Min
-        </DurationButton>
-        <DurationButton
-          duration={{
-            type: "bullet",
-            time: min2ms(2),
-            rules: [],
-          }}
-        >
-          2 Min
-        </DurationButton>
-        <DurationButton
-          duration={{
-            type: "bullet",
-            time: min2ms(2),
-            rules: [
-              {
-                move: 1,
-                threshold: 1000,
-                time: 1000,
-              },
-            ],
-          }}
-        >
-          2Min+1
-        </DurationButton>
-        <DurationButton
-          duration={{
-            time: min2ms(3),
-            type: "rapid",
-            rules: [],
-          }}
-        >
-          3 Min
-        </DurationButton>
-        <DurationButton
-          duration={{
-            time: min2ms(5),
-            type: "rapid",
-            rules: [],
-          }}
-        >
-          5 Min
-        </DurationButton>
-        <DurationButton
-          duration={{
-            time: min2ms(10),
-            type: "rapid",
-            rules: [],
-          }}
-        >
-          10 Min
-        </DurationButton>
+        {TIME_DURATION_CATAGORIES.map((v, i) => {
+          return (
+            <DurationButton key={i} duration={v}>
+              {v.label}
+            </DurationButton>
+          );
+        })}
       </GridContainer>
     </ContextContainer>
   );

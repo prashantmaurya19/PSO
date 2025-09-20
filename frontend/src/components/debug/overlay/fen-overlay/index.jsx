@@ -7,6 +7,9 @@ import { useSelector } from "react-redux";
  */
 export function FenOverlay({}) {
   const board_info = useSelector((s) => s.chess.chess_position);
+  const board_info2 = useSelector(
+    (s) => s.component_data.chess_board.self.info,
+  );
   const display = useSelector(
     (s) => s.component_data.debug.fen_overlay.display,
   );
@@ -24,7 +27,9 @@ export function FenOverlay({}) {
         "rounded-md",
       )}
     >
-      Fen: {board_info.fen}
+      Fen1: {board_info.fen}
+      <br />
+      Fen2: {board_info2.fen}
       <br />
       KingInfo:{" b=> ["}
       {board_info.kings["b"].toString()}

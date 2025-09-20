@@ -35,12 +35,10 @@ class StorageHandler {
   }
 
   /** return default if cache is not exists
-   * @param {object} d - default value
+   * @param {string} d - default value
    */
   getOrDefault(d) {
-    const res = this.get();
-    if (res == null) return d;
-    return res;
+    return new CacheGetHelper(this.#storage.getItem(this.#att_name), d);
   }
 
   /**
@@ -73,8 +71,14 @@ class CacheSetHelper {
 
 class CacheGetHelper {
   #payload;
-  constructor(v) {
+  /**
+   * @param {string} v
+   * @param {object} [d=null]
+   */
+  constructor(v, d = null) {
     this.#payload = v;
+    this.default = d;
+    if (d != null && v == null) this.#payload = d;
   }
   /**
    * @returns {string}

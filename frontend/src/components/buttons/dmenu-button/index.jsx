@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "@pso/util/tailwind";
 import {
@@ -5,12 +6,16 @@ import {
   PawnIcon,
   RobotHeadIcon,
   SettingGearIcon,
+  StopWatchIcon,
 } from "@pso/components/icon/dashboard";
+import { acache } from "@pso/util/cache";
+import { pmlog } from "@pso/util/log";
+import { TIME_DURATION_CATAGORIES } from "@pso/util/time";
 
 /**
  * @param {import("@pso/util/jjsx").JSXProps} param0
  */
-export function NewBotPlayMenuButon({...a}) {
+export function NewBotPlayMenuButon({ ...a }) {
   return (
     <IconStartUpMenuButton
       {...a}
@@ -30,7 +35,7 @@ export function NewBotPlayMenuButon({...a}) {
 /**
  * @param {import("@pso/util/jjsx").JSXProps} param0
  */
-export function NewGamePlayMenuButon({...a}) {
+export function NewGamePlayMenuButon({ ...a }) {
   return (
     <IconStartUpMenuButton
       {...a}
@@ -50,18 +55,35 @@ export function NewGamePlayMenuButon({...a}) {
 /**
  * @param {import("@pso/util/jjsx").JSXProps} param0
  */
-export function BliztPlayMenuButton({...a}) {
+export function DirectPlayMenuButton({ ...a }) {
+  let b_info = acache("LAST_GAME_DURATION").localstorage().get().json();
+  if (b_info == undefined) {
+    acache("LAST_GAME_DURATION")
+      .localstorage()
+      .set()
+      .json(TIME_DURATION_CATAGORIES[3]);
+    b_info = TIME_DURATION_CATAGORIES[3];
+  }
   return (
     <IconStartUpMenuButton
       {...a}
-      text="3 Min "
+      text={b_info.label}
       icon={
-        <BlitzChessIcon
-          pathProp={{
-            className: joinTWClass("fill-white"),
-          }}
-          className="fill-white"
-        />
+        b_info.type == "rapid" ? (
+          <StopWatchIcon
+            pathProp={{
+              className: joinTWClass("fill-white"),
+            }}
+            className="fill-white"
+          />
+        ) : (
+          <BlitzChessIcon
+            pathProp={{
+              className: joinTWClass("fill-white"),
+            }}
+            className="fill-white"
+          />
+        )
       }
     />
   );

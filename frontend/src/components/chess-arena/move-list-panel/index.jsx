@@ -17,6 +17,9 @@ import { useSelector } from "react-redux";
 export function MoveListPanel({ className = "", ...a }) {
   const player_info = useSelector((s) => s.chess.players_data);
   const option = useSelector((s) => s.component_data.move_list_panel);
+  const active_index = useSelector(
+    (s) => s.component_data.move_list_panel.active_move_index,
+  );
   if (!option.display) return <></>;
   return (
     <div
@@ -35,7 +38,10 @@ export function MoveListPanel({ className = "", ...a }) {
         player_name={player_info.p.name}
         oponent_name={player_info.o.name}
       />
-      <MoveListTable table_data={option.move_list} />
+      <MoveListTable
+        active_index={active_index}
+        table_data={option.move_list}
+      />
       <MoveListTableFunctionButtons />
       <GameStateViceMoveListFunctionButtons />
       <OponentRequestField title={option.request.title} />
