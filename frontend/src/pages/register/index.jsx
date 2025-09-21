@@ -1,17 +1,20 @@
+//@ts-nocheck
 import NavBar from "@pso/components/header/navbar";
 import { LoginButton, NavButton } from "@pso/components/buttons/navbutton";
 import { RegistrationForm } from "@pso/components/form/registration";
 import { anime } from "@pso/util/anime";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { SelfContainedLoader } from "@pso/components/loader/form";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 import { PageLayout, PageContentLayout } from "@pso/components/page/section";
+import { hasCookie } from "@pso/util/acookie";
 
 export default function RegistrationPage() {
-  const container = useRef();
+  const container = useRef(null);
   const { contextSafe } = useGSAP({ scope: container });
   const navigate = useNavigate();
+  if (hasCookie("token_id")) return <Navigate to={"/dashboard"} />;
   return (
     <PageLayout
       ref={container}

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
 import { join } from "@pso/util/tailwind";
 import { useGSAP } from "@gsap/react";
@@ -9,6 +10,8 @@ import { validate } from "@pso/util/validate";
 import { useRef } from "react";
 import { request, response } from "@pso/util/requests";
 import { useNavigate } from "react-router-dom";
+import { getCookie, setCookie } from "@pso/util/acookie";
+import { pmlog } from "@pso/util/log";
 
 /**
  * @param {{disable:boolean}&import("react").HTMLAttributes} param0
@@ -88,7 +91,8 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
                 .httpBasic(form_data.username, form_data.password)
                 .execute();
               const res = await resp.json();
-              response(res).storeInCookie("token_id", "token");
+              pmlog(res);
+              setCookie("token_id", res.token);
             }
           } catch (error) {
             return console.log(error);

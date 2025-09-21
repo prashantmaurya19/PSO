@@ -5,7 +5,12 @@
  * @property {RequestInit} param
  */
 
+import { setCookie } from "./acookie";
+
 class ResponseHandler {
+  /**
+   * @param {object} json_data
+   */
   constructor(json_data) {
     this.data = json_data;
   }
@@ -16,8 +21,7 @@ class ResponseHandler {
    * @returns {ResponseHandler}
    */
   storeInCookie(cookie_name, name) {
-    if (this.data[name] != undefined)
-      document.cookie += `${cookie_name}=${this.data[name]};`;
+    if (this.data[name] != undefined) setCookie(cookie_name, this.data[name]);
     return this;
   }
 }
@@ -128,6 +132,8 @@ class Requests {
    */
   header(name, value) {
     this.#handleHeaderInit();
+
+    // @ts-ignore
     this.request_object.param.headers.append(name, value);
     return this;
   }
@@ -139,6 +145,7 @@ class Requests {
   headers(name_value_object) {
     this.#handleHeaderInit();
     for (const k in name_value_object) {
+      // @ts-ignore
       this.request_object.param.headers.append(k, name_value_object[k]);
     }
     return this;
