@@ -9,37 +9,32 @@ import { Creator } from "@pso/util/chess";
  * @property {PlayersData} players_data
  * @property {PlayerType} turn
  * @property {import("@pso/util/chess").BoardInfo} chess_position
- * @property {FlipTypes} flip
+ * @property {boolean} flip
  * @property {import("@pso/util/chess").ChessMoveNotation} [promotion_notation]
  */
-
-/**
- * @type {PlayersData}
- */
-const players_data = {
-  p: {
-    name: "xyz",
-    address: "1234:xyz",
-    side: "w",
-    rating: 100,
-    picture,
-  },
-  o: {
-    name: "abc",
-    address: "5678:abc",
-    side: "b",
-    rating: 100,
-    picture,
-  },
-};
 
 /**
  * @type {InitState}
  */
 const initialState = {
   game_state: "start",
-  players_data,
-  flip: "normal",
+  players_data: {
+    p: {
+      name: "xyz",
+      address: "1234:xyz",
+      side: "w",
+      rating: 100,
+      picture,
+    },
+    o: {
+      name: "abc",
+      address: "5678:abc",
+      side: "b",
+      rating: 100,
+      picture,
+    },
+  },
+  flip: true,
   chess_position: Creator.getNewChessPosition(),
   turn: "p",
   promotion_notation: "",
@@ -49,6 +44,9 @@ export const chessBoardSlice = createSlice({
   name: "chess-data",
   initialState,
   reducers: {
+    setDataChessBoardFlip(state, action) {
+      state.flip = action.payload;
+    },
     setDataChessBoardGameState(state, action) {
       state.game_state = action.payload;
     },
@@ -93,8 +91,7 @@ export const chessBoardSliceReducer = chessBoardSlice.reducer;
 
 /**
  * @typedef {"p"|"o"} PlayerType
- * @typedef {{name:string,side:import("../../../util/chess").ChessColor,picture:string,rating:number,address:string}} PlayerData
+ * @typedef {{name:string,side:import("@pso/util/chess").ChessColor,picture:string,rating:number,address:string}} PlayerData
  * @typedef {Record<PlayerType,PlayerData>} PlayersData
- * @typedef {"normal"|"board"|"perspective"} FlipTypes
  */
 export default {};

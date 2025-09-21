@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconWraper } from "@pso/components/icon";
 import { pmlog } from "@pso/util/log";
 import { joinTWClass } from "@pso/util/tailwind";
+import { useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -61,9 +62,11 @@ export function OponentRequestFieldAcceptButton({ ...a }) {
 }
 
 /**
- * @param {Partial<{title:string}>&import("@pso/util/jjsx").JSXProps} p
+ * @param {import("@pso/util/jjsx").JSXProps} p
  */
-export function OponentRequestField({ title = "no title", className, ...a }) {
+export function OponentRequestField({ className, ...a }) {
+  const request = useSelector((s) => s.component_data.move_list_panel.request);
+  if (request.title == "") return <></>;
   return (
     <div
       {...a}
@@ -80,7 +83,7 @@ export function OponentRequestField({ title = "no title", className, ...a }) {
           "p-2",
         )}
       >
-        {title}
+        {request.title}
       </span>
       <OponentRequestFieldDeclineButton
         onClick={(e) => {

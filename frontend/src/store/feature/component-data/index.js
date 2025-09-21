@@ -37,8 +37,9 @@ const initialState = {
     display: true,
     /** @type {Array<import("@pso/util/chess").ChessMoveNotation>} */
     move_list: [],
-    active_move_index: -1,
-    request: { title: "demo question?" },
+    active_move_index: 0,
+    request: { title: "" },
+    flip: true,
   },
   debug: {
     fen_overlay: {
@@ -54,22 +55,25 @@ export const componentDataSlice = createSlice({
   name: "component-data",
   initialState,
   reducers: {
+    updateMoveListFlip(state, action) {
+      state.move_list_panel.flip = action.payload;
+    },
     updateMoveListActiveIndex(state, action) {
       if (
-        action.payload < state.move_list_panel.move_list.length &&
+        action.payload <= state.move_list_panel.move_list.length &&
         action.payload > -1
       )
         state.move_list_panel.active_move_index = action.payload;
     },
     incMoveListActiveIndex(state, _) {
       if (
-        state.move_list_panel.active_move_index + 1 <
+        state.move_list_panel.active_move_index + 1 <=
         state.move_list_panel.move_list.length
       )
         state.move_list_panel.active_move_index++;
     },
     decMoveListActiveIndex(state, _) {
-      if (state.move_list_panel.active_move_index - 1 > -2)
+      if (state.move_list_panel.active_move_index - 1 > -1)
         state.move_list_panel.active_move_index--;
     },
     pushChessNotationToMoveList(state, action) {
@@ -120,15 +124,16 @@ export const componentDataSlice = createSlice({
 });
 
 export const {
+  pushChessNotationToMoveList,
   incMoveListActiveIndex,
   decMoveListActiveIndex,
   updateMoveListActiveIndex,
   updateMoveListArray,
+  updateMoveListFlip,
   updateChessBoard,
   updatePromotionPieceOverlay,
   updateChessBoardFindOponentLoader,
   updateGameWinnerBannerOverlay,
-  pushChessNotationToMoveList,
   updateDebugFenOverlay,
   updateChessBoardDuration,
   changeChessBoardPlayerClockTime,

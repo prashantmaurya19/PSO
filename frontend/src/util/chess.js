@@ -1793,7 +1793,6 @@ export class ChessNotation {
 export function travers(to_index, move_list) {
   let b_info = Creator.getNewChessPosition();
   if (to_index < 0) return b_info;
-  to_index++;
   if (to_index >= move_list.length) to_index = move_list.length;
   for (let i = 0, notation_info = null, l; i < to_index; i++) {
     notation_info = ChessNotation.enrichedParse(

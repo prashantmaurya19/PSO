@@ -2,8 +2,9 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@pso/*": ["src/*"]
-      "@pso/components/*": ["src/components/*"]
+      "@pso/*": ["src/*"],
+      "@pso/components/*": ["src/components/*"],
+      "@pso/util/*": ["src/util/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react",

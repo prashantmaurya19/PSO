@@ -126,8 +126,8 @@ export function MoveListTableFunctionButtons({ ...a }) {
     <MoveListFunctionButtons {...a}>
       <MoveListButton
         onClick={(e) => {
-          dispatch(updateMoveListActiveIndex(0));
-          const info = travers(0, move_list);
+          dispatch(updateMoveListActiveIndex(1));
+          const info = travers(1, move_list);
           dispatch(setDataChessBoardPosition(info));
         }}
         icon={
@@ -166,7 +166,7 @@ export function MoveListTableFunctionButtons({ ...a }) {
       />
       <MoveListButton
         onClick={(e) => {
-          dispatch(updateMoveListActiveIndex(move_list.length - 1));
+          dispatch(updateMoveListActiveIndex(move_list.length));
           dispatch(setDataChessBoardPosition(current_game_position_info));
         }}
         icon={

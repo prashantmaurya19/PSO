@@ -1,4 +1,5 @@
 /** check if a character is in Uppercase
+ * @param {string} char
  * @return {boolean}
  */
 export function isLowerCase(char) {
@@ -7,6 +8,7 @@ export function isLowerCase(char) {
 }
 
 /** check if a character is in Uppercase
+ * @param {string} char
  * @return {boolean}
  */
 export function isUpperCase(char) {
@@ -39,17 +41,33 @@ export function insertAt(s, index, payload) {
   return s.substring(0, index) + payload + s.substring(index);
 }
 
-/**
- * {JSDoc}
- *
- * The splice() method changes the content of a string by removing a range of
- * characters and/or adding new characters.
- *
+/** The splice() method changes the content of a string by removing
+ * a range of characters and/or adding new characters.
+ * @param {string} s
  * @param {number} index after index n
  * @param {number} del An integer indicating the number of old chars to remove.
- * @param {string} payload The String that is spliced in.
- * @return {string} A new string with the spliced substring.
+ * @param {string} payload
+ * @return {string}
  */
 export function splice(s, index, del, payload) {
   return s.slice(0, index) + payload + s.slice(index + Math.abs(del));
+}
+
+/** return new reverse string
+ * @param {string} s
+ * @returns {string}
+ */
+export function reverse(s) {
+  if (s.length < 2) return s;
+  let res = s.length % 2 == 0 ? "" : s.charAt(Math.floor(s.length / 2));
+
+  for (
+    let i = Math.floor(s.length / 2) - 1,
+      j = Math.floor(s.length / 2) + (s.length % 2 == 0 ? 0 : 1);
+    i > -1 && j < s.length;
+    i--, j++
+  ) {
+    res = s.charAt(j) + res + s.charAt(i);
+  }
+  return res;
 }

@@ -25,7 +25,7 @@ export function MoveRowData({ text = "", className, ...a }) {
 }
 
 /**
- * @param {{active_index:number,curr_index:number,total:number,index:number,left_move:string,right_move:string}&import("@pso/util/jjsx").JSXProps} p
+ * @param {{move_list:Array,active_index:number,curr_index:number,total:number,index:number,left_move:string,right_move:string}&import("@pso/util/jjsx").JSXProps} p
  */
 export function MoveRow({
   total,
@@ -33,14 +33,12 @@ export function MoveRow({
   curr_index,
   active_index,
   left_move,
+  move_list,
   right_move,
   className,
   ...a
 }) {
   const endRef = useRef(null);
-  const move_list = useSelector(
-    (s) => s.component_data.move_list_panel.move_list,
-  );
   const dispatch = useDispatch();
   const click_move = (e) => {
     const n = parseInt(e.currentTarget.getAttribute("move_index"));
@@ -77,23 +75,23 @@ export function MoveRow({
         {index}
       </td>
       <MoveRowData
-        onClick={click_move}
-        move_index={curr_index}
+        onClick={left_move == "" ? null : click_move}
+        move_index={left_move == "" ? null : curr_index + 1}
         text={left_move}
         className={joinTWClass(
           "w-[37%] pl-1",
-          curr_index == active_index ? "bg-white/10" : "",
+          curr_index + 1 == active_index ? "bg-white/10" : "",
         )}
       />
       <td className={joinTWClass("mx-1")}>|</td>
       <MoveRowData
         onClick={click_move}
-        move_index={curr_index + 1}
+        move_index={curr_index + 2}
         text={right_move}
         className={joinTWClass(
           "justify-end grow-1",
           "pr-2",
-          curr_index + 1 == active_index ? "bg-white/10" : "",
+          curr_index + 2 == active_index ? "bg-white/10" : "",
         )}
       />
     </tr>
@@ -101,14 +99,16 @@ export function MoveRow({
 }
 
 /**
- * @param {{active_index:number,table_data:Array<String>}&import("@pso/util/jjsx").JSXProps} p
+ * @param {import("@pso/util/jjsx").JSXProps} p
  */
-export function MoveListTable({
-  active_index,
-  table_data = [],
-  className = "",
-  ...a
-}) {
+export function MoveListTable({ className = "", ...a }) {
+  const table_data = useSelector(
+    (s) => s.component_data.move_list_panel.move_list,
+  );
+  const active_index = useSelector(
+    (s) => s.component_data.move_list_panel.active_move_index,
+  );
+  const flip = useSelector((s) => s.component_data.move_list_panel.flip);
   return (
     <table {...a} className={twMerge(joinTWClass("w-full h-[60%]"), className)}>
       <tbody
@@ -118,23 +118,35 @@ export function MoveListTable({
           "overflow-y-auto",
         )}
       >
-        {(function (data) {
-          const res = [];
-          for (let i = 0; i < data.length; i += 2) {
+        {(function () {
+          const res = [
+            <MoveRow
+              key={flip ? -1 : 0}
+              move_list={table_data}
+              active_index={active_index}
+              curr_index={flip ? -1 : 0}
+              total={table_data.length}
+              index={1}
+              left_move={flip ? "" : table_data[0]}
+              right_move={table_data[flip ? 0 : 1]}
+            />,
+          ];
+          for (let i = flip ? 1 : 2; i < table_data.length; i += 2) {
             res.push(
               <MoveRow
                 key={i}
+                move_list={table_data}
                 active_index={active_index}
                 curr_index={i}
-                total={data.length}
+                total={table_data.length}
                 index={res.length + 1}
-                left_move={data[i]}
-                right_move={data[i + 1]}
+                left_move={table_data[i]}
+                right_move={table_data[i + 1]}
               />,
             );
           }
           return res;
-        })(table_data)}
+        })()}
       </tbody>
     </table>
   );
