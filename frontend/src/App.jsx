@@ -7,6 +7,7 @@ import { StartUpMenu } from "@pso/pages/dashboard/dmain";
 import { GameDurationMenu } from "@pso/pages/dashboard/dmain/GameDurationMenu";
 import { BotPlayCreateMenu } from "@pso/pages/dashboard/dmain/BotPlayCreateMenu";
 import { ChessArenaGround } from "@pso/pages/dashboard/dmain/ChessArenaGround";
+import { DashboardInitializationPage } from "./pages/dashboard/dmain/DashboardInitializationPage";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/dashboard" element={<DashBoard />}>
-          <Route index element={<StartUpMenu />} />
+          <Route index element={<DashboardInitializationPage />} />
+          <Route path="index" element={<StartUpMenu />} />
           <Route path="new_game" element={<GameDurationMenu />} />
           <Route path="new_bot_game" element={<BotPlayCreateMenu />} />
           <Route path="chess_arena" element={<ChessArenaGround />} />

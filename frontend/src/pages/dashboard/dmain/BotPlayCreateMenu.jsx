@@ -4,7 +4,7 @@ import { joinTWClass } from "@pso/util/tailwind";
 import { BotPlayForm } from "@pso/components/form/bot-play";
 
 /**
- * @param {import("../../../util/jjsx").JSXProps} param0
+ * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function BotPlayCreateMenu({ className = "", ...opt }) {
   return (

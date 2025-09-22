@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { twJoin, twMerge } from "tailwind-merge";
 
 /**

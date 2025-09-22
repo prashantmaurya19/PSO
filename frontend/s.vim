@@ -33,39 +33,49 @@ badd +38 src/components/chess-arena/chess-board/promotion-piece-overlay.jsx
 badd +53 src/components/chess-arena/chess-board/winner-banner-overlay.jsx
 badd +57 src/components/loader/chess-board/index.jsx
 badd +31 src/components/chess-arena/index.jsx
-badd +30 src/store/feature/chess-data/index.js
-badd +1 src/store/index.js
+badd +87 src/store/feature/chess-data/index.js
+badd +9 src/store/index.js
 badd +94 src/components/chess-arena/player-panel/index.jsx
 badd +60 src/util/time.js
 badd +26 src/util/log.js
 badd +4 src/components/debug/overlay/duration-overlay/index.jsx
-badd +6 jsconfig.json
+badd +14 jsconfig.json
 badd +8 src/components/debug/overlay/fen-overlay/index.jsx
 badd +7 src/util/event.js
 badd +63 src/util/astring.js
 badd +19 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/telescope.lua
 badd +1680 node_modules/@types/react/index.d.ts
-badd +76 src/pages/dashboard/dmain/GameDurationMenu.jsx
-badd +26 src/pages/dashboard/dmain/index.jsx
+badd +1 src/pages/dashboard/dmain/GameDurationMenu.jsx
+badd +13 src/pages/dashboard/dmain/index.jsx
 badd +68 src/components/buttons/dmenu-button/index.jsx
 badd +8 src/components/icon/dashboard/index.jsx
 badd +27 src/util/cache.js
-badd +11 src/pages/dashboard/index.jsx
+badd +14 src/pages/dashboard/index.jsx
 badd +6 src/util/astring.test.js
-badd +6 src/util/acookie.js
-badd +23 src/util/requests.js
+badd +102 src/util/acookie.js
+badd +36 src/util/requests.js
+badd +39 src/store/feature/sockjs-socket/socket.js
+badd +1 src/store/feature/sockjs-socket/index.js
+badd +183 src/util/socket.js
+badd +1 src/pages/dashboard/dtooltip-menu/index.jsx
+badd +13 src/pages/dashboard/dmain/DashboardInitializationPage/index.jsx
+badd +7 src/pages/dashboard/dmain/BotPlayCreateMenu.jsx
+badd +56 src/pages/dashboard/dmain/DashboardInitializationPage/initializer.jsx
+badd +27 src/components/loader/form/index.jsx
+badd +21 src/App.jsx
+badd +19 src/store/feature/initialization-data/index.js
+badd +2 src/pages/dashboard/dmain/DashboardInitializationPage/security.jsx
+badd +1 src/pages/dashboard/dmain/DashboardInitializationPage/security-task.jsx
+badd +9 src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
 argglobal
 %argdel
-edit src/util/acookie.js
+edit src/pages/dashboard/dmain/DashboardInitializationPage/initializer.jsx
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
-wincmd _ | wincmd |
-vsplit
-2wincmd h
-wincmd w
+1wincmd h
 wincmd w
 let &splitbelow = s:save_splitbelow
 let &splitright = s:save_splitright
@@ -76,9 +86,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 52 + 79) / 159)
-exe 'vert 2resize ' . ((&columns * 53 + 79) / 159)
-exe 'vert 3resize ' . ((&columns * 52 + 79) / 159)
+exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
+exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 argglobal
 setlocal foldmethod=manual
 setlocal foldexpr=0
@@ -90,44 +99,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 19) / 38)
+let s:l = 56 - ((18 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 6
-normal! 038|
+keepjumps 56
+normal! 07|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
 argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/util/requests.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/util/requests.js | else | edit ~/Documents/coding/PSO/frontend/src/util/requests.js | endif
+if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx | else | edit ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx | endif
 if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/frontend/src/util/requests.js
+  silent file ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
 endif
-balt ~/Documents/coding/PSO/frontend/src/store/feature/component-data/index.js
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 23 - ((16 * winheight(0) + 19) / 38)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 23
-normal! 09|
-lcd ~/Documents/coding/PSO/frontend
-wincmd w
-argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/jsconfig.json", ":p")) | buffer ~/Documents/coding/PSO/frontend/jsconfig.json | else | edit ~/Documents/coding/PSO/frontend/jsconfig.json | endif
-if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/frontend/jsconfig.json
-endif
-balt ~/Documents/coding/PSO/frontend/src/util/requests.js
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -143,12 +127,11 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 11
-normal! 030|
+normal! 09|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
-exe 'vert 1resize ' . ((&columns * 52 + 79) / 159)
-exe 'vert 2resize ' . ((&columns * 53 + 79) / 159)
-exe 'vert 3resize ' . ((&columns * 52 + 79) / 159)
+exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
+exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -164,7 +147,6 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

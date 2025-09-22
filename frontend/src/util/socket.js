@@ -3,10 +3,10 @@ import SockJS from "sockjs-client";
 
 class MessageHandler {
   static decoder = new TextDecoder("utf-8"); // Specify the encoding
+  #msg = "";
   /**
    * @param {object} msg - message object in onSubscribe functions
    */
-  #msg = "";
   constructor(msg) {
     /**
      * @type {string}
@@ -30,7 +30,7 @@ class MessageHandler {
 }
 
 /**
- * @typedef {(Function):Function} JSDecorator
+ * @typedef {function(Function):Function} JSDecorator
  * @typedef {function(string,MessageHandler):void} onSubscribeFunction
  */
 export class SocketHandler {
@@ -96,9 +96,10 @@ export class SocketHandler {
         e.topic,
         this.stomp_client.subscribe(
           e.topic,
+          // @ts-ignore
           e.onSubscribe == undefined
             ? this.default_onSubscribeHandler
-            : this.#attachOnSubscribeDecorator(e.onSubscribe),
+            : this.#attachOnSubscribeDecorator(e.onSubscribe, e.topic),
         ),
       );
     });
@@ -133,8 +134,8 @@ export class SocketHandler {
 
   /**
    * @param {string} url - url
-   * @param {function():void} onConnect - callback for onConnect
-   * @param {function():void} onDisconnect - callback for onDisconnect
+   * @param {function(...object):void} onConnect - callback for onConnect
+   * @param {function(...object):void} onDisconnect - callback for onDisconnect
    */
   connect(url, onConnect, onDisconnect) {
     if (this.socket != null) return;
@@ -156,6 +157,7 @@ export class SocketHandler {
       }),
     );
 
+    // @ts-ignore
     this.stomp_client.onDisconnect = this.#attachSelfToFunction(function () {
       console.log("onDisconnect called");
       this.is_connected = false;
@@ -177,3 +179,5 @@ export class SocketHandler {
     this.deactivate();
   }
 }
+
+export const socket = new SocketHandler();

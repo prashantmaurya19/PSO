@@ -5,7 +5,7 @@
  * @property {RequestInit} param
  */
 
-import { setCookie } from "./acookie";
+import { ACookie } from "./acookie";
 
 class ResponseHandler {
   /**
@@ -21,7 +21,8 @@ class ResponseHandler {
    * @returns {ResponseHandler}
    */
   storeInCookie(cookie_name, name) {
-    if (this.data[name] != undefined) setCookie(cookie_name, this.data[name]);
+    if (this.data[name] != undefined)
+      ACookie.setCookie(cookie_name, this.data[name]);
     return this;
   }
 }
