@@ -56,7 +56,7 @@ function IntializationProcessBanner({ className, ...a }) {
       }
       dispatch(taskCompleted());
     })
-    .catch(() => dispatch(taskFailed()));
+    .catch(() => navigate("/dashboard/"));
   return (
     <div
       {...a}

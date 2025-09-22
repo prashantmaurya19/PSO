@@ -66,7 +66,8 @@ badd +21 src/App.jsx
 badd +19 src/store/feature/initialization-data/index.js
 badd +2 src/pages/dashboard/dmain/DashboardInitializationPage/security.jsx
 badd +1 src/pages/dashboard/dmain/DashboardInitializationPage/security-task.jsx
-badd +9 src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
+badd +11 src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
+badd +1 .gitignore
 argglobal
 %argdel
 edit src/pages/dashboard/dmain/DashboardInitializationPage/initializer.jsx
@@ -108,9 +109,9 @@ normal! 07|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
 argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx | else | edit ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx | endif
+if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/util/acookie.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/util/acookie.js | else | edit ~/Documents/coding/PSO/frontend/src/util/acookie.js | endif
 if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/frontend/src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
+  silent file ~/Documents/coding/PSO/frontend/src/util/acookie.js
 endif
 setlocal foldmethod=manual
 setlocal foldexpr=0
@@ -122,12 +123,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 11 - ((10 * winheight(0) + 19) / 38)
+let s:l = 35 - ((17 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 11
-normal! 09|
+keepjumps 35
+normal! 059|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)

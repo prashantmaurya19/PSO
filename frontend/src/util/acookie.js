@@ -1,4 +1,11 @@
 import { splice } from "./astring";
+import { pmlog } from "./log";
+
+if (document == undefined) {
+  var document = { cookie: "" };
+}
+
+export const d = document;
 
 export class ACookie {
   /** return true if cookie exits otherwise false
@@ -15,7 +22,8 @@ export class ACookie {
   static getCookie(name) {
     // because unescape has been deprecated, replaced with decodeURI
     //return unescape(dc.substring(begin + prefix.length, end));
-    return this.getInfo(name).value;
+
+    return this.getInfo(name)?.value;
   }
 
   /**
@@ -32,7 +40,23 @@ export class ACookie {
    */
   static updateCookie(name, value) {
     const info = this.getInfo(name);
+    if (info == undefined) return;
     document.cookie = splice(document.cookie, info.start, info.length, value);
+  }
+
+  /**
+   * @param {string} name
+   */
+  static deleteCookie(name) {
+    const info = this.getInfo(name);
+    document.cookie = splice(
+      document.cookie,
+      info.start - name.length,
+      info.length,
+      "",
+    )
+      .replace(/;;/g, ";")
+      .replace(/^;/g, "");
   }
 
   /**
@@ -46,22 +70,17 @@ export class ACookie {
      */
     let res = { start: -1, end: -1, value: "", length: 0 };
     let dc = document.cookie;
-    let prefix = name + "=";
-    let begin = dc.indexOf("; " + prefix),
-      end;
-    if (begin == -1) {
-      begin = dc.indexOf(prefix);
-      if (begin != 0) return res;
-    } else {
-      begin += 2;
-      end = document.cookie.indexOf(";", begin);
-      if (end == -1) {
-        end = dc.length;
-      }
+    const regex = new RegExp(`(${name})\\s*=\\s*(\\w+)\\s*;`, "gi");
+    const result = regex.exec(dc);
+    if (result == undefined) return;
+
+    res.start = result.index + name.length + 1;
+    res.end = dc.length - result.index + name.length;
+    res.value = decodeURI(dc.substring(res.start, res.end));
+    if (res.value.charAt(res.value.length - 1) == ";") {
+      res.end--;
+      res.value = splice(res.value, res.value.length - 1, 1, "");
     }
-    res.start = begin + prefix.length;
-    res.end = end;
-    res.value = decodeURI(dc.substring(begin + prefix.length, end));
     res.length = res.value.length;
     return res;
   }
@@ -100,4 +119,11 @@ export function hasCookie(name) {
  */
 export function updateCookie(name, value) {
   return ACookie.updateCookie(name, value);
+}
+
+/**
+ * @param {CookieNames} name
+ */
+export function deleteCookie(name) {
+  return ACookie.deleteCookie(name);
 }

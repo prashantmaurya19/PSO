@@ -5,7 +5,6 @@
       "@pso/*": ["src/*"],
       "@pso/components/*": ["src/components/*"],
       "@pso/util/*": ["src/util/*"],
-      "@pso/pages/*": ["src/pages/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react",

@@ -5,7 +5,6 @@ import com.PlayChess.com.Authentication.Response.AuthResponse;
 import com.PlayChess.com.Authentication.Response.VerifiedClient;
 import com.PlayChess.com.Authentication.Services.UserService;
 import com.PlayChess.com.Authentication.Utils.JwtUtil;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ public class UserController {
   public ResponseEntity<VerifiedClient> verify() {
     Authentication au = SecurityContextHolder.getContext().getAuthentication();
     return new ResponseEntity<VerifiedClient>(
-        new VerifiedClient(au.getName(), 1, List.of("")), HttpStatus.OK);
+        new VerifiedClient(au.getName(), HttpStatus.OK.value()), HttpStatus.OK);
   }
 
   @PostMapping("/login")

@@ -50,7 +50,7 @@ export function insertAt(s, index, payload) {
  * @return {string}
  */
 export function splice(s, index, del, payload) {
-  return s.slice(0, index) + payload + s.slice(index + Math.abs(del));
+  return s.slice(0, index) + payload + s.slice(index + del);
 }
 
 /** return new reverse string

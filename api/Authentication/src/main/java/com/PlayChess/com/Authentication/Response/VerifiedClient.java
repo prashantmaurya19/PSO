@@ -11,5 +11,4 @@ import lombok.RequiredArgsConstructor;
 public class VerifiedClient {
   public String username;
   public int status;
-  public List<String> roles;
 }

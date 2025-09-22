@@ -7,9 +7,8 @@ import com.PlayChess.com.Authentication.Services.UserService;
 import com.PlayChess.com.Authentication.Utils.CookiesUtil;
 import com.PlayChess.com.Authentication.Utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-
 import java.rmi.ServerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/old")
 public class InterMicroServiceController {
-  @Autowired
-  private CookiesUtil cu;
+  @Autowired private CookiesUtil cu;
 
-  @Autowired
-  private UserService us;
-  @Autowired
-  private JwtUtil ju;
+  @Autowired private UserService us;
+  @Autowired private JwtUtil ju;
 
   /** it verifies user with cookies */
   @GetMapping("/verify/v2")
@@ -38,11 +34,13 @@ public class InterMicroServiceController {
       String username = ju.extractUsername(cu.extractJwtCookies(request));
       User ud = us.getUserByUsername(username);
       return new ResponseEntity<VerifiedClient>(
-          new VerifiedClient(ud.getUsername(), HttpStatus.OK.value(), ud.getRoles()), HttpStatus.OK);
+          new VerifiedClient(ud.getUsername(), HttpStatus.OK.value()), HttpStatus.OK);
     } catch (CookieNotFound e) {
-      return new ResponseEntity<>(new VerifiedClient("", HttpStatus.BAD_REQUEST.value(), null), HttpStatus.OK);
+      return new ResponseEntity<>(
+          new VerifiedClient("", HttpStatus.BAD_REQUEST.value()), HttpStatus.OK);
     } catch (Exception e) {
-      return new ResponseEntity<>(new VerifiedClient("", HttpStatus.UNAUTHORIZED.value(), null), HttpStatus.OK);
+      return new ResponseEntity<>(
+          new VerifiedClient("", HttpStatus.UNAUTHORIZED.value()), HttpStatus.OK);
     }
   }
 
