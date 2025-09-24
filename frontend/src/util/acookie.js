@@ -1,9 +1,10 @@
 import { splice } from "./astring";
 import { pmlog } from "./log";
 
-if (document == undefined) {
-  var document = { cookie: "" };
-}
+// if (document == undefined) {
+//   pmlog("i that u")
+//   var document = { cookie: "" };
+// }
 
 export const d = document;
 
@@ -31,7 +32,7 @@ export class ACookie {
    * @param {string} value
    */
   static setCookie(name, value) {
-    document.cookie += `${name}=${value};`;
+    document.cookie = name + "=" + value + "; Path=/;";
   }
 
   /**
@@ -49,28 +50,20 @@ export class ACookie {
    */
   static deleteCookie(name) {
     const info = this.getInfo(name);
-    document.cookie = splice(
-      document.cookie,
-      info.start - name.length,
-      info.length,
-      "",
-    )
-      .replace(/;;/g, ";")
-      .replace(/^;/g, "");
+    document.cookie =
+      name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
   }
 
   /**
-   * @typedef {{start:number,end:number,length:number,value:string}} CookieInfo
+   * @typedef {{start:number,end:number,length:number,value:string,match:string}} CookieInfo
    * @param {string} name
    * @returns {CookieInfo}
    */
   static getInfo(name) {
-    /**
-     * @type {CookieInfo}
-     */
-    let res = { start: -1, end: -1, value: "", length: 0 };
+    /** @type {CookieInfo} */
+    let res = { start: -1, end: -1, value: "", length: 0, match: "" };
     let dc = document.cookie;
-    const regex = new RegExp(`(${name})\\s*=\\s*(\\w+)\\s*;`, "gi");
+    const regex = new RegExp(`(${name})\\s*=\\s*([^;]+)\\s*[;]{0,1}`, "gi");
     const result = regex.exec(dc);
     if (result == undefined) return;
 
@@ -82,6 +75,7 @@ export class ACookie {
       res.value = splice(res.value, res.value.length - 1, 1, "");
     }
     res.length = res.value.length;
+    res.match = result[0];
     return res;
   }
 }
@@ -95,14 +89,16 @@ export class ACookie {
  * @param {string} value
  */
 export function setCookie(name, value) {
-  return ACookie.setCookie(name, value);
+  return hasCookie(name)
+    ? updateCookie(name, value)
+    : ACookie.setCookie(name, value);
 }
 
 /**
  * @param {CookieNames} name
  */
 export function getCookie(name) {
-  return ACookie.getCookie(name);
+  return pmlog(ACookie.getCookie(name), document.cookie, "getCookie");
 }
 
 /** return true if cookie exits otherwise false
@@ -110,7 +106,7 @@ export function getCookie(name) {
  * @returns {boolean}
  */
 export function hasCookie(name) {
-  return getCookie(name) != null;
+  return ACookie.hasCookie(name);
 }
 
 /** return true if cookie exits otherwise false

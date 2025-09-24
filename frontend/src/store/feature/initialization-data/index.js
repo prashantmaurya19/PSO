@@ -4,7 +4,6 @@ const initialState = {
   completed_task: 0,
   failed: false,
   task: {
-    name: "",
     /** @type {import("@pso/pages/dashboard/dmain/DashboardInitializationPage/initializer").TaskStatus} */
     status: "processing",
   },
@@ -14,6 +13,11 @@ export const initializationSlice = createSlice({
   name: "initialization-data",
   initialState,
   reducers: {
+    initializeInitData(state) {
+      state.completed_task = 0;
+      state.failed = false;
+      state.task.status = "processing";
+    },
     taskCompleted(state, _) {
       state.completed_task++;
     },
@@ -27,7 +31,11 @@ export const initializationSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { taskCompleted, taskFailed, taskUpdateTaskStatus } =
-  initializationSlice.actions;
+export const {
+  taskCompleted,
+  taskFailed,
+  taskUpdateTaskStatus,
+  initializeInitData,
+} = initializationSlice.actions;
 
 export const initializationSliceReducer = initializationSlice.reducer;

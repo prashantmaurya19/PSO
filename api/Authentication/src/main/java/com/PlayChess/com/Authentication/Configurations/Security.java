@@ -1,5 +1,6 @@
 package com.PlayChess.com.Authentication.Configurations;
 
+import com.PlayChess.com.Authentication.Filter.JwtFilter;
 import com.PlayChess.com.Authentication.Services.UserLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,19 +15,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class Security {
 
   @Autowired public UserLoaderService uloaderservice;
+  @Autowired private JwtFilter jwtFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests(
         request ->
             request
-                .requestMatchers("/health/**", "/register/**")
+                .requestMatchers("/health/**", "/register/**", "/user/**")
                 .permitAll()
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
@@ -35,7 +38,7 @@ public class Security {
     http.csrf(csrf -> csrf.disable());
     http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     http.httpBasic(Customizer.withDefaults());
-
+    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 

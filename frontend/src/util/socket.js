@@ -85,7 +85,7 @@ export class SocketHandler {
   }
 
   /**
-   * @param {...{topic:string,onSubscribe:onSubscribeFunction|undefined}} endpoints - endpoints to subscribe
+   * @param {...Partial<{topic:string,onSubscribe:onSubscribeFunction|undefined}>} endpoints - endpoints to subscribe
    */
   subscribe(...endpoints) {
     if (!this.isConnected()) return;

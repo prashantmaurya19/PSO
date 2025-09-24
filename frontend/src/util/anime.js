@@ -1,19 +1,20 @@
+// @ts-nocheck
 /**
  * this utility is create because of unsatisfactory result by the animator.js
  * animator.js lack costomization and combination with diffrent parts
  */
 
 import gsap from "gsap";
-// @ts-nocheck
 
 /**
- * @typedef {"from"|"to"} AnimationDirectionLiterals
+ * @typedef {"from"|"to"|"fromto"} AnimationDirectionLiterals
  */
 
 /**
  * @typedef {object} AnimationObject
  * @property {AnimationDirectionLiterals} direction
  * @property {gsap.TweenVars} animation
+ * @property {gsap.TweenVars} [to]
  * @property {string|HTMLElement|gsap.TweenTarget} e
  */
 
@@ -156,6 +157,9 @@ class AnimeExecutor {
     } else if (e.direction == "from") {
       if (tl == null) return g.from(e.e, e.animation);
       g = g.from(e.e, e.animation);
+    } else if (e.direction == "fromto") {
+      if (tl == null) return g.from(e.e, e.animation);
+      g = g.fromTo(e.e, e.animation, e.to);
     }
     return g;
   }
@@ -379,7 +383,7 @@ class Anime {
   /**
    * @param {AnimationDirectionLiterals} direction
    * @param {gsap.TweenTarget} e - target element for animation
-   * @param {gsap.TweenVars} animation - animation object
+   * @param {gsap.TweenVars} user_animation - animation object
    * @returns {Anime}
    */
   formFieldAll(direction, e, user_animation) {
@@ -401,7 +405,7 @@ class Anime {
 
   /**
    * @param {gsap.TweenTarget} e - target element for animation
-   * @param {gsap.TweenVars} animation - animation object
+   * @param {gsap.TweenVars} user_animation - animation object
    * @returns {Anime}
    */
   selfContainedLoaderShow(e = ".SelfContainedLoader", user_animation) {
@@ -421,7 +425,7 @@ class Anime {
 
   /**
    * @param {gsap.TweenTarget} e - target element for animation
-   * @param {gsap.TweenVars} animation - animation object
+   * @param {gsap.TweenVars} user_animation - animation object
    * @returns {Anime}
    */
   selfContainedLoaderHide(e = ".SelfContainedLoader", user_animation) {
@@ -435,6 +439,52 @@ class Anime {
         },
         user_animation,
       ),
+    });
+    return this;
+  }
+
+  /**
+   * @param {gsap.TweenTarget} e - target element for animation
+   * @param {gsap.TweenVars} user_animation - animation object
+   * @returns {Anime}
+   */
+  initializationProcessBannerFadeOut(e, user_animation) {
+    this.#anime_handler.handleAnimation({
+      e,
+      direction: "to",
+      animation: this.#handleAnimationObject(
+        {
+          opacity: 0,
+          y: 10,
+          duration: 1,
+        },
+        user_animation,
+      ),
+    });
+    return this;
+  }
+
+  /**
+   * @param {gsap.TweenTarget} e - target element for animation
+   * @param {gsap.TweenVars} user_animation - animation object
+   * @returns {Anime}
+   */
+  initializationProcessBannerFadeIn(e, user_animation) {
+    this.#anime_handler.handleAnimation({
+      e,
+      direction: "fromto",
+      animation: this.#handleAnimationObject(
+        {
+          opacity: 0,
+          y: 10,
+        },
+        user_animation,
+      ),
+      to: {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+      },
     });
     return this;
   }

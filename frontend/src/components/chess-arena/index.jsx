@@ -5,6 +5,7 @@ import { emit, useListen } from "@pso/util/event";
 import { pmlog } from "@pso/util/log";
 import { useDispatch } from "react-redux";
 import {
+  initializeComponentsData,
   updateChessBoardDuration,
   updateChessBoardFindOponentLoader,
 } from "@pso/store/feature/component-data";
@@ -15,28 +16,23 @@ import { ChessBoard } from "@pso/components/chess-arena/chess-board";
 import { FenOverlay } from "@pso/components/debug/overlay/fen-overlay";
 import { DurationOverlay } from "../debug/overlay/duration-overlay";
 import { MoveListPanel } from "./move-list-panel";
+import { initializeChessBoardData } from "@pso/store/feature/chess-data";
 
 /**
  * @param {import("@pso/util/jjsx").JSXProps} p
  */
 export function ChessArena({ className, ...a }) {
   const dispatch = useDispatch();
-  useListen("GAME_INITIALIZED", (e) => {});
-  useListen("GAME_STARTED", (e) => {
-    dispatch(updateChessBoardFindOponentLoader({ display: false }));
-    /** @type {import("@pso/util/time").DurationCache} */
-    const duration = acache("LAST_GAME_DURATION").localstorage().get().json();
-    if (duration == null) return;
-    pmlog("GAME_STARTED", duration);
-    dispatch(updateChessBoardDuration(duration));
+  useListen("GAME_INITIALIZED", (e) => {
+    dispatch(initializeChessBoardData());
+    dispatch(initializeComponentsData());
   });
-  // setTimeout(() => {
-  //   // this is for testing
-  //   dispatch(updateChessBoardFindOponentLoader({ display: false }));
-  // }, 1000);
+  useListen("GAME_STARTED", (e) => {
+    // once oponent found here
+    // will thing initialize for game
+  });
   useEffect(() => {
     emit("GAME_INITIALIZED", {});
-    emit("GAME_STARTED", {});
   }, []);
   return (
     <div

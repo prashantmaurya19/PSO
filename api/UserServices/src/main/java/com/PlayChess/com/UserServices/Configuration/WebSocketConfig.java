@@ -64,7 +64,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 }
               }
             })
-        .setAllowedOrigins("http://localhost:7000/")
+        .setAllowedOrigins("http://localhost:7000/","http://localhost:5173/")
         .withSockJS()
         .setSuppressCors(true);
   }

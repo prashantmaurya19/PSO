@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
 import { join } from "@pso/util/tailwind";
 import { anime } from "@pso/util/anime";
@@ -25,12 +26,6 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
       .formFieldAll("from", ".RegistrationFormFields")
       .endTimeline()
       .build();
-
-    // await getAnimation(
-    //   "login-form-open",
-    //   "#register-form-container",
-    //   ".RegistrationFormFields",
-    // ).get();
   });
 
   const username = useRef();
@@ -151,7 +146,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
             res = await resp.json();
             response(res).storeInCookie("token_id", "token");
             await anime().selfContainedLoaderHide().build();
-          navigate("/dashboard", { auth: true });
+            navigate("/dashboard", { auth: true });
           } else {
             await anime()
               .timeline()

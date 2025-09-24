@@ -20,7 +20,7 @@ export function ChessArenaGround({ className = "", ...a }) {
     >
       <div
         className={joinTWClass(
-          "h-[97%] w-[60%] debug",
+          "h-[97%] w-[60%]",
           "flex justify-center items-center",
           "transform-[translate(18%,0)]",
         )}

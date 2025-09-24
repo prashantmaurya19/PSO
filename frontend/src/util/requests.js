@@ -44,14 +44,12 @@ class Requests {
    * @param {string} endpoint
    */
   constructor(endpoint = "") {
-    /**
-     * @type {RequestObject}
-     */
+    /** @type {RequestObject} */
     this.request_object = {
       url: "http://localhost:8080",
       // url: "https://4b768640-cfb0-4023-9359-50797410da67.mock.pstmn.io",
       endpoint: endpoint,
-      param: { method: "GET" },
+      param: { method: "GET", credentials: "include" },
     };
   }
 

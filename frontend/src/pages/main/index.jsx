@@ -3,7 +3,6 @@ import { LoginButton, SignUpButton } from "@pso/components/buttons/navbutton";
 import { LeftSection, RightSlogan } from "@pso/pages/main/sections";
 import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
-import { getAnimation } from "@pso/util/animator";
 import NavBar from "@pso/components/header/navbar";
 import { anime } from "@pso/util/anime";
 import { useRef } from "react";
@@ -13,7 +12,6 @@ export default function IndexPage() {
   const chessboard = useRef(null);
 
   const { contextSafe } = useGSAP(async () => {
-    // await getAnimation("main.open").get();
     await anime()
       .mainRightSlogan("from", ".main-right")
       .mainLeftChessBoard("from", "#main-left-chess_board")

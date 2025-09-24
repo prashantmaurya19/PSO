@@ -12,6 +12,8 @@ import { request, response } from "@pso/util/requests";
 import { useNavigate } from "react-router-dom";
 import { getCookie, setCookie } from "@pso/util/acookie";
 import { pmlog } from "@pso/util/log";
+import { credintials } from "@pso/var-data/debug-data";
+import { profile_name } from "@pso/var-data/profile-data";
 
 /**
  * @param {{disable:boolean}&import("react").HTMLAttributes} param0
@@ -53,6 +55,7 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
         inputProp={{
           ref: username_element,
           type: "text",
+          defaultValue: credintials[profile_name].username,
           placeholder: "Enter Username",
           className: "p-3",
         }}
@@ -63,6 +66,7 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
         inputProp={{
           ref: password_element,
           type: "password",
+          defaultValue: credintials[profile_name].password,
           placeholder: "Enter Password",
           className: "p-3",
         }}
@@ -86,24 +90,23 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
                 .limit(4, 16)
                 .and()
                 .get();
-              const resp = await request("/ur/user/login")
+              const resp = await request("/ur/login")
                 .post()
                 .httpBasic(form_data.username, form_data.password)
                 .execute();
               const res = await resp.json();
-              pmlog(res);
-              setCookie("token_id", res.token);
+              if (res.token) setCookie("token_id", res.token);
             }
+            await anime()
+              .timeline()
+              .formFieldAll("to", ".fields")
+              .formContainerHide("#login-form-container")
+              .endTimeline()
+              .build();
+            navigate("/dashboard", { state: { auth: true } });
           } catch (error) {
             return console.log(error);
           }
-          await anime()
-            .timeline()
-            .formFieldAll("to", ".fields")
-            .formContainerHide("#login-form-container")
-            .endTimeline()
-            .build();
-          navigate("/dashboard", { state: { auth: true } });
         })}
         className={join("fields", `${element_width} h-[5vh]`)}
       />

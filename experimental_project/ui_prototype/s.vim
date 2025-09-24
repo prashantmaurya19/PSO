@@ -3,7 +3,7 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
-cd ~/Documents/coding/PSO/test_sockjs_project
+cd ~/Documents/coding/PSO/experimental_project/ui_prototype
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
@@ -13,14 +13,12 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +19 src/App.jsx
-badd +28 src/components/loader.jsx
-badd +8 src/suits/websocket-endpoint-suit.jsx
+badd +47 src/suits/websocket-endpoint-suit.jsx
 argglobal
 %argdel
-edit src/components/loader.jsx
+edit src/suits/websocket-endpoint-suit.jsx
 argglobal
-balt src/App.jsx
+balt src/suits/websocket-endpoint-suit.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -31,12 +29,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 28 - ((26 * winheight(0) + 19) / 38)
+let s:l = 47 - ((28 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 28
-normal! 041|
+keepjumps 47
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

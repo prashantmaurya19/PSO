@@ -1,5 +1,7 @@
+//@ts-nocheck
 import { twMerge } from "tailwind-merge";
 import { joinTWClass } from "@pso/util/tailwind";
+import { pmlog } from "@pso/util/log";
 
 export function RememberMe({ className = "" }) {
   return (
@@ -10,7 +12,7 @@ export function RememberMe({ className = "" }) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXProps  & {inputProp:import("../../../util/jjsx").JSXProps}} p
+ * @param {import("@pso/util/jjsx").JSXProps  & {inputProp:import("@pso/util/jjsx").JSXProps}} p
  */
 export function UsernameField(p) {
   return (
@@ -33,12 +35,21 @@ export function UsernameField(p) {
 }
 
 /**
- * @param {import("../../../util/jjsx").JSXProps  & {inputProp:import("../../../util/jjsx").JSXProps}} p
+ * @param {import("@pso/util/jjsx").JSXProps  & {inputProp:import("@pso/util/jjsx").JSXProps}} p
  */
 export function PasswordField(p) {
   return (
     <InputField
       {...p}
+      onClick={(e) => {
+        e.currentTarget.firstChild.setAttribute(
+          "type",
+          e.currentTarget.firstChild.getAttribute("type") == "password"
+            ? "text"
+            : "password",
+        );
+        e.preventDefault();
+      }}
       icon={
         <button
           className={joinTWClass(
@@ -97,6 +108,7 @@ export function InputField({ className = "", inputProp, icon, ...args }) {
               "text-index-second",
               "p-3",
               "grow-1",
+              "focus:outline-none",
             ),
             inputProp.className,
           ),

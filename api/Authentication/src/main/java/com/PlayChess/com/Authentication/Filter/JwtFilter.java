@@ -35,15 +35,19 @@ public class JwtFilter extends OncePerRequestFilter {
     try {
       jwt = cu.extractJwtCookies(request);
       username = jwtUtil.extractUsername(jwt);
+      log.info("authenticatied username=" + username);
     } catch (CookieNotFound e) {
+      log.info("not a auth request");
       chain.doFilter(request, response);
       return;
     } catch (Exception e) {
-      response.sendError(HttpStatus.UNAUTHORIZED.value(), "Error Message");
+      log.info("not a auth request " + e.getMessage());
+      response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
       return;
     }
 
     if (username == null) {
+      log.info("not a auth request ");
       response.sendError(HttpStatus.UNAUTHORIZED.value(), "Error Message");
       return;
     }

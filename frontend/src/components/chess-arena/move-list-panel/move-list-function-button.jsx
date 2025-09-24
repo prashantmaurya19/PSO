@@ -55,54 +55,67 @@ export function MoveListButton({ icon = null, text = "", className, ...a }) {
  * @param {import("@pso/util/jjsx").JSXProps} p
  */
 export function GameStateViceMoveListFunctionButtons({ ...a }) {
+  /**  @type {import("@pso/util/chess").GameStateName} */
   const state = useSelector((s) => s.chess.game_state);
   const b_info = acache("LAST_GAME_DURATION").localstorage().get().json();
   return (
     <MoveListFunctionButtons {...a}>
-      {state == "playing" ? (
-        <>
-          <MoveListButton text="1/2 Draw" />
-          <MoveListButton
-            icon={
-              <IconWraper className="h-[70%] aspect-square">
-                <FontAwesomeIcon
-                  icon={faFlag}
-                  rotation={315}
-                  style={{ color: "#ffffff" }}
+      {(function () {
+        switch (state) {
+          case "playing": {
+            return (
+              <>
+                <MoveListButton text="1/2 Draw" />
+                <MoveListButton
+                  icon={
+                    <IconWraper className="h-[70%] aspect-square">
+                      <FontAwesomeIcon
+                        icon={faFlag}
+                        rotation={315}
+                        style={{ color: "#ffffff" }}
+                      />
+                    </IconWraper>
+                  }
+                  text="Resign"
                 />
-              </IconWraper>
-            }
-            text="Resign"
-          />
-        </>
-      ) : null}
-      {state == "start" ? (
-        <>
-          <MoveListButton
-            icon={
-              <IconWraper className="h-[50%] aspect-square">
-                <FontAwesomeIcon icon={faXmark} />{" "}
-              </IconWraper>
-            }
-            text="Abort"
-          />
-        </>
-      ) : null}
-      {state == "end" ? (
-        <>
-          <MoveListButton
-            className="text-2xl"
-            icon={
-              <IconWraper className="h-[50%] aspect-square">
-                <FontAwesomeIcon
-                  icon={b_info.type == "rapid" ? faBoltLightning : faStopwatch}
+              </>
+            );
+          }
+          case "end": {
+            return (
+              <>
+                <MoveListButton
+                  className="text-2xl"
+                  icon={
+                    <IconWraper className="h-[50%] aspect-square">
+                      <FontAwesomeIcon
+                        icon={
+                          b_info.type == "rapid" ? faBoltLightning : faStopwatch
+                        }
+                      />
+                    </IconWraper>
+                  }
+                  text={b_info.label}
                 />
-              </IconWraper>
-            }
-            text={b_info.label}
-          />
-        </>
-      ) : null}
+              </>
+            );
+          }
+          default: {
+            return (
+              <>
+                <MoveListButton
+                  icon={
+                    <IconWraper className="h-[50%] aspect-square">
+                      <FontAwesomeIcon icon={faXmark} />{" "}
+                    </IconWraper>
+                  }
+                  text="Abort"
+                />
+              </>
+            );
+          }
+        }
+      })()}
     </MoveListFunctionButtons>
   );
 }

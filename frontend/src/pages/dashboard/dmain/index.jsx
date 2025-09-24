@@ -6,13 +6,18 @@ import {
   NewBotPlayMenuButon,
   NewGamePlayMenuButon,
 } from "@pso/components/buttons/dmenu-button";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { pmlog } from "@pso/util/log";
 
 /**
  * @param {import("@pso/util/jjsx").JSXProps} param0
  */
 export function StartUpMenu({ className = "", ...opt }) {
+  const location = useLocation();
   const navigate = useNavigate();
+  if (location.state == undefined) {
+    return <Navigate to={"/dashboard"} />;
+  }
   return (
     <ContextContainer
       {...opt}
@@ -39,4 +44,3 @@ export function StartUpMenu({ className = "", ...opt }) {
     </ContextContainer>
   );
 }
-

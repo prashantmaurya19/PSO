@@ -31,7 +31,7 @@ class StorageHandler {
    * @returns {CacheGetHelper}
    */
   get() {
-    return new CacheGetHelper(this.#storage.getItem(this.#att_name));
+    return new CacheGetHelper(this.#storage.getItem(this.#att_name), null);
   }
 
   /** return default if cache is not exists
@@ -73,7 +73,7 @@ class CacheGetHelper {
   #payload;
   /**
    * @param {string} v
-   * @param {object} [d=null]
+   * @param {string} [d=null]
    */
   constructor(v, d = null) {
     this.#payload = v;

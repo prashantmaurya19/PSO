@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { combine } from "@pso/util/aobject";
 import { Creator } from "@pso/util/chess";
+import { acache } from "@pso/util/cache";
+import { TIME_DURATION_CATAGORIES } from "@pso/util/time";
 
 const initialState = {
   // NOTE i want to rename chess_board to chess_arena
@@ -11,13 +13,14 @@ const initialState = {
       info: Creator.getNewChessPosition(),
     },
     /**
-     * @type {{time_decrement_in_interval:number,duration:import("@pso/util/time").DurationCache|undefined}&Record<import("../chess-data").PlayerType,{clock:import("@pso/util/time").MiliSecond}>}
+     * @type {{state:boolean,time_decrement_in_interval:number,duration:import("@pso/util/time").DurationCache|undefined}&Record<import("../chess-data").PlayerType,{clock:import("@pso/util/time").MiliSecond}>}
      */
     clock_info_panel: {
       p: { clock: 0 },
       o: { clock: 0 },
       duration: undefined,
       time_decrement_in_interval: -100,
+      state: false,
     },
     promotion_piece_overlay: {
       display: false,
@@ -43,10 +46,10 @@ const initialState = {
   },
   debug: {
     fen_overlay: {
-      display: true,
+      display: false,
     },
     duration_overlay: {
-      display: true,
+      display: false,
     },
   },
 };
@@ -55,6 +58,20 @@ export const componentDataSlice = createSlice({
   name: "component-data",
   initialState,
   reducers: {
+    initializeComponentsData(state, _) {
+      state.chess_board.self.info = Creator.getNewChessPosition();
+      state.chess_board.loader.display = true;
+      state.chess_board.game_winner_banner_overlay.display = false;
+      state.chess_board.clock_info_panel.duration = acache("LAST_GAME_DURATION")
+        .localstorage()
+        .getOrDefault(JSON.stringify(TIME_DURATION_CATAGORIES[4]))
+        .json();
+      state.chess_board.clock_info_panel.o.clock =
+        state.chess_board.clock_info_panel.duration.time;
+      state.chess_board.clock_info_panel.p.clock =
+        state.chess_board.clock_info_panel.duration.time;
+      state.chess_board.clock_info_panel.state = false;
+    },
     updateMoveListFlip(state, action) {
       state.move_list_panel.flip = action.payload;
     },
@@ -137,5 +154,6 @@ export const {
   updateDebugFenOverlay,
   updateChessBoardDuration,
   changeChessBoardPlayerClockTime,
+  initializeComponentsData,
 } = componentDataSlice.actions;
 export const componentDataSliceReducer = componentDataSlice.reducer;

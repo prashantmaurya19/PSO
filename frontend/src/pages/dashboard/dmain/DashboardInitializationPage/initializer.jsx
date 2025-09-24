@@ -1,15 +1,26 @@
-//@ts-nocheck
+// @ts-nocheck
 import { joinTWClass } from "@pso/util/tailwind";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import { INITIALIZATION_TASK_LIST as tasks } from "./tasks";
+import { INITIALIZATION_TASK_LIST as tasks } from "@pso/var-data/initialization-data";
 import {
+  initializeInitData,
   taskCompleted,
   taskFailed,
   taskUpdateTaskStatus,
 } from "@pso/store/feature/initialization-data";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { anime } from "@pso/util/anime";
+import { deleteCookie } from "@pso/util/acookie";
+import { ApplicationListener } from "@pso/listeners/app-listeners";
+import { pmlog } from "@pso/util/log";
+import { PromotionPieceOverlay } from "@pso/components/chess-arena/chess-board/promotion-piece-overlay";
+import {
+  getInitializerState,
+  initializerOn,
+} from "@pso/var-data/component-data/initializer";
 
 /**
  * @typedef {"done"|"processing"|"failed"} TaskStatus
@@ -44,19 +55,30 @@ function TaskLabel({ text, className, ...a }) {
  * @param {import("@pso/util/jjsx").JSXProps} p
  */
 function IntializationProcessBanner({ className, ...a }) {
-  const completed_task = useSelector((s) => s.initial.completed_task);
-  const navigate = useNavigate();
+  const [completed_task, setCompleteTask] = useState(0);
   const dispatch = useDispatch();
-
-  tasks[completed_task]
-    .config()
-    .then(() => {
-      if (completed_task + 1 == tasks.length) {
-        return navigate("/dashboard/index");
-      }
-      dispatch(taskCompleted());
-    })
-    .catch(() => navigate("/dashboard/"));
+  useEffect(() => {
+    pmlog(completed_task, "IntializationProcessBanner", getInitializerState());
+    if (getInitializerState() && completed_task < tasks.length) {
+      tasks[completed_task]
+        .config()
+        .then(() => {
+          setTimeout(() => setCompleteTask(completed_task + 1), 500);
+        })
+        .catch(() => {
+          ApplicationListener.onLogout();
+          navigate("/login");
+        });
+    }
+    return () => {
+      initializerOn();
+    };
+  }, [completed_task]);
+  if (completed_task == tasks.length) {
+    return (
+      <Navigate to={"/dashboard/index"} state={{ initialization: true }} />
+    );
+  }
   return (
     <div
       {...a}
@@ -65,8 +87,6 @@ function IntializationProcessBanner({ className, ...a }) {
           "w-full h-[30%]",
           "flex justify-around items-center",
           "text-white text-3xl",
-          "relative",
-          "debug",
         ),
         className,
       )}
@@ -86,7 +106,6 @@ export function InitializerContainer({ className, ...a }) {
       {...a}
       className={twMerge(
         joinTWClass(
-          // "w-[40%] h-[40%]",
           "flex justify-start items-center flex-col gap-3",
           "w-[30%] aspect-[1.3]",
           "p-10",

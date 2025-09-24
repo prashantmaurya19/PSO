@@ -6,11 +6,12 @@ import { NavButton, SignUpButton } from "@pso/components/buttons/navbutton";
 import { anime } from "@pso/util/anime";
 import { useGSAP } from "@gsap/react";
 import { hasCookie } from "@pso/util/acookie";
+import { pmlog } from "@pso/util/log";
 
 export default function LoginPage() {
   const { contextSafe } = useGSAP();
   const navigate = useNavigate();
-  if (hasCookie("token_id")) return <Navigate to={"/dashboard"} />;
+  if (pmlog(hasCookie("token_id"))) return <Navigate to={"/dashboard"} />;
   return (
     <div className="h-[100vh] w-[100vw] bg-bg flex justify-center items-center flex-col overflow-hidden">
       <NavBar>

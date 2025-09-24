@@ -1,7 +1,7 @@
 /**
  * @typedef {{capture:boolean,check:boolean,checkmate:boolean,castling:CastlingSide}} TransitionEventInfo
  * @typedef {{from:BoardCellIndex,to:BoardCellIndex,move_info:MotionPathInfo,next:BoardStateInfo,prev:BoardStateInfo,info:object|CastlingInfo,notation_info:TransitionEventInfo}} MotionPathInfoHandlerProp
- * @typedef {"playing"|"start"|"end"} GameStateName
+ * @typedef {"playing"|"start"|"end"|"init"} GameStateName
  * @typedef {"k"|"q"} CastlingSide
  * @typedef {Array<MotionPathInfo>} MoveInfoList
  * @typedef {"diagonal"|"straight"|"knight"} MotionType

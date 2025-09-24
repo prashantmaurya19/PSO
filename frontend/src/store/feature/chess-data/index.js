@@ -17,7 +17,7 @@ import { Creator } from "@pso/util/chess";
  * @type {InitState}
  */
 const initialState = {
-  game_state: "start",
+  game_state: "init",
   players_data: {
     p: {
       name: "xyz",
@@ -44,6 +44,11 @@ export const chessBoardSlice = createSlice({
   name: "chess-data",
   initialState,
   reducers: {
+    initializeChessBoardData(state, _) {
+      state.chess_position = Creator.getNewChessPosition();
+      state.promotion_notation = "";
+      state.game_state = "init";
+    },
     setDataChessBoardFlip(state, action) {
       state.flip = action.payload;
     },
@@ -86,6 +91,7 @@ export const {
   setDataChessBoardPosition,
   setDataChessBoardLastNotation,
   setDataChessBoardGameState,
+  initializeChessBoardData,
 } = chessBoardSlice.actions;
 export const chessBoardSliceReducer = chessBoardSlice.reducer;
 

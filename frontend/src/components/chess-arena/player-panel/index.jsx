@@ -86,7 +86,8 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
   const disabled = pid != turn;
   const dispatch = useDispatch();
   useEffect(() => {
-    if (duration == undefined || state == "end" || disabled) return;
+    if (!clock_info.state || state == "end" || disabled) return;
+
     if (clockTime + dec_time < 0) {
       emit("GAME_ENDED", {});
       dispatch(setDataChessBoardGameState("end"));
@@ -99,7 +100,7 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
     return () => {
       clearTimeout(id);
     };
-  }, [turn, clockTime]);
+  }, [turn, clockTime, clock_info.state]);
   return (
     <InfoPanel
       {...a}
