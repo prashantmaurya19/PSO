@@ -15,4 +15,5 @@ public class GameEvent {
   private String to;
   private String from;
   private String action;
+  private String payload;
 }

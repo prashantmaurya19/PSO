@@ -89,13 +89,14 @@ export class SocketHandler {
 
     endpoints.forEach((e) => {
       if (this.subscribtions.has(e.topic)) return;
+      console.log(e);
       this.subscribtions.set(
         e.topic,
         this.stomp_client.subscribe(
           e.topic,
           e.onSubscribe == undefined
             ? this.default_onSubscribeHandler
-            : this.#attachOnSubscribeDecorator(e.onSubscribe),
+            : this.#attachOnSubscribeDecorator(e.onSubscribe, e.topic),
         ),
       );
     });

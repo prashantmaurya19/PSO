@@ -1,7 +1,7 @@
 package com.PlayChess.com.Authentication.Services;
 
 import com.PlayChess.com.Authentication.Entities.UserEntity;
-import com.PlayChess.com.Authentication.Repositories.Users;
+import com.PlayChess.com.Authentication.Repositories.UsersRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserLoaderService implements UserDetailsService {
-  private final Users ur;
+  private final UsersRepo ur;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

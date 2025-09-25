@@ -71,3 +71,13 @@ export function reverse(s) {
   }
   return res;
 }
+
+/** return a formated string for displaing
+ * playername
+ * @param {string} fname - first name
+ * @param {string} lname - last name
+ * @returns {string}
+ */
+export function formatPlayerName(fname, lname) {
+  return `${fname} ${lname}`;
+}

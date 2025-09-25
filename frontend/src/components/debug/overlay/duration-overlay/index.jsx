@@ -97,7 +97,7 @@ export function DurationOverlay({}) {
           )}
           onKeyPress={(e) => {
             if (e.key == "Enter") {
-              emit("SOCKET_GAME_EVENT_RECIVED", {
+              emit("TEST", {
                 test: dump,
                 response: { jingalala: true },
               });

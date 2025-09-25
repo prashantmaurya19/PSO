@@ -1,11 +1,13 @@
 package com.PlayChess.com.Authentication.Entities;
 
-import com.PlayChess.com.Authentication.Pojo.UserInterface;
+import com.PlayChess.com.Authentication.TransLayer.UserAndUserEntityLayer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity implements UserInterface {
+public class UserEntity implements UserAndUserEntityLayer {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "uid")
@@ -27,7 +29,11 @@ public class UserEntity implements UserInterface {
   private String lastname;
   private String email;
   private String password;
+
   private String username;
+
+  @OneToOne @MapsId private UserPersonalInfomationEntity info;
+
   private List<String> roles;
 
   public boolean isUserHavePassword() {

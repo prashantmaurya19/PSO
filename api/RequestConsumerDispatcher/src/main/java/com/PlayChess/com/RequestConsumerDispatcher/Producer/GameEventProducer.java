@@ -26,7 +26,9 @@ public class GameEventProducer {
     // if(!r1.getType().equals(r2.getType())){
     //   return ;
     // }
-    pushGameEvent(new GameEvent(r1.getUser(), r2.getUser(), GameEventConst.INIT));
-    pushGameEvent(new GameEvent(r2.getUser(), r1.getUser(), GameEventConst.INIT));
+    pushGameEvent(
+        new GameEvent(r1.getUser(), r2.getUser(), GameEventConst.INIT, "{\"side\":\"b\"}"));
+    pushGameEvent(
+        new GameEvent(r2.getUser(), r1.getUser(), GameEventConst.INIT, "{\"side\":\"w\"}"));
   }
 }

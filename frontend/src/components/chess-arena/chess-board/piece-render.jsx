@@ -146,7 +146,7 @@ export function RenderChessBoard({}) {
       }),
     );
   });
-  useListen("SOCKET_GAME_EVENT_RECIVED", (e) => {
+  useListen("TEST", (e) => {
     if (state != "playing") dispatch(setDataChessBoardGameState("playing"));
 
     emit("BOARD_MOVE_PLAYED", {

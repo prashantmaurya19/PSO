@@ -9,6 +9,11 @@ import { changeChessBoardPlayerClockTime } from "@pso/store/feature/component-da
 import { pmlog } from "@pso/util/log";
 import { emit } from "@pso/util/event";
 import { setDataChessBoardGameState } from "@pso/store/feature/chess-data";
+import { RESULT } from "@pso/var-data/initialization-data";
+import { socket } from "@pso/util/socket";
+import { SOCKET_GAME_REQUEST_ENDPOINT } from "@pso/var-data/api-data";
+import { acache } from "@pso/util/cache";
+import { Navigate, useLocation } from "react-router-dom";
 
 /**
  * @typedef {{pid:import("@pso/store/feature/chess-data").PlayerType}} InfoProp
@@ -80,13 +85,12 @@ function ClockInfoPanel({ pid = "p", className, ...a }) {
   const clock_info = useSelector((s) => {
     return s.component_data.chess_board.clock_info_panel;
   });
-  const duration = clock_info.duration;
   const dec_time = clock_info.time_decrement_in_interval;
 
   const disabled = pid != turn;
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!clock_info.state || state == "end" || disabled) return;
+    if (!clock_info.state || state != "playing" || disabled) return;
 
     if (clockTime + dec_time < 0) {
       emit("GAME_ENDED", {});

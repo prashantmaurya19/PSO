@@ -1,9 +1,12 @@
 // @ts-nocheck
 import { joinTWClass } from "@pso/util/tailwind";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import { INITIALIZATION_TASK_LIST as tasks } from "@pso/var-data/initialization-data";
+import {
+  RESULT,
+  INITIALIZATION_TASK_LIST as tasks,
+} from "@pso/var-data/initialization-data";
 import {
   initializeInitData,
   taskCompleted,
@@ -19,6 +22,7 @@ import { pmlog } from "@pso/util/log";
 import { PromotionPieceOverlay } from "@pso/components/chess-arena/chess-board/promotion-piece-overlay";
 import {
   getInitializerState,
+  initializerOff,
   initializerOn,
 } from "@pso/var-data/component-data/initializer";
 
@@ -55,10 +59,10 @@ function TaskLabel({ text, className, ...a }) {
  * @param {import("@pso/util/jjsx").JSXProps} p
  */
 function IntializationProcessBanner({ className, ...a }) {
+  const location = useLocation();
   const [completed_task, setCompleteTask] = useState(0);
   const dispatch = useDispatch();
   useEffect(() => {
-    pmlog(completed_task, "IntializationProcessBanner", getInitializerState());
     if (getInitializerState() && completed_task < tasks.length) {
       tasks[completed_task]
         .config()
@@ -69,14 +73,19 @@ function IntializationProcessBanner({ className, ...a }) {
           ApplicationListener.onLogout();
           navigate("/login");
         });
+      initializerOff();
     }
     return () => {
       initializerOn();
     };
   }, [completed_task]);
   if (completed_task == tasks.length) {
+    RESULT.initialized = true;
     return (
-      <Navigate to={"/dashboard/index"} state={{ initialization: true }} />
+      <Navigate
+        to={location.state?.to ? location.state.to : "/dashboard/index"}
+        state={{ initialization: true }}
+      />
     );
   }
   return (

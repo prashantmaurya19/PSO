@@ -13,7 +13,7 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +47 src/suits/websocket-endpoint-suit.jsx
+badd +0 src/suits/websocket-endpoint-suit.jsx
 argglobal
 %argdel
 edit src/suits/websocket-endpoint-suit.jsx
@@ -29,11 +29,11 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 47 - ((28 * winheight(0) + 19) / 38)
+let s:l = 1 - ((0 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 47
+keepjumps 1
 normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

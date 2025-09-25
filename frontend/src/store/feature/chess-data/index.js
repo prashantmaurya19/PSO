@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { picture } from "./demo-pictures";
-import { copy } from "@pso/util/aobject";
-import { emit } from "@pso/util/event";
+import { combine } from "@pso/util/aobject";
 import { Creator } from "@pso/util/chess";
+import { RESULT } from "@pso/var-data/initialization-data";
+import { formatPlayerName } from "@pso/util/astring";
 /**
  * @typedef {Object} InitState
  * @property {import("@pso/util/chess").GameStateName} game_state
@@ -21,7 +22,7 @@ const initialState = {
   players_data: {
     p: {
       name: "xyz",
-      address: "1234:xyz",
+      address: "1234:xyz", // no need
       side: "w",
       rating: 100,
       picture,
@@ -48,6 +49,13 @@ export const chessBoardSlice = createSlice({
       state.chess_position = Creator.getNewChessPosition();
       state.promotion_notation = "";
       state.game_state = "init";
+      state.players_data.p.name = formatPlayerName(
+        RESULT.userinfo.firstname,
+        RESULT.userinfo.lastname,
+      );
+      state.players_data.p.rating = RESULT.userinfo.info.rating;
+      state.players_data.o.name = formatPlayerName("Unknown", "Player");
+      state.players_data.o.rating = 0;
     },
     setDataChessBoardFlip(state, action) {
       state.flip = action.payload;
@@ -58,14 +66,16 @@ export const chessBoardSlice = createSlice({
     setDataChessBoardLastNotation(state, action) {
       state.promotion_notation = action.payload;
     },
-    setDataChessBoardPlayer: (state, action) => {
-      copy(action.payload, state.players_data);
-      if (action.payload["p"] != undefined)
-        emit("PLAYER_DATA_UPDATED", { p: action.payload["p"] });
-      if (action.payload["o"] != undefined)
-        emit("PLAYER_OPONENT_DATA_UPDATED", {
-          o: action.payload["o"],
-        });
+    setDataChessBoardPlayer(state, action) {
+      state.players_data.o = combine(state.players_data.o, action.payload);
+      state.players_data.p.side = state.players_data.o.side == "b" ? "w" : "b";
+      state.flip = state.players_data.p.side == "b";
+      if (state.players_data.o.side == "w") {
+        state.turn = "o";
+      } else {
+        state.turn = "p";
+      }
+      state.game_state = "playing";
     },
     setDataChessBoardPosition: (state, action) => {
       state.chess_position = action.payload;

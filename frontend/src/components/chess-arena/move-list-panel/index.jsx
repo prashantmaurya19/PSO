@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
  * @param {import("@pso/util/jjsx").JSXProps} p
  */
 export function MoveListPanel({ className = "", ...a }) {
-  const player_info = useSelector((s) => s.chess.players_data);
   const display = useSelector((s) => s.component_data.move_list_panel.display);
   if (!display) return <></>;
   return (
@@ -31,10 +30,6 @@ export function MoveListPanel({ className = "", ...a }) {
         className,
       )}
     >
-      <VersesBanner
-        player_name={player_info.p.name}
-        oponent_name={player_info.o.name}
-      />
       <MoveListTable />
       <MoveListTableFunctionButtons />
       <GameStateViceMoveListFunctionButtons />

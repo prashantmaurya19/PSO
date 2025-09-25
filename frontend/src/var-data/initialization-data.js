@@ -3,11 +3,14 @@ import { request } from "@pso/util/requests";
 import { socket } from "@pso/util/socket";
 import { credintials } from "./debug-data";
 import { profile_name } from "./profile-data";
+import { parseUserAddress } from "@pso/util/api";
+import { emit } from "@pso/util/event";
+import { combine } from "@pso/util/aobject";
 
 /**
- * @type {Partial<{username:string}>}
+ * @type {Partial<{username:string,initialized:boolean,userinfo:{firstname:string,lastname:string,info:{rating:number}},post_info:{from:string,to:string}}>}
  */
-export const RESULT = {};
+export const RESULT = { initialized: false };
 
 /**
  * @type {Array<{name:string,config:function():Promise<void>}>}
@@ -32,7 +35,6 @@ export const INITIALIZATION_TASK_LIST = [
     name: "Connecting to Server",
     config() {
       return new Promise((resolve, reject) => {
-        pmlog("connect");
         socket.connect(
           "http://localhost:8080/ps/ws/v1",
           () => {
@@ -42,8 +44,29 @@ export const INITIALIZATION_TASK_LIST = [
               },
               {
                 topic: `/c1/${RESULT.username}/game_event`,
-                onSubscribe(topic, msg) {
-                  pmlog(msg, topic);
+                async onSubscribe(topic, msg) {
+                  const data = msg.json();
+                  const payload = combine(
+                    {
+                      user: null,
+                      action: null,
+                      topic,
+                    },
+                    data,
+                  );
+                  if (payload.action == "init") {
+                    RESULT.post_info = {
+                      from: payload.to,
+                      to: payload.from,
+                    };
+                    const res = await request(
+                      `/ur/user/get_info/${parseUserAddress(data.from).username}`,
+                    )
+                      .get()
+                      .execute();
+                    payload.user = await res.json();
+                  }
+                  emit("SOCKET_GAME_EVENT_RECIVED", payload);
                 },
               },
             );
@@ -54,7 +77,6 @@ export const INITIALIZATION_TASK_LIST = [
             reject();
           },
         );
-        pmlog("connect");
       });
     },
   },
@@ -65,9 +87,11 @@ export const INITIALIZATION_TASK_LIST = [
         try {
           const res = await request("/ur/user").get().execute();
           const data = await res.json();
+          RESULT.userinfo = data;
           console.log(data, res);
           if (res.status == 200) {
             resolve();
+            RESULT.initialized = true;
           } else {
             reject();
           }

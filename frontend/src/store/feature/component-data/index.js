@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { combine } from "@pso/util/aobject";
 import { Creator } from "@pso/util/chess";
-import { acache } from "@pso/util/cache";
-import { TIME_DURATION_CATAGORIES } from "@pso/util/time";
 
 const initialState = {
   // NOTE i want to rename chess_board to chess_arena
@@ -58,19 +56,25 @@ export const componentDataSlice = createSlice({
   name: "component-data",
   initialState,
   reducers: {
-    initializeComponentsData(state, _) {
+    initializeComponentsData(state, action) {
       state.chess_board.self.info = Creator.getNewChessPosition();
       state.chess_board.loader.display = true;
       state.chess_board.game_winner_banner_overlay.display = false;
-      state.chess_board.clock_info_panel.duration = acache("LAST_GAME_DURATION")
-        .localstorage()
-        .getOrDefault(JSON.stringify(TIME_DURATION_CATAGORIES[4]))
-        .json();
+      state.chess_board.clock_info_panel.duration = action.payload.duration;
+
       state.chess_board.clock_info_panel.o.clock =
         state.chess_board.clock_info_panel.duration.time;
       state.chess_board.clock_info_panel.p.clock =
         state.chess_board.clock_info_panel.duration.time;
       state.chess_board.clock_info_panel.state = false;
+    },
+    initializeComponentForPlaying(state, action) {
+      state.move_list_panel.flip = action.payload;
+      state.chess_board.clock_info_panel.state = true;
+      state.chess_board.loader.display = false;
+    },
+    updateClockInfoPanelState(state, action) {
+      state.chess_board.clock_info_panel.state = action.payload;
     },
     updateMoveListFlip(state, action) {
       state.move_list_panel.flip = action.payload;
@@ -155,5 +159,7 @@ export const {
   updateChessBoardDuration,
   changeChessBoardPlayerClockTime,
   initializeComponentsData,
+  updateClockInfoPanelState,
+  initializeComponentForPlaying,
 } = componentDataSlice.actions;
 export const componentDataSliceReducer = componentDataSlice.reducer;

@@ -50,6 +50,9 @@ export function WebSocketEndPointSuit() {
         },
         {
           topic: "/c1/user@chess.com/game_event",
+          onSubscribe(t, msg) {
+            console.log(msg.json(), t);
+          },
         },
       );
     },

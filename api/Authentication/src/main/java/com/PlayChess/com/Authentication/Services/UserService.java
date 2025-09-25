@@ -2,13 +2,13 @@ package com.PlayChess.com.Authentication.Services;
 
 import com.PlayChess.com.Authentication.Entities.UserEntity;
 import com.PlayChess.com.Authentication.Pojo.User;
-import com.PlayChess.com.Authentication.Pojo.UserInterface;
-import com.PlayChess.com.Authentication.Repositories.Users;
+import com.PlayChess.com.Authentication.Pojo.UserPersonalInfomation;
+import com.PlayChess.com.Authentication.Repositories.UsersRepo;
+import com.PlayChess.com.Authentication.TransLayer.UserAndUserEntityLayer;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,29 +17,28 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-  private final Users ur;
+  private final UsersRepo ur;
 
   private final ModelMapper mm;
   private final PasswordEncoder pe;
 
-
-  public boolean isUserHavePassword(UserInterface u) {
+  public boolean isUserHavePassword(UserAndUserEntityLayer u) {
     return !(u.getPassword() == null || u.getPassword().equals(""));
   }
 
-  public boolean isUserHaveFirstName(UserInterface u) {
+  public boolean isUserHaveFirstName(UserAndUserEntityLayer u) {
     return !(u.getFirstname() == null || u.getFirstname().equals(""));
   }
 
-  public boolean isUserHaveLastName(UserInterface u) {
+  public boolean isUserHaveLastName(UserAndUserEntityLayer u) {
     return !(u.getLastname() == null || u.getLastname().equals(""));
   }
 
-  public boolean isUserHaveUsername(UserInterface u) {
+  public boolean isUserHaveUsername(UserAndUserEntityLayer u) {
     return !(u.getUsername() == null || u.getUsername().equals(""));
   }
 
-  public boolean isUserHaveEmail(UserInterface u) {
+  public boolean isUserHaveEmail(UserAndUserEntityLayer u) {
     return !(u.getEmail() == null || u.getEmail().equals(""));
   }
 
@@ -49,7 +48,7 @@ public class UserService {
     return u.getRoles().size() > 0;
   }
 
-  public boolean isValidUser(UserInterface u) {
+  public boolean isValidUser(UserAndUserEntityLayer u) {
     return this.isUserHaveEmail(u) && this.isUserHavePassword(u) && this.isUserHaveUsername(u);
   }
 
@@ -83,6 +82,9 @@ public class UserService {
       u.setRoles(new ArrayList<>());
       u.getRoles().add("USER");
     }
+    UserPersonalInfomation upi = new UserPersonalInfomation();
+    upi.setRating(1000);
+    u.setInfo(upi);
     this.saveNewUser(this.mm.map(u, UserEntity.class));
     return u;
   }

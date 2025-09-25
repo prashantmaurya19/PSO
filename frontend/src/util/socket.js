@@ -1,5 +1,16 @@
+import {
+  SOCKET_GAME_EVENT_ENDPOINT,
+  SOCKET_GAME_REQUEST_ENDPOINT,
+} from "@pso/var-data/api-data";
+import { getOpenGameRequests, incGameRequests } from "@pso/var-data/app-data";
+import { RESULT } from "@pso/var-data/initialization-data";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+
+/**
+ * @typedef {{user:string,type:string}} GameRequest
+ * @typedef {{to:string,from:string,action:string,payload:string}} GameEvent
+ */
 
 class MessageHandler {
   static decoder = new TextDecoder("utf-8"); // Specify the encoding
@@ -181,3 +192,21 @@ export class SocketHandler {
 }
 
 export const socket = new SocketHandler();
+
+/** send game request
+ * @param {string} game_request_type - eg:3 Min,1 Min etc
+ */
+export function sendGameRequest(game_request_type) {
+  if (getOpenGameRequests() > 0) return;
+  socket.send(SOCKET_GAME_REQUEST_ENDPOINT, {
+    type: game_request_type,
+    user: RESULT.username,
+  });
+  incGameRequests();
+}
+/** send game event
+ * @param {Partial<GameEvent>} game_event
+ */
+export function sendGameEvent(game_event) {
+  socket.send(SOCKET_GAME_EVENT_ENDPOINT, game_event);
+}

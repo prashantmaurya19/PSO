@@ -20,7 +20,6 @@ public class GameRequestListener {
 
   @KafkaListener(topics = "game_request", groupId = "rcp-consumers")
   public void dispach(String payload) {
-    log.info(payload);
     try {
       GameRequest request = oms.parse(payload, GameRequest.class);
       if (pending_players.getOrDefault(request.getType(), null) == null) {
