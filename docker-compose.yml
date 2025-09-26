@@ -10,32 +10,24 @@ services:
       MYSQL_PASSWORD: prashant
 
   zookeeper:
-    image: "pmzookeeper"
+    build:
+      context: ./Kafka
+      dockerfile: Dockerfile.zookeeper
+    pull_policy: never
     networks:
       - pmnet
-    volumes:
-      - /home/prashant/Apps/Kafka:/kafka
 
   service-registry:
-    image: "pmapp"
+    image: pmapp:latest
     ports:
       - "8761:8761"
     networks:
       - pmnet
     volumes:
-      - /home/prashant/Documents/coding/PSO/api/ServiceRegistry/:/app
+      - ./api/ServiceRegistry/:/app
 
   view-service:
-    image: "pmapp"
-    depends_on:
-      - service-registry
-    networks:
-      - pmnet
-    volumes:
-      - /home/prashant/Documents/coding/PSO/api/ViewService/:/app
-
-  user-service:
-    image: "pmapp"
+    image: pmapp:latest
     depends_on:
       - service-registry
       - kafka
@@ -43,31 +35,45 @@ services:
     networks:
       - pmnet
     volumes:
-      - /home/prashant/Documents/coding/PSO/api/UserServices/:/app
+      - ./api/ViewService/:/app
+
+  user-service:
+    image: pmapp:latest
+    depends_on:
+      - service-registry
+      - kafka
+      - db
+    networks:
+      - pmnet
+    volumes:
+      - ./api/UserServices/:/app
 
   request-consumerDispatcher:
-    image: "pmapp"
+    image: pmapp:latest
     ports:
       - "8185:8185"
     depends_on:
-      - kafka
-    networks:
-      - pmnet
-    volumes:
-      - /home/prashant/Documents/coding/PSO/api/RequestConsumerDispatcher/:/app
-
-  authentication:
-    image: "pmapp"
-    depends_on:
       - service-registry
+      - kafka
       - db
     networks:
       - pmnet
     volumes:
-      - /home/prashant/Documents/coding/PSO/api/Authentication/:/app
+      - ./api/RequestConsumerDispatcher/:/app
+
+  authentication:
+    image: pmapp:latest
+    depends_on:
+      - service-registry
+      - kafka
+      - db
+    networks:
+      - pmnet
+    volumes:
+      - ./api/Authentication/:/app
 
   gateway:
-    image: "pmapp"
+    image: pmapp:latest
     hostname: localhost
     ports:
       - "8080:8080"
@@ -80,18 +86,19 @@ services:
     networks:
       - pmnet
     volumes:
-      - /home/prashant/Documents/coding/PSO/api/Gateway/:/app
+      - ./api/Gateway/:/app
 
   kafka:
-    image: "pmkafka"
+    build:
+      context: ./Kafka
+      dockerfile: Dockerfile.kafka
+    pull_policy: never
     ports:
       - "9092:9092"
     depends_on:
       - zookeeper
     networks:
       - pmnet
-    volumes:
-      - /home/prashant/Apps/Kafka:/kafka
 
 networks:
   pmnet:

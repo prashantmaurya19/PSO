@@ -6,9 +6,13 @@ play chess over real time with other.**
 ### Docker Support
 run below command to spin up server
 ```bash
+docker build pmapp:latest
+docker compose build zookeeper
+docker compose build kafka
 docker compose up
 ```
 
-### Endpoint
-
-#### localhost:8080
+**open the website at below url
+```
+http://localhost:8080/
+```

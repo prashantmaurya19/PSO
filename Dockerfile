@@ -17,6 +17,7 @@ RUN cd UserServices/ && ./mvnw clean install -DskipTests
 WORKDIR /app
 
 ENTRYPOINT ["./mvnw","clean","spring-boot:run"]
+# ENTRYPOINT ["echo"]
 
 
 
