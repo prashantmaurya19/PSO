@@ -7,7 +7,7 @@ RUN apt-get upgrade -y
 WORKDIR /prerun
 
 COPY ./api/ .
- # Authentication
+RUN cd ViewService/ && ./mvnw clean install -DskipTests
 RUN cd Authentication/ && ./mvnw clean install -DskipTests
 RUN cd Gateway/ && ./mvnw clean install -DskipTests
 RUN cd RequestConsumerDispatcher/ && ./mvnw clean install -DskipTests

@@ -1,22 +1,23 @@
 server:
-    port: 8097
-    servlet:
-        context-path: /ur
+  port: 8097
+  servlet:
+    context-path: /ur
+
 spring:
-    application:
-        name: USER-REGISTRY
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        password: prashant
-        url: jdbc:mysql://db:3306/pso_db
-        username: pso
-    jpa:
-        hibernate:
-            ddl-auto: update
-    main:
-        allow-circular-references: true
+  application:
+    name: USER-REGISTRY
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: prashant
+    url: jdbc:mysql://db:3306/pso_db
+    username: pso
+  jpa:
+    hibernate:
+      ddl-auto: update
+  main:
+    allow-circular-references: true
 
 eureka:
   client:
     service-url:
-      defaultZone : http://service-registry:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/

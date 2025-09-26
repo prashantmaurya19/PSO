@@ -98,9 +98,9 @@ export function FontAwesomeIconDiv({ iconProps = {}, className, ...a }) {
     <div
       {...a}
       className={twMerge(
-        className,
         "bg-center",
         "bg-no-repeat bg-size-[70%_85%]",
+        className,
       )}
       style={{
         backgroundImage: `url('${src}')`,

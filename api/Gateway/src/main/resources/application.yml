@@ -8,6 +8,7 @@ spring:
         webflux:
           routes:
             - id: USER-REGISTRY
+              order: 1
               uri: lb://USER-REGISTRY
               predicates:
                 - Path=/ur/**
@@ -15,24 +16,18 @@ spring:
                 - AuthenticationFilter
 
             - id: PSO-SERVICES
+              order: 2
               uri: lb://PSO-SERVICES
               predicates:
                 - Path=/ps/**
               filters:
                 - AuthenticationFilter
-        # globalcors:
-        #   cors-configurations:
-        #     '[/**]': # Applies to all paths
-        #       allowedOrigins: "http://localhost:5173,http://localhost:7000" 
-        #       allowedMethods:
-        #         - GET
-        #         - POST
-        #         - PUT
-        #         - DELETE
-        #         - OPTIONS
-        #       allowedHeaders:
-        #         - "*" # Allows all headers
-        #       allowCredentials: true # Allow sending cookies, authorization headers etc.
+
+            - id: ViewService
+              uri: lb://ViewService
+              order: 1000
+              predicates:
+                - Path=/**
 
   application:
     name: PSO-GATEWAY

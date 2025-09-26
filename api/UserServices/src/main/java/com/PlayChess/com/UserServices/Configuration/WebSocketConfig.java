@@ -2,7 +2,6 @@ package com.PlayChess.com.UserServices.Configuration;
 
 import java.util.List;
 import java.util.Map;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -32,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.setApplicationDestinationPrefixes("/w1");
-    registry.enableSimpleBroker("/t1","/c1");
+    registry.enableSimpleBroker("/t1", "/c1");
     registry.setUserDestinationPrefix("/c1");
   }
 
@@ -64,7 +63,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 }
               }
             })
-        .setAllowedOrigins("http://localhost:7000/","http://localhost:5173/")
+        .setAllowedOrigins(
+            "http://localhost:7000/", "http://localhost:5173/", "http://localhost:8080")
         .withSockJS()
         .setSuppressCors(true);
   }

@@ -1,3 +1,8 @@
+//@ts-nocheck
+import { faChess } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIconDiv } from "@pso/components/icon/fontawesome";
+import { joinTWClass } from "@pso/util/tailwind";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -42,8 +47,20 @@ export function LeftSection({ ...a }) {
     >
       <span
         id="main-left-chess_board"
-        className="bg-linear-90 from-pink-600 to-red-600  w-1/2 aspect-square rounded-[7px]"
-      ></span>
+        className={joinTWClass(
+          "w-1/2 aspect-square rounded-[7px]",
+          "flex justify-center items-center",
+        )}
+      >
+        <FontAwesomeIconDiv
+          className="w-full h-full"
+          iconProps={{
+            icon: faChess,
+            style: { color: "greenyellow" },
+            size: "xs",
+          }}
+        />
+      </span>
     </div>
   );
 }

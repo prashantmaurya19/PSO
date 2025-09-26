@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ViewService
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+server:
+  port: 8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-registry:8761/eureka/

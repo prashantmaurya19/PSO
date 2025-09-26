@@ -25,6 +25,15 @@ services:
     volumes:
       - /home/prashant/Documents/coding/PSO/api/ServiceRegistry/:/app
 
+  view-service:
+    image: "pmapp"
+    depends_on:
+      - service-registry
+    networks:
+      - pmnet
+    volumes:
+      - /home/prashant/Documents/coding/PSO/api/ViewService/:/app
+
   user-service:
     image: "pmapp"
     depends_on:
@@ -67,6 +76,7 @@ services:
       - user-service
       - request-consumerDispatcher
       - service-registry
+      - view-service
     networks:
       - pmnet
     volumes:
