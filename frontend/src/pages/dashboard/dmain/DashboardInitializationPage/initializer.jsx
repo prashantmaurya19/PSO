@@ -61,6 +61,7 @@ function TaskLabel({ text, className, ...a }) {
 function IntializationProcessBanner({ className, ...a }) {
   const location = useLocation();
   const [completed_task, setCompleteTask] = useState(0);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     if (getInitializerState() && completed_task < tasks.length) {

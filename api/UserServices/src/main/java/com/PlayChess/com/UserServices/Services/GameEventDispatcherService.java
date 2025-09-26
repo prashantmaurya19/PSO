@@ -5,7 +5,6 @@ import com.PlayChess.com.UserServices.Pojo.InServerUser;
 import com.PlayChess.com.UserServices.Utils.StateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ public class GameEventDispatcherService {
 
   public void dispatchToClient(GameEvent event) {
     InServerUser u = su.parse(event.getTo());
+    log.info("[" + event.getTo() + "username=" + u.getUsername() + "]");
     messagingTemplate.convertAndSendToUser(u.getUsername(), "/game_event", event);
   }
 

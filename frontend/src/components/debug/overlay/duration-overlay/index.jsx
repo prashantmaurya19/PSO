@@ -66,6 +66,11 @@ export function DurationOverlay({}) {
   const duration = useSelector(
     (s) => s.component_data.chess_board.clock_info_panel.duration,
   );
+  const flip = useSelector((s) => s.chess.flip);
+  const turn = useSelector((s) => s.chess.turn);
+  const state = useSelector((s) => s.chess.game_state);
+  const player_info = useSelector((s) => s.chess.players_data);
+  const promotion_notation = useSelector((s) => s.chess.promotion_notation);
   const move_list_info = useSelector((s) => s.component_data.move_list_panel);
   const inputele = useRef();
   const dump = { move: moves[index] };
@@ -82,6 +87,7 @@ export function DurationOverlay({}) {
         "text-white text-2xl",
         "flex items-start justify-start flex-col gap-2",
         "p-2",
+        " wrap-normal",
       )}
     >
       <div className="w-[90%] h-[30%]">
@@ -115,6 +121,11 @@ export function DurationOverlay({}) {
       <br />
       Move_list_info:(active_index={move_list_info.active_move_index}),(moves=
       {move_list_info.move_list.length})
+      <br /> flip = {flip}
+      <br /> turn = {turn}
+      <br /> state = {state}
+      <br /> promotion_notation = {promotion_notation}
+      <br /> move_list_info = {JSON.stringify(move_list_info, null, "")}
     </div>
   );
 }

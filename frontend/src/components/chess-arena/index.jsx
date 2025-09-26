@@ -24,7 +24,10 @@ import {
   setDataChessBoardPlayer,
 } from "@pso/store/feature/chess-data";
 import { sendGameRequest, socket } from "@pso/util/socket";
-import { SOCKET_GAME_REQUEST_ENDPOINT } from "@pso/var-data/api-data";
+import {
+  GameEventAction,
+  SOCKET_GAME_REQUEST_ENDPOINT,
+} from "@pso/var-data/api-data";
 import { RESULT } from "@pso/var-data/initialization-data";
 import { REQUESTS } from "@pso/var-data/app-data";
 import { TIME_DURATION_CATAGORIES } from "@pso/util/time";
@@ -68,7 +71,16 @@ export function ChessArena({ className, ...a }) {
     dispatch(initializeComponentForPlaying(e.payload.side == "w"));
   });
   useListen("SOCKET_GAME_EVENT_RECIVED", (e) => {
-    if (e.action == "init") emit("GAME_STARTED", e);
+    switch (e.action) {
+      case GameEventAction.INIT: {
+        emit("GAME_STARTED", e);
+        break;
+      }
+      case GameEventAction.MOVE_PLAYED: {
+        e.payload = JSON.parse(e.payload);
+        emit("TEST", { test: { move: e.payload.notation } });
+      }
+    }
   });
   useEffect(() => {
     emit("GAME_INITIALIZED", {});

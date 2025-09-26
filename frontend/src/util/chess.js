@@ -1806,10 +1806,11 @@ export function travers(to_index, move_list) {
 }
 
 /**
+ * @typedef {{reason:string,board_info:BoardInfo,chess_notation:ChessMoveNotation,cancel:boolean}} TransitionInfo
  * @param {BoardCellIndex} to - destination cell name
  * @param {BoardCellIndex} from - current cell name
  * @param {BoardInfo} fen - current chess fen
- * @returns {{board_info:BoardInfo,chess_notation:ChessMoveNotation,cancel:boolean}}
+ * @returns {TransitionInfo}
  */
 export function transition(from, to, fen) {
   const info = parse(fen.fen);
@@ -1829,7 +1830,7 @@ export function transition(from, to, fen) {
     },
     king_info: clone(fen.kings),
   };
-  /** @type {{board_info:BoardInfo,chess_notation:ChessMoveNotation,cancel:boolean}} */
+  /** @type {TransitionInfo} */
   let res = {
     // @ts-ignore
     board_info: {
@@ -1837,6 +1838,7 @@ export function transition(from, to, fen) {
     },
     chess_notation: "",
     cancel: false,
+    reason: "",
   };
   /**  @type {MotionPathInfoHandlerProp} */
   const props = {
@@ -1863,6 +1865,7 @@ export function transition(from, to, fen) {
       board_info: fen,
       chess_notation: "",
       cancel: true,
+      reason: `move_info=${move_info}|prev.fen_info.color=${prev.fen_info.color}`,
     };
   }
 
@@ -1874,6 +1877,7 @@ export function transition(from, to, fen) {
     props.info = move_info.cases[c];
     if (ChessEventHandler.PLAYED_MOTION_PATH_INFO[c](props) == "failed")
       return {
+        reason: "failed",
         board_info: fen,
         chess_notation: "",
         cancel: true,
@@ -2088,5 +2092,12 @@ export class IndexCoordinator {
    */
   static fromTwoDimensionalIndexToRealChessIndex(x, y) {
     return [x + 1, 8 - y];
+  }
+
+  /**
+   * @param {BoardCellIndex} index
+   */
+  static flipBoardCellIndex(index) {
+    return index.map((v) => 7 - v);
   }
 }
