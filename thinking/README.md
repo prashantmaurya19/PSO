@@ -6,11 +6,11 @@ play chess over real time with other.**
 ### Docker Support
 run below command to spin up server
 ```bash
-docker build pmapp:latest
+docker build -t pmapp:latest .
 docker compose up
 ```
 
-**open the website at below url
+**open the website at below url**
 ```
 http://localhost:8080/
 ```
