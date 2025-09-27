@@ -20,7 +20,6 @@ public class UserLoaderService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     log.info("request for " + username + " auth recived");
     if ("user@chess.com".equals(username)) {
-      log.info("request for " + username + " object created");
       return User.builder()
           .username("user@chess.com")
           .password("$2a$10$QxcntxtYnz4oC/o064EYw.xJ0w6F0aARwY9t7zFUOERGKxuO487Je")

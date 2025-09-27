@@ -9,14 +9,6 @@ services:
       MYSQL_USER: pso
       MYSQL_PASSWORD: prashant
 
-  zookeeper:
-    build:
-      context: ./Kafka
-      dockerfile: Dockerfile.zookeeper
-    pull_policy: never
-    networks:
-      - pmnet
-
   service-registry:
     image: pmapp:latest
     ports:
@@ -43,6 +35,8 @@ services:
       - service-registry
       - kafka
       - db
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     networks:
       - pmnet
     volumes:
@@ -56,6 +50,8 @@ services:
       - service-registry
       - kafka
       - db
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     networks:
       - pmnet
     volumes:
@@ -87,19 +83,31 @@ services:
       - pmnet
     volumes:
       - ./api/Gateway/:/app
-
   kafka:
-    build:
-      context: ./Kafka
-      dockerfile: Dockerfile.kafka
-    pull_policy: never
+    image: apache/kafka:latest
     ports:
       - "9092:9092"
-    depends_on:
-      - zookeeper
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:29092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
       - pmnet
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
 
 networks:
   pmnet:
     driver: bridge
+volumes:
+  kafka_data:

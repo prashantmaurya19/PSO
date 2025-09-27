@@ -55,6 +55,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
       <InputField
         className={`${element_width} h-[5vh] RegistrationFormFields`}
         inputProp={{
+          defaultValue: "pika",
           ref: firstname,
           type: "text",
           placeholder: "Enter First Name",
@@ -64,6 +65,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         className={`${element_width} h-[5vh] RegistrationFormFields`}
         inputProp={{
           ref: lastname,
+          defaultValue: "pika",
           type: "text",
           placeholder: "Enter Last Name",
         }}
@@ -72,6 +74,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         className={`${element_width} h-[5vh] RegistrationFormFields`}
         inputProp={{
           ref: username,
+          defaultValue: "ak@chess.com",
           type: "text",
           placeholder: "Enter Email",
           className: "p-3",
@@ -82,6 +85,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         className={`${element_width} h-[5vh] RegistrationFormFields`}
         inputProp={{
           ref: password,
+          defaultValue: "prashant",
           type: "password",
           placeholder: "Enter Password",
           className: "p-3",
@@ -92,6 +96,7 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         className={`${element_width} h-[5vh] RegistrationFormFields`}
         inputProp={{
           type: "password",
+          defaultValue: "prashant",
           placeholder: "Re Enter Password",
           className: "p-3",
         }}
@@ -134,19 +139,21 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
           let resp = await request("/ur/register")
             .post()
             .json()
+            .credentials()
             .body(form_data)
             .execute();
 
           let res = await resp.json();
           if (res.status == "ok") {
-            resp = await request("/ur/user/login")
-              .post()
-              .httpBasic(form_data.username, form_data.password)
-              .execute();
-            res = await resp.json();
-            response(res).storeInCookie("token_id", "token");
+            // resp = await request("/ur/login")
+            //   .post()
+            //   .credentials()
+            //   .httpBasic(form_data.username, form_data.password)
+            //   .execute();
+            // res = await resp.json();
+            // response(res).storeInCookie("token_id", "token");
             await anime().selfContainedLoaderHide().build();
-            navigate("/dashboard", { auth: true });
+            navigate("/login", { auth: true });
           } else {
             await anime()
               .timeline()

@@ -93,6 +93,7 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
               const resp = await request("/ur/login")
                 .post()
                 .httpBasic(form_data.username, form_data.password)
+                .credentials()
                 .execute();
               const res = await resp.json();
               if (res.token) setCookie("token_id", res.token);

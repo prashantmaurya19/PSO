@@ -6,6 +6,7 @@
  */
 
 import { ACookie } from "./acookie";
+import { pmlog } from "./log";
 
 class ResponseHandler {
   /**
@@ -38,7 +39,7 @@ export function response(d) {
 class Requests {
   #handleHeaderInit() {
     if (this.request_object.param.headers == undefined)
-      this.request_object.param.headers = new Headers();
+      this.request_object.param.headers = {};
   }
   /**
    * @param {string} endpoint
@@ -112,6 +113,7 @@ class Requests {
    */
   json() {
     this.header("Content-Type", "application/json");
+
     return this;
   }
 
@@ -124,6 +126,15 @@ class Requests {
     return this;
   }
 
+  /**
+   * @param {RequestCredentials} [v]
+   */
+  credentials(v) {
+    if (v == null) delete this.request_object.param.credentials;
+    else this.request_object.param.credentials = v;
+    return this;
+  }
+
   /** add header
    * @param {string} name - name of header
    * @param {string} value - value of header
@@ -131,9 +142,9 @@ class Requests {
    */
   header(name, value) {
     this.#handleHeaderInit();
-
+    this.request_object.param.headers[name] = value;
     // @ts-ignore
-    this.request_object.param.headers.append(name, value);
+    // this.request_object.param.headers.set(name, value);
     return this;
   }
 
@@ -164,6 +175,7 @@ class Requests {
    * @returns {Promise.<Response>}
    */
   execute() {
+    pmlog(this.request_object);
     return fetch(
       `${this.request_object.url}${this.request_object.endpoint}`,
       this.request_object.param,
