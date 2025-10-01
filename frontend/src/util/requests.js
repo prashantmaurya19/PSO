@@ -6,7 +6,6 @@
  */
 
 import { ACookie } from "./acookie";
-import { pmlog } from "./log";
 
 class ResponseHandler {
   /**
@@ -175,7 +174,6 @@ class Requests {
    * @returns {Promise.<Response>}
    */
   execute() {
-    pmlog(this.request_object);
     return fetch(
       `${this.request_object.url}${this.request_object.endpoint}`,
       this.request_object.param,

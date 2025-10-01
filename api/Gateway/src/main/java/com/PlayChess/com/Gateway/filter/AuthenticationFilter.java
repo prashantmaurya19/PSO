@@ -64,35 +64,3 @@ public class AuthenticationFilter
     return response.setComplete();
   }
 }
-// @Component
-// public class AuthenticationFilter implements HandlerFilterFunction<ServerResponse,
-// ServerResponse> {
-
-//   private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
-
-//   @Autowired private JwtUtil jwtUtil;
-//   @Autowired private CookieUtil cu;
-
-//   @Override
-//   public ServerResponse filter(ServerRequest request, HandlerFunction<ServerResponse> next)
-//       throws Exception {
-//     String jwt = null, username = "";
-//     log.info("Cookies = " + request.headers().header("Cookie"));
-//     try {
-//       jwt = cu.extractJwtCookies(request);
-//       log.info("Token = " + jwt);
-//     } catch (CookieNotFound e) {
-//       log.info("normal user");
-//       return next.handle(ServerRequest.from(request).header("X-User-pso", username).build());
-//     }
-//     try {
-//       username = jwtUtil.extractUsername(jwt);
-//       log.info("authorized user = " + username);
-//     } catch (Exception e) {
-//       log.info("un-authorized user");
-//       return status(HttpStatus.UNAUTHORIZED).build();
-//     }
-//     return next.handle(ServerRequest.from(request).header("X-User-pso", username).build());
-//     // return next.handle(request);
-//   }
-// }

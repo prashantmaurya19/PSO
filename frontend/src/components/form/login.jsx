@@ -80,7 +80,6 @@ export default function LoginForm({ disable = false, className = "", ...a }) {
           };
           try {
             if (!disable) {
-              // validate credentials here
               validate(form_data)
                 .string("username")
                 .limit(4, 64)

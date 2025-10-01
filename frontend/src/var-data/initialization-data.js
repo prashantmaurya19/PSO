@@ -20,7 +20,10 @@ export const INITIALIZATION_TASK_LIST = [
     name: "Security Check Up",
     config() {
       return new Promise(async (resolve, reject) => {
-        const res = await request("/ur/user/verify").get().execute();
+        const res = await request("/ur/user/verify")
+          .credentials("same-origin")
+          .get()
+          .execute();
         const data = await res.json();
         RESULT.username = data.username;
         if (res.status == 200) {

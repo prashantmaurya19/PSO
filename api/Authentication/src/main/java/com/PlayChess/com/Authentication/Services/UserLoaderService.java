@@ -18,15 +18,20 @@ public class UserLoaderService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    log.info("request for " + username + " auth recived");
     if ("user@chess.com".equals(username)) {
+      log.info("special request for " + username + " auth recived");
       return User.builder()
           .username("user@chess.com")
           .password("$2a$10$QxcntxtYnz4oC/o064EYw.xJ0w6F0aARwY9t7zFUOERGKxuO487Je")
           .roles("USER")
           .build();
     }
-    UserEntity u = this.ur.findByUsername(username);
+    UserEntity u = null;
+    try {
+      u = this.ur.findByUsername(username);
+    } catch (Exception e) {
+      log.info("request for " + username + " auth recived enity=" + u + " " + e.getMessage());
+    }
     if (u == null) throw new UsernameNotFoundException("User  " + username + " not found!!!");
     return User.builder()
         .username(u.getUsername())

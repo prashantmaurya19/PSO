@@ -104,22 +104,22 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
       <SingupButton
         text="Sign Up"
         onClick={contextSafe(async () => {
-          await anime()
-            .timeline()
-            .formFieldAll("to", ".RegistrationFormFields")
-            .formContainerHide("#register-form-container")
-            .selfContainedLoaderShow(".SelfContainedLoader")
-            .endTimeline()
-            .build();
-          onSubmit();
-          const form_data = {
-            email: username.current.value,
-            password: password.current.value,
-            username: username.current.value,
-            firstname: firstname.current.value,
-            lastname: lastname.current.value,
-          };
-          console.log(
+          try {
+            await anime()
+              .timeline()
+              .formFieldAll("to", ".RegistrationFormFields")
+              .formContainerHide("#register-form-container")
+              .selfContainedLoaderShow(".SelfContainedLoader")
+              .endTimeline()
+              .build();
+            onSubmit();
+            const form_data = {
+              email: username.current.value,
+              password: password.current.value,
+              username: username.current.value,
+              firstname: firstname.current.value,
+              lastname: lastname.current.value,
+            };
             validate(form_data)
               .string("email")
               .limit(4, 64)
@@ -134,32 +134,36 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
               .string("lastname")
               .limit(4, 16)
               .and()
-              .get(),
-          );
-          let resp = await request("/ur/register")
-            .post()
-            .json()
-            .credentials()
-            .body(form_data)
-            .execute();
+              .get();
+            let resp = await request("/ur/register")
+              .post()
+              .json()
+              .credentials()
+              .body(form_data)
+              .execute();
 
-          let res = await resp.json();
-          if (res.status == "ok") {
-            // resp = await request("/ur/login")
-            //   .post()
-            //   .credentials()
-            //   .httpBasic(form_data.username, form_data.password)
-            //   .execute();
-            // res = await resp.json();
-            // response(res).storeInCookie("token_id", "token");
-            await anime().selfContainedLoaderHide().build();
-            navigate("/login", { auth: true });
-          } else {
+            let res = await resp.json();
+            if (res.status == "ok") {
+              await anime().selfContainedLoaderHide().build();
+              navigate("/login", { auth: true });
+            } else {
+              await anime()
+                .timeline()
+                .selfContainedLoaderHide(".SelfContainedLoader")
+                .formContainerShow("#register-form-container")
+                .formFieldAll("from", ".RegistrationFormFields")
+                .endTimeline()
+                .build();
+            }
+          } catch {
             await anime()
               .timeline()
               .selfContainedLoaderHide(".SelfContainedLoader")
               .formContainerShow("#register-form-container")
-              .formFieldAll("from", ".RegistrationFormFields")
+              .formFieldAll("to", ".RegistrationFormFields", {
+                opacity: 1,
+                y: 0,
+              })
               .endTimeline()
               .build();
           }

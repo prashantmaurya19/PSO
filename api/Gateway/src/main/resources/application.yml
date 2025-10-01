@@ -14,6 +14,7 @@ spring:
                 - Path=/ur/**
               filters:
                 - AuthenticationFilter
+                - RemoveResponseHeader=WWW-Authenticate
 
             - id: PSO-SERVICES
               order: 2
@@ -22,6 +23,7 @@ spring:
                 - Path=/ps/**
               filters:
                 - AuthenticationFilter
+                - RemoveResponseHeader=WWW-Authenticate
 
             - id: ViewService
               uri: lb://ViewService

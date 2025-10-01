@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
       username = jwtUtil.extractUsername(jwt);
       log.info("authenticatied username=" + username);
     } catch (CookieNotFound e) {
-      log.info("not a auth request");
+      log.info("not a auth request : CookieNotFound");
       chain.doFilter(request, response);
       return;
     } catch (Exception e) {
@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     if (username == null) {
-      log.info("not a auth request ");
+      log.info("not a auth request : username=null");
       response.sendError(HttpStatus.UNAUTHORIZED.value(), "Error Message");
       return;
     }
