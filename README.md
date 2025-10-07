@@ -1,4 +1,4 @@
-# Play Chess Online : Chess.com
+# Play Chess Online
 -------------
 **a Websocket + Kafka + SpringBoat + React Project to 
 play chess over real time with other.**

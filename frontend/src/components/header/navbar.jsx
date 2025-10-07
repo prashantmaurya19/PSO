@@ -22,7 +22,7 @@ function NavBar({ className = "", children, ...a }) {
     >
       <span className="flex w-[30%] h-full">
         <span className="block bg-index-third h-[150%] aspect-square rounded-[50%] translate-x-[-30%] translate-y-[-40%]"></span>
-        <p className="text-[26px] block ml-[-28px] z-10">Chess.com</p>
+        <p className="text-[26px] block ml-[-28px] z-10">PlayChess</p>
       </span>
       <span
         className={joinTWClass(
