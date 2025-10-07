@@ -6,10 +6,12 @@ import { getOpenGameRequests, incGameRequests } from "@pso/var-data/app-data";
 import { RESULT } from "@pso/var-data/initialization-data";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { combine } from "./aobject";
 
 /**
  * @typedef {{user:string,type:string}} GameRequest
- * @typedef {{to:string,from:string,action:string,payload:string}} GameEvent
+ * @typedef {"move_played"|"init"|"request"|"resign"} SocketChessAction
+ * @typedef {{to:string,from:string,action:SocketChessAction,payload:string}} GameEvent
  */
 
 class MessageHandler {
@@ -208,5 +210,8 @@ export function sendGameRequest(game_request_type) {
  * @param {Partial<GameEvent>} game_event
  */
 export function sendGameEvent(game_event) {
-  socket.send(SOCKET_GAME_EVENT_ENDPOINT, game_event);
+  socket.send(
+    SOCKET_GAME_EVENT_ENDPOINT,
+    combine(RESULT.post_info, game_event),
+  );
 }

@@ -28,6 +28,9 @@ const initialState = {
       display: false,
       piece: "K",
       color: "w",
+      draw: false,
+      resign: false,
+      timeout: false,
       text: "demo are winner",
     },
     loader: {

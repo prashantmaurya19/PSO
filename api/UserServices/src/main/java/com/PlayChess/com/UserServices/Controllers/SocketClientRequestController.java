@@ -1,9 +1,8 @@
 package com.PlayChess.com.UserServices.Controllers;
 
-import com.PlayChess.com.UserServices.Model.GameEvent;
-import com.PlayChess.com.UserServices.Model.GameRequest;
 import com.PlayChess.com.UserServices.Services.KafkaProducerService;
-
+import com.PlayChess.com.model.GameEvent;
+import com.PlayChess.com.model.GameRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;

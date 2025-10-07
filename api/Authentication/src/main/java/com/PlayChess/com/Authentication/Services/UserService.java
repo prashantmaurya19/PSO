@@ -5,19 +5,26 @@ import com.PlayChess.com.Authentication.Pojo.User;
 import com.PlayChess.com.Authentication.Pojo.UserPersonalInfomation;
 import com.PlayChess.com.Authentication.Repositories.UsersRepo;
 import com.PlayChess.com.Authentication.TransLayer.UserAndUserEntityLayer;
+import com.PlayChess.com.util.StringUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
   private final UsersRepo ur;
+  private final String CACHE_USER = "auth_user";
 
   private final ModelMapper mm;
   private final PasswordEncoder pe;
@@ -59,16 +66,24 @@ public class UserService {
     return u;
   }
 
+  @Cacheable(cacheNames = CACHE_USER, key = "#email")
   public User getUserByEmail(String email) {
     UserEntity d = this.ur.findByEmail(email);
     if (d == null) return null;
     return this.mm.map(d, User.class);
   }
 
+  @Cacheable(cacheNames = CACHE_USER, key = "#username")
   public User getUserByUsername(String username) {
     UserEntity d = this.ur.findByUsername(username);
     if (d == null) return null;
     return this.mm.map(d, User.class);
+  }
+
+  @Cacheable(cacheNames = CACHE_USER, key = "#username")
+  public boolean isUserExists(String username) {
+    UserEntity d = this.ur.findByUsername(username);
+    return d != null;
   }
 
   public List<User> getAll() {
@@ -76,8 +91,16 @@ public class UserService {
   }
 
   @Transactional
+  @Cacheable(cacheNames = CACHE_USER, key = "#u.username")
   public User create(User u) {
-    if (!this.isValidUser(u)) return null;
+    if (this.isUserExists(u.getUsername())) return u;
+    log.info(StringUtil.join("create user : ", u.getUsername()));
+    if (!this.isValidUser(u)) return u;
+    return this.createUser(u);
+  }
+
+  @CachePut(cacheNames = CACHE_USER, key = "#result.username")
+  public User createUser(User u) {
     if (!this.isValidRole(u)) {
       u.setRoles(new ArrayList<>());
       u.getRoles().add("USER");
@@ -90,6 +113,7 @@ public class UserService {
   }
 
   @Transactional
+  @CachePut(cacheNames = CACHE_USER, key = "#result.email")
   public User updateUserCredentials(User newu, String email) {
     UserEntity u = this.ur.findByEmail(email);
     if (u == null) return null;
@@ -102,6 +126,7 @@ public class UserService {
   }
 
   @Transactional
+  @CacheEvict(cacheNames = CACHE_USER, key = "#email")
   public User deleteById(String email) {
     UserEntity u = this.ur.findByEmail(email);
     if (u == null) return null;

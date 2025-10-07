@@ -1,0 +1,6 @@
+thinking/
+.vscode/
+archive/
+.env
+*.vim
+

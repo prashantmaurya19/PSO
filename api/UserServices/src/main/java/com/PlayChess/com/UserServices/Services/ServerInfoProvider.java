@@ -1,15 +1,20 @@
 package com.PlayChess.com.UserServices.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ServerInfoProvider {
 
-  @Autowired private ServletWebServerApplicationContext server;
+  private final ServletWebServerApplicationContext server;
 
   public int getServerPort() {
     return server.getWebServer().getPort();
+  }
+
+  public String getKafkaServerTopic() {
+    return this.getServerPort() + "pso";
   }
 }

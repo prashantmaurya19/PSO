@@ -31,12 +31,12 @@ export function logCheckPoint() {
 }
 
 /**
+ * i know name is rediculas
  * @param {object} data
  * @param {...object} args
  */
 export function pmlog(data, ...args) {
   if (!option.logging) return data;
-  // i know name is rediculas
   log(`0: pmlog => `, data);
   args.forEach((v, i) => {
     log(`${i + 1}: pmlog => `, v);

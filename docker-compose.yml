@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: prashant
 
   service-registry:
-    image: pmapp:latest
+    image: pso-img:latest
     ports:
       - "8761:8761"
     networks:
@@ -19,7 +19,7 @@ services:
       - ./api/ServiceRegistry/:/app
 
   view-service:
-    image: pmapp:latest
+    image: pso-img:latest
     depends_on:
       - service-registry
       - kafka
@@ -30,7 +30,7 @@ services:
       - ./api/ViewService/:/app
 
   user-service:
-    image: pmapp:latest
+    image: pso-img:latest
     depends_on:
       - service-registry
       - kafka
@@ -43,7 +43,7 @@ services:
       - ./api/UserServices/:/app
 
   request-consumerDispatcher:
-    image: pmapp:latest
+    image: pso-img:latest
     ports:
       - "8185:8185"
     depends_on:
@@ -57,19 +57,25 @@ services:
     volumes:
       - ./api/RequestConsumerDispatcher/:/app
 
+  redis:
+    image: redis:latest
+    networks:
+      - pmnet
+
   authentication:
-    image: pmapp:latest
+    image: pso-img:latest
     depends_on:
       - service-registry
       - kafka
       - db
+      - redis
     networks:
       - pmnet
     volumes:
       - ./api/Authentication/:/app
 
   gateway:
-    image: pmapp:latest
+    image: pso-img:latest
     hostname: localhost
     ports:
       - "8080:8080"

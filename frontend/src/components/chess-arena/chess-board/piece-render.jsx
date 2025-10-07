@@ -81,12 +81,10 @@ export function RenderChessBoard({}) {
     }
     emit("BOARD_MOVE_PLAYED", e);
     if (!e.t.cancel)
-      sendGameEvent(
-        combine(RESULT.post_info, {
-          action: "move_played",
-          payload: JSON.stringify({ notation: e.t.chess_notation }),
-        }),
-      );
+      sendGameEvent({
+        action: "move_played",
+        payload: JSON.stringify({ notation: e.t.chess_notation }),
+      });
   });
   useListen("BOARD_MOVE_PLAYED", (e) => {
     pmlog(e);
@@ -107,18 +105,22 @@ export function RenderChessBoard({}) {
       CHESS_NOTATION_CHECKMATE_CHAR
     ) {
       emit("GAME_ENDED", {});
-      dispatch(setDataChessBoardGameState("end"));
     }
   });
   useListen("GAME_ENDED", (e) => {
+    const color = e?.resign ? toggleColor(fen_info.color) : fen_info.color;
+    dispatch(setDataChessBoardGameState("end"));
     dispatch(
       updateGameWinnerBannerOverlay({
         display: true,
-        color: fen_info.color,
-        piece: fen_info.color == "b" ? "k" : "K",
-        text: `${fen_info.color == player_info.p.side ? "You" : "Oponent"} win by ChessMate`,
+        color,
+        piece: color == "b" ? "k" : "K",
+        text: `${color == player_info.p.side ? "You" : "Oponent"} win by ${e?.text == undefined ? "ChessMate" : e.text}`,
       }),
     );
+  });
+  useListen("BOARD_RESIGN", (e) => {
+    emit("GAME_ENDED", { resign: true, text: "Resignation" });
   });
   useListen("TEST", (e) => {
     if (state != "playing") dispatch(setDataChessBoardGameState("playing"));

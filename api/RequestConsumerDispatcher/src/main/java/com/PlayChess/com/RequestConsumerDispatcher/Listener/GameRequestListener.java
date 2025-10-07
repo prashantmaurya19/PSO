@@ -1,8 +1,9 @@
 package com.PlayChess.com.RequestConsumerDispatcher.Listener;
 
-import com.PlayChess.com.RequestConsumerDispatcher.Model.GameRequest;
 import com.PlayChess.com.RequestConsumerDispatcher.Producer.GameEventProducer;
 import com.PlayChess.com.RequestConsumerDispatcher.Services.ObjectMapperService;
+import com.PlayChess.com.constants.KafkaTopics;
+import com.PlayChess.com.model.GameRequest;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class GameRequestListener {
   private final GameEventProducer gep;
   private final HashMap<String, GameRequest> pending_players = new HashMap<>();
 
-  @KafkaListener(topics = "game_request", groupId = "rcp-consumers")
+  @KafkaListener(topics = KafkaTopics.GAME_REQUEST_TOPIC, groupId = "rcp-consumers")
   public void dispach(String payload) {
     try {
       GameRequest request = oms.parse(payload, GameRequest.class);

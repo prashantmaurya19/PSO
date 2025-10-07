@@ -1,7 +1,5 @@
 package com.PlayChess.com.RequestConsumerDispatcher.Controller;
 
-import com.PlayChess.com.RequestConsumerDispatcher.Model.GameRequest;
-import com.PlayChess.com.RequestConsumerDispatcher.Producer.GameEventProducer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.PlayChess.com.RequestConsumerDispatcher.Producer.GameEventProducer;
+import com.PlayChess.com.model.GameRequest;
 
 @RestController
 @RequestMapping("/kafka")

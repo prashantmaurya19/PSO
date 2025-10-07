@@ -6,7 +6,7 @@ play chess over real time with other.**
 ### Docker Support
 run below command to spin up server
 ```bash
-docker build -t pmapp:latest .
+docker build -t pso-img:latest .
 docker compose up
 ```
 

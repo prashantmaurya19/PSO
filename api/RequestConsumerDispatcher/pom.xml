@@ -28,6 +28,7 @@
   </scm>
   <properties>
     <java.version>21</java.version>
+    <PsoUtility.version>1.0-SNAPSHOT</PsoUtility.version>
   </properties>
   <dependencies>
     <dependency>
@@ -47,6 +48,11 @@
       <artifactId>spring-boot-devtools</artifactId>
       <scope>runtime</scope>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.PlayChess.com</groupId>
+      <version>${PsoUtility.version}</version>
+      <artifactId>PsoUtility</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

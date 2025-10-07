@@ -1,9 +1,11 @@
 package com.PlayChess.com.Authentication.Controllers;
 
 import com.PlayChess.com.Authentication.Response.AuthResponse;
-import com.PlayChess.com.Authentication.Utils.JwtUtil;
+import com.PlayChess.com.Authentication.Utils.ResponseUtil;
+import com.PlayChess.com.mvc.util.CookieUtil;
+import com.PlayChess.com.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,12 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class LoginController {
 
-  @Autowired private JwtUtil jwt;
-
   @PostMapping("/login")
-  public ResponseEntity<AuthResponse> getJwtToken() {
+  public ResponseEntity<AuthResponse> getJwtToken(HttpServletResponse response) {
     Authentication au = SecurityContextHolder.getContext().getAuthentication();
-    return new ResponseEntity<AuthResponse>(
-        new AuthResponse(jwt.generateToken(au.getName()), "ok"), HttpStatus.OK);
+    String token = JwtUtil.generateToken(au.getName());
+    ResponseUtil.addCookie(response, CookieUtil.JWT_COOKIE_NAME, token);
+    return new ResponseEntity<AuthResponse>(new AuthResponse(token, "ok"), HttpStatus.OK);
   }
 }

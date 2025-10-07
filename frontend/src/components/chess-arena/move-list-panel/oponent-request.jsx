@@ -3,9 +3,12 @@
 import { faC, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconWraper } from "@pso/components/icon";
+import { emit, useListen } from "@pso/util/event";
 import { pmlog } from "@pso/util/log";
+import { sendGameEvent } from "@pso/util/socket";
 import { joinTWClass } from "@pso/util/tailwind";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -66,7 +69,12 @@ export function OponentRequestFieldAcceptButton({ ...a }) {
  */
 export function OponentRequestField({ className, ...a }) {
   const request = useSelector((s) => s.component_data.move_list_panel.request);
-  if (request.title == "") return <></>;
+  const dispatch = useDispatch();
+  const [title, setTitle] = useState("");
+  useListen("SOCKET_GAME_REQUEST_RECIVED", (o) => {
+    setTitle(o.payload.title);
+  });
+  if (title == "") return <></>;
   return (
     <div
       {...a}
@@ -83,15 +91,32 @@ export function OponentRequestField({ className, ...a }) {
           "p-2",
         )}
       >
-        {request.title}
+        {title}
       </span>
       <OponentRequestFieldDeclineButton
         onClick={(e) => {
+          sendGameEvent({
+            action: "request",
+            payload: JSON.stringify({
+              title,
+              accept: false,
+            }),
+          });
           console.log("OponentRequestFieldDeclineButton is clicked");
         }}
       />
       <OponentRequestFieldAcceptButton
         onClick={(e) => {
+          sendGameEvent({
+            action: "request",
+            payload: JSON.stringify({
+              title,
+              accept: true,
+            }),
+          });
+          if (title == "Draw") {
+            emit("BOARD_DRAW", {});
+          }
           console.log("OponentRequestFieldAcceptButton is clicked");
         }}
       />

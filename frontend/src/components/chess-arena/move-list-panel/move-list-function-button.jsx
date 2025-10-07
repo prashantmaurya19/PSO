@@ -21,7 +21,9 @@ import {
 } from "@pso/store/feature/component-data";
 import { acache } from "@pso/util/cache";
 import { travers } from "@pso/util/chess";
+import { emit } from "@pso/util/event";
 import { pmlog } from "@pso/util/log";
+import { sendGameEvent } from "@pso/util/socket";
 import { joinTWClass } from "@pso/util/tailwind";
 import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
@@ -57,7 +59,12 @@ export function MoveListButton({ icon = null, text = "", className, ...a }) {
 export function GameStateViceMoveListFunctionButtons({ ...a }) {
   /**  @type {import("@pso/util/chess").GameStateName} */
   const state = useSelector((s) => s.chess.game_state);
+  const turn = useSelector((s) => s.chess.turn);
   const b_info = acache("LAST_GAME_DURATION").localstorage().get().json();
+  const button_decorator = (f, e) => {
+    if (turn != "p") return;
+    f(e);
+  };
   return (
     <MoveListFunctionButtons {...a}>
       {(function () {
@@ -65,7 +72,17 @@ export function GameStateViceMoveListFunctionButtons({ ...a }) {
           case "playing": {
             return (
               <>
-                <MoveListButton text="1/2 Draw" />
+                <MoveListButton
+                  text="1/2 Draw"
+                  onClick={button_decorator.bind(this, (e) => {
+                    sendGameEvent({
+                      action: "request",
+                      payload: JSON.stringify({
+                        title: "Draw",
+                      }),
+                    });
+                  })}
+                />
                 <MoveListButton
                   icon={
                     <IconWraper className="h-[70%] aspect-square">
@@ -76,6 +93,15 @@ export function GameStateViceMoveListFunctionButtons({ ...a }) {
                       />
                     </IconWraper>
                   }
+                  onClick={button_decorator.bind(this, (e) => {
+                    emit("BOARD_RESIGN", {});
+                    sendGameEvent({
+                      action: "resign",
+                      payload: JSON.stringify({
+                        title: "Resign",
+                      }),
+                    });
+                  })}
                   text="Resign"
                 />
               </>

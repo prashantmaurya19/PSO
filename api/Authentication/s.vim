@@ -13,15 +13,26 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +61 src/main/java/com/PlayChess/com/Authentication/Utils/JwtUtil.java
-badd +45 src/main/java/com/PlayChess/com/Authentication/Controllers/Registration.java
-badd +11 src/main/java/com/PlayChess/com/Authentication/Response/SuccessfullAuthentication.java
-badd +51 health://
+badd +10 src/main/resources/application.yml
+badd +34 pom.xml
+badd +3 src/main/java/com/PlayChess/com/Authentication/Surrogate/UserFieldMask.java
+badd +55 src/main/java/com/PlayChess/com/Authentication/Pojo/User.java
+badd +3 src/main/java/com/PlayChess/com/Authentication/Services/UserService.java
+badd +3 src/main/java/com/PlayChess/com/Authentication/TransLayer/UserAndUserEntityLayer.java
+badd +6 src/main/java/com/PlayChess/com/Authentication/TransLayer/CacheLayer.java
+badd +15 src/main/java/com/PlayChess/com/Authentication/Controllers/RegistrationController.java
+badd +72 src/main/java/com/PlayChess/com/Authentication/Controllers/UserController.java
+badd +10 src/main/java/com/PlayChess/com/Authentication/Utils/StringUtil.java
+badd +20 src/main/java/com/PlayChess/com/Authentication/Utils/JwtUtil.java
+badd +15 src/main/java/com/PlayChess/com/Authentication/Configurations/RedisConfig.java
+badd +18 src/main/java/com/PlayChess/com/Authentication/Configurations/DevConfig.java
+badd +17 src/main/java/com/PlayChess/com/Authentication/Cache/RedisCache.java
+badd +4 .gitignore
 argglobal
 %argdel
-edit src/main/java/com/PlayChess/com/Authentication/Controllers/Registration.java
+edit src/main/java/com/PlayChess/com/Authentication/Services/UserService.java
 argglobal
-balt src/main/java/com/PlayChess/com/Authentication/Response/SuccessfullAuthentication.java
+balt src/main/java/com/PlayChess/com/Authentication/Cache/RedisCache.java
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -32,12 +43,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 40 - ((26 * winheight(0) + 17) / 35)
+let s:l = 6 - ((5 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 40
-normal! 025|
+keepjumps 6
+normal! 029|
 lcd ~/Documents/coding/PSO/api/Authentication
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

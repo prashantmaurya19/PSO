@@ -1,6 +1,6 @@
 package com.PlayChess.com.Authentication.Pojo;
 
-import com.PlayChess.com.Authentication.Surrogate.Masks;
+import com.PlayChess.com.Authentication.Surrogate.UserFieldMask;
 import com.PlayChess.com.Authentication.TransLayer.UserAndUserEntityLayer;
 import java.util.List;
 import javax.validation.constraints.Email;
@@ -48,10 +48,10 @@ public class User implements UserAndUserEntityLayer {
   }
 
   public void hideSensitiveInfo() {
-    this.setPassword(Masks.STRING_HIDDEN_FIELD);
-    this.setEmail(Masks.STRING_HIDDEN_FIELD);
-    this.setId(Masks.LONG_HIDDEN_FIELD);
-    this.getInfo().setId(Masks.LONG_HIDDEN_FIELD);
+    this.setPassword(UserFieldMask.STRING_HIDDEN_FIELD);
+    this.setEmail(UserFieldMask.STRING_HIDDEN_FIELD);
+    this.setId(UserFieldMask.LONG_HIDDEN_FIELD);
+    this.getInfo().setId(UserFieldMask.LONG_HIDDEN_FIELD);
     this.setRoles(null);
   }
 }

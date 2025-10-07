@@ -1,12 +1,11 @@
 import { isTypeOf } from "@pso/util/types.js";
 
 /** return combined from and to object
- * @param {object} from
- * @param {object} to
+ * @param {...object} o
  * @returns {object}
  */
-export function combine(from, to) {
-  return { ...from, ...to };
+export function combine(...o) {
+  return Object.assign({}, ...o);
 }
 
 /**

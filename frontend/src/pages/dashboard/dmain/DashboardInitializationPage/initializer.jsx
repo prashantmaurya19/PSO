@@ -60,6 +60,10 @@ function TaskLabel({ text, className, ...a }) {
  */
 function IntializationProcessBanner({ className, ...a }) {
   const location = useLocation();
+  if (location.state == null) {
+    pmlog(location);
+    initializerOn();
+  }
   const [completed_task, setCompleteTask] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();

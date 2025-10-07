@@ -1,8 +1,8 @@
 package com.PlayChess.com.UserServices.Services;
 
-import com.PlayChess.com.UserServices.Model.GameEvent;
 import com.PlayChess.com.UserServices.Pojo.InServerUser;
 import com.PlayChess.com.UserServices.Utils.StateUtil;
+import com.PlayChess.com.model.GameEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

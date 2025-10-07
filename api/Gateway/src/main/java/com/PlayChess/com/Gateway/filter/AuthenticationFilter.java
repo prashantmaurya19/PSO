@@ -1,9 +1,9 @@
 package com.PlayChess.com.Gateway.filter;
 
-import com.PlayChess.com.Gateway.exception.CookieNotFound;
-import com.PlayChess.com.Gateway.utils.CookieUtil;
-import com.PlayChess.com.Gateway.utils.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.PlayChess.com.Gateway.exceptions.CookieNotFound;
+import com.PlayChess.com.Gateway.util.CookieUtil;
+import com.PlayChess.com.constants.PsoAuthHeaders;
+import com.PlayChess.com.util.JwtUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -18,10 +18,6 @@ import reactor.core.publisher.Mono;
 public class AuthenticationFilter
     extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-  // private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
-  @Autowired private JwtUtil jwtUtil;
-  @Autowired private CookieUtil cu;
-
   public AuthenticationFilter() {
     super(Config.class);
   }
@@ -33,14 +29,13 @@ public class AuthenticationFilter
       String jwt = null, username = "";
       // log.info("Cookies = " + exchange.getRequest().getCookies().getFirst("Cookie"));
       try {
-        jwt = cu.extractJwtCookies(exchange.getRequest());
-        // log.info("Token = " + jwt);
+        jwt = CookieUtil.extractJwtCookies(exchange.getRequest());
       } catch (CookieNotFound e) {
         // log.info("normal user");
         return chain.filter(exchange.mutate().request(addXUserHeader(modifiedRequest, "")).build());
       }
       try {
-        username = jwtUtil.extractUsername(jwt);
+        username = JwtUtil.extractUsername(jwt);
         // log.info("authorized user = " + username);
       } catch (Exception e) {
         // log.info("un-authorized user");
@@ -54,7 +49,7 @@ public class AuthenticationFilter
   public static class Config {}
 
   private ServerHttpRequest addXUserHeader(Builder request, String value) {
-    return request.header("X-User-pso", value).build();
+    return request.header(PsoAuthHeaders.X_USER_PSO, value).build();
   }
 
   private Mono<Void> handleError(ServerWebExchange exchange) {

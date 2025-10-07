@@ -1,8 +1,8 @@
 package com.PlayChess.com.Authentication.Filter;
 
-import com.PlayChess.com.Authentication.Exceptions.CookieNotFound;
-import com.PlayChess.com.Authentication.Utils.CookiesUtil;
-import com.PlayChess.com.Authentication.Utils.JwtUtil;
+import com.PlayChess.com.mvc.exceptions.CookieNotFound;
+import com.PlayChess.com.mvc.util.CookieUtil;
+import com.PlayChess.com.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,17 +24,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
   @Autowired private UserDetailsService userDetailsService;
 
-  @Autowired private JwtUtil jwtUtil;
-  @Autowired private CookiesUtil cu;
-
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
     String jwt = null, username = null;
     try {
-      jwt = cu.extractJwtCookies(request);
-      username = jwtUtil.extractUsername(jwt);
+      jwt = CookieUtil.extractJwtCookies(request);
+      username = JwtUtil.extractUsername(jwt);
       log.info("authenticatied username=" + username);
     } catch (CookieNotFound e) {
       log.info("not a auth request : CookieNotFound");
@@ -52,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
       return;
     }
     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-    if (jwtUtil.validateToken(jwt)) {
+    if (JwtUtil.validateToken(jwt)) {
       UsernamePasswordAuthenticationToken auth =
           new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
       auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

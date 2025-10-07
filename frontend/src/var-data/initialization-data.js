@@ -6,11 +6,47 @@ import { profile_name } from "./profile-data";
 import { parseUserAddress } from "@pso/util/api";
 import { emit } from "@pso/util/event";
 import { combine } from "@pso/util/aobject";
+import { parse } from "@pso/util/chess";
+import { extendTailwindMerge } from "tailwind-merge";
+import { UNSAFE_useFogOFWarDiscovery } from "react-router-dom";
 
 /**
  * @type {Partial<{username:string,initialized:boolean,userinfo:{firstname:string,lastname:string,info:{rating:number}},post_info:{from:string,to:string}}>}
  */
 export const RESULT = { initialized: false };
+
+/**
+ * @type {Record<import("@pso/util/socket").SocketChessAction,function({payload:{user:object,action:import("@pso/util/socket").SocketChessAction,from:string,to:string,topic:string,payload:object}}):void>}
+ */
+export const event_handlers = {
+  move_played({ payload }) {
+    emit("SOCKET_GAME_EVENT_RECIVED", payload);
+  },
+  async init({ payload }) {
+    RESULT.post_info = {
+      from: payload.to,
+      to: payload.from,
+    };
+    const res = await request(
+      `/ur/user/get_info/${parseUserAddress(payload.from).username}`,
+    )
+      .get()
+      .execute();
+    payload.user = await res.json();
+    emit("SOCKET_GAME_EVENT_RECIVED", payload);
+  },
+  request({ payload }) {
+    payload.payload = JSON.parse(payload.payload);
+    if (payload.payload?.accept == undefined) {
+      emit("SOCKET_GAME_REQUEST_RECIVED", payload);
+    } else if (payload.payload.title == "Draw") {
+      emit("SOCKET_GAME_DRAW_REQUEST_RECIVED", payload);
+    }
+  },
+  resign({ payload }) {
+    emit("BOARD_RESIGN", payload);
+  },
+};
 
 /**
  * @type {Array<{name:string,config:function():Promise<void>}>}
@@ -21,7 +57,7 @@ export const INITIALIZATION_TASK_LIST = [
     config() {
       return new Promise(async (resolve, reject) => {
         const res = await request("/ur/user/verify")
-          .credentials("same-origin")
+          .credentials("include")
           .get()
           .execute();
         const data = await res.json();
@@ -57,19 +93,7 @@ export const INITIALIZATION_TASK_LIST = [
                     },
                     data,
                   );
-                  if (payload.action == "init") {
-                    RESULT.post_info = {
-                      from: payload.to,
-                      to: payload.from,
-                    };
-                    const res = await request(
-                      `/ur/user/get_info/${parseUserAddress(data.from).username}`,
-                    )
-                      .get()
-                      .execute();
-                    payload.user = await res.json();
-                  }
-                  emit("SOCKET_GAME_EVENT_RECIVED", payload);
+                  await event_handlers[payload.action]({ payload });
                 },
               },
             );
