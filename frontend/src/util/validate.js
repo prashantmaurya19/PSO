@@ -2,7 +2,7 @@ import { isTypeOf } from "@pso/util/types";
 
 /**
  * @typedef {boolean|string|number} ValidationTypes
- * @typedef {Object.<string,ValidationTypes>} ValidationObject
+ * @typedef {function():void} CatchCallback
  */
 
 class ValidationError extends Error {
@@ -32,20 +32,21 @@ class ValidationError extends Error {
     return new ValidationError(`Limit is Exceeded for ${m}!`);
   }
 
-  constructor(m) {
-    super(m);
+  /**
+   * @param {...object} m
+   */
+  constructor(...m) {
+    super(...m);
     // this.message = `Validating length of ${this.va}:${}`;
     this.name = "ValidationError";
   }
 }
 
-class StringValidation {
+export class StringValidation {
   /**
-   * @param {Validation} parent
-   * @param {String} sample
+   * @param {string} sample
    */
-  constructor(parent, sample) {
-    this.parent = parent;
+  constructor(sample) {
     this.sample = sample;
   }
 
@@ -58,108 +59,70 @@ class StringValidation {
   /** check length limit
    * @param {number} [min=Number.MIN_SAFE_INTEGER]
    * @param {number} [max=Number.MAX_SAFE_INTEGER]
+   * @param {CatchCallback} [catch_callback] - called when validation failed
    * @returns {StringValidation}
    */
-  limit(min = Number.MIN_SAFE_INTEGER, max = Number.MAX_SAFE_INTEGER) {
-    let a = this.get().length;
-    if (a < min || a > max)
+  limit(
+    min = Number.MIN_SAFE_INTEGER,
+    max = Number.MAX_SAFE_INTEGER,
+    catch_callback = () => {
       throw ValidationError.limitExceeded(`${this.get()}`);
+    },
+  ) {
+    let a = this.get().length;
+    if (a < min || a > max) catch_callback();
     return this;
   }
 
   /** returns true if regex is matched to whole value
-   * @param {...RegExp} pattern
+   * @param {Array<RegExp>|RegExp} patterns
+   * @param {CatchCallback} [catch_callback] - called when validation failed
    * @returns {StringValidation}
    */
-  regex(...pattern) {
-    for (const r of pattern) {
-      if (!r.test(this.get()))
-        throw ValidationError.regexFailed(`${this.get()}`);
-    }
+  regex(
+    patterns,
+    catch_callback = () => {
+      throw ValidationError.regexFailed(`${this.get()}`);
+    },
+  ) {
+    //@ts-ignore
+    if (!isTypeOf(patterns, Array)) patterns = [patterns];
+    //@ts-ignore
+    for (const r of patterns) if (!r.test(this.get())) catch_callback();
     return this;
   }
 
   /** check if a string is a email
-   * @param {string}
-   * @param {StringValidation}
+   * @param {CatchCallback} [catch_callback] - called when validation failed
    */
-  email() {
-    this.regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g);
+  email(catch_callback) {
+    this.regex(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/g,
+      catch_callback,
+    );
     return this;
   }
 
   /**
+   * @param {CatchCallback} [catch_callback] - called when validation failed
    * @returns {StringValidation}
    */
-  notEmpty() {
-    this.limit((min = 1));
+  notEmpty(catch_callback) {
+    this.limit(1, null, catch_callback);
     return this;
-  }
-
-  /**
-   * @returns {Validation}
-   */
-  and() {
-    return this.parent;
-  }
-}
-
-class Validation {
-  /** check if a object is string or not
-   * @param {object} s
-   * @returns {boolean}
-   */
-  isString(s) {
-    return isTypeOf(s, String);
-  }
-
-  /** check object is a number
-   * @param {object} s
-   * @returns {boolean}
-   */
-  isNumber(s) {
-    return isTypeOf(s, Number) && !isNaN(s);
-  }
-
-  /** check object is a boolean
-   * @param {object} s
-   * @returns {boolean}
-   */
-  isBoolean(s) {
-    return isTypeOf(s, Boolean);
-  }
-
-  /** return value of field
-   * @param {string|undefined} name - name of the field in sample
-   * @returns {ValidationTypes|ValidationObject}
-   */
-  get(name) {
-    if (name == undefined) return this.sample;
-    return this.sample[name];
-  }
-
-  /**
-   * @param {ValidationObject} o
-   */
-  constructor(o) {
-    this.sample = o;
-  }
-
-  /**
-   * @param {string} name
-   * @returns {StringValidation}
-   */
-  string(name) {
-    if (!this.isString(this.get(name)))
-      throw ValidationError.typeMismatch("String", this.get(name));
-    return new StringValidation(this, this.get(name));
   }
 }
 
 /**
- * @param {ValidationObject} o
- * @returns {Validation}
+ * @param {any} o
+ * @returns {StringValidation|null}
  */
 export function validate(o) {
-  return new Validation(o);
+  if (typeof o == "string" || o instanceof String) {
+    return new StringValidation(`${o}`);
+  } else if (isTypeOf(o, Number)) {
+    return null;
+  } else {
+    return null;
+  }
 }

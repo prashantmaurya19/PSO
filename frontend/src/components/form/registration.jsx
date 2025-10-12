@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { twMerge } from "tailwind-merge";
-import { join } from "@pso/util/tailwind";
+import { join, joinTWClass } from "@pso/util/tailwind";
 import { anime } from "@pso/util/anime";
 import { useGSAP } from "@gsap/react";
 import { InputField, UsernameField } from "@pso/components/form/inputs";
@@ -9,8 +9,9 @@ import { PasswordField } from "@pso/components/form/inputs";
 import { FormTitle } from "@pso/components/form/title";
 import { request, response } from "@pso/util/requests";
 import { useRef } from "react";
-import { validate } from "@pso/util/validate";
+import { StringValidation, validate } from "@pso/util/validate";
 import { useNavigate } from "react-router-dom";
+import { formatPlayerName } from "@pso/util/astring";
 
 /** all fields has class RegistrationFormFields
  * @param {Object} param0
@@ -34,6 +35,25 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
   const password = useRef();
 
   const element_width = "w-[23vw]";
+  const form_field_error_handler = (e, err) => {
+    e.current.parentNode.setAttribute("data-status", "error");
+
+    const error_ele =
+      e.current.parentNode.nextElementSibling.tagName == "SPAN"
+        ? e.current.parentNode.nextElementSibling
+        : document.createElement("span");
+    for (const s of joinTWClass(
+      "text-red-600 text-sm",
+      "flex justify-start items-center",
+      "w-[90%] h-[4%] mb-3",
+    ).split(" ")) {
+      error_ele.classList.add(s);
+    }
+    e.current.parentNode.classList.remove("mb-3");
+    error_ele.innerHTML = err;
+    e.current.parentNode.insertAdjacentElement("afterend", error_ele);
+    throw Error();
+  };
 
   return (
     <div
@@ -105,13 +125,6 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
         text="Sign Up"
         onClick={contextSafe(async () => {
           try {
-            await anime()
-              .timeline()
-              .formFieldAll("to", ".RegistrationFormFields")
-              .formContainerHide("#register-form-container")
-              .selfContainedLoaderShow(".SelfContainedLoader")
-              .endTimeline()
-              .build();
             onSubmit();
             const form_data = {
               email: username.current.value,
@@ -120,42 +133,62 @@ export function RegistrationForm({ onSubmit = () => {}, className = "" }) {
               firstname: firstname.current.value,
               lastname: lastname.current.value,
             };
-            validate(form_data)
-              .string("email")
-              .limit(4, 64)
-              .email()
-              .and()
-              .string("password")
-              .limit(4, 16)
-              .and()
-              .string("firstname")
-              .limit(4, 16)
-              .and()
-              .string("lastname")
-              .limit(4, 16)
-              .and()
-              .get();
-            let resp = await request("/ur/register")
-              .post()
-              .json()
-              .credentials()
-              .body(form_data)
-              .execute();
 
-            let res = await resp.json();
-            if (res.status == "ok") {
-              await anime().selfContainedLoaderHide().build();
-              navigate("/login", { auth: true });
-            } else {
-              await anime()
-                .timeline()
-                .selfContainedLoaderHide(".SelfContainedLoader")
-                .formContainerShow("#register-form-container")
-                .formFieldAll("from", ".RegistrationFormFields")
-                .endTimeline()
-                .build();
-            }
-          } catch {
+            validate(form_data.email).email(
+              form_field_error_handler.bind(this, username, "Invalid Email!"),
+            );
+            validate(form_data.password).limit(
+              4,
+              16,
+              form_field_error_handler.bind(
+                this,
+                password,
+                "Invalid Password Lenght!",
+              ),
+            );
+            validate(form_data.firstname).limit(
+              4,
+              16,
+              form_field_error_handler.bind(
+                this,
+                firstname,
+                "firstname must be greater then 4 and less then 16",
+              ),
+            );
+            validate(form_data.lastname).limit(
+              4,
+              16,
+              form_field_error_handler.bind(this, lastname, "fuck"),
+            );
+
+            // let resp = await request("/ur/register")
+            //   .post()
+            //   .json()
+            //   .credentials()
+            //   .body(form_data)
+            //   .execute();
+
+            // let res = await resp.json();
+            // if (res.status == "ok") {
+            // await anime()
+            //   .timeline()
+            //   .formFieldAll("to", ".RegistrationFormFields")
+            //   .formContainerHide("#register-form-container")
+            //   .selfContainedLoaderShow(".SelfContainedLoader")
+            //   .endTimeline()
+            //   .build();
+            //   await anime().selfContainedLoaderHide().build();
+            //   navigate("/login", { auth: true });
+            // } else {
+            //   await anime()
+            //     .timeline()
+            //     .selfContainedLoaderHide(".SelfContainedLoader")
+            //     .formContainerShow("#register-form-container")
+            //     .formFieldAll("from", ".RegistrationFormFields")
+            //     .endTimeline()
+            //     .build();
+            // }
+          } catch (e) {
             await anime()
               .timeline()
               .selfContainedLoaderHide(".SelfContainedLoader")

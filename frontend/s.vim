@@ -13,70 +13,15 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +30 src/components/chess-arena/chess-board/index.jsx
-badd +38 src/components/chess-arena/move-list-panel/index.jsx
-badd +131 src/components/chess-arena/move-list-panel/move-list-table.jsx
-badd +43 src/components/chess-arena/move-list-panel/verses-banner.jsx
-badd +7 src/components/chess-arena/move-list-panel/function-button.jsx
-badd +121 src/components/chess-arena/move-list-panel/move-list-function-button.jsx
-badd +23 src/pages/dashboard/dmain/ChessArenaGround.jsx
-badd +1 src/components/icon/index.jsx
-badd +69 src/components/chess-arena/move-list-panel/oponent-request.jsx
-badd +1795 src/util/chess.js
-badd +1 src/util/chess.test.js
-badd +76 ~/Documents/linux-dotfiles/nvim/.config/nvim/pm_user/lua/pm_user/remaps.lua
-badd +66 src/store/feature/component-data/index.js
-badd +150 src/components/chess-arena/chess-board/piece-render.jsx
-badd +1 src/components/chess-arena/chess-board/board.jsx
-badd +27 src/components/icon/fontawesome/index.jsx
-badd +38 src/components/chess-arena/chess-board/promotion-piece-overlay.jsx
-badd +53 src/components/chess-arena/chess-board/winner-banner-overlay.jsx
-badd +57 src/components/loader/chess-board/index.jsx
-badd +60 src/components/chess-arena/index.jsx
-badd +34 src/store/feature/chess-data/index.js
-badd +9 src/store/index.js
-badd +145 src/components/chess-arena/player-panel/index.jsx
-badd +55 src/util/time.js
-badd +26 src/util/log.js
-badd +100 src/components/debug/overlay/duration-overlay/index.jsx
-badd +7 jsconfig.json
-badd +8 src/components/debug/overlay/fen-overlay/index.jsx
-badd +26 src/util/event.js
-badd +1 src/util/astring.js
-badd +19 ~/Documents/linux-dotfiles/nvim/.config/nvim/lua/plugins/telescope.lua
-badd +1680 node_modules/@types/react/index.d.ts
-badd +1 src/pages/dashboard/dmain/GameDurationMenu.jsx
-badd +18 src/pages/dashboard/dmain/index.jsx
-badd +68 src/components/buttons/dmenu-button/index.jsx
-badd +8 src/components/icon/dashboard/index.jsx
-badd +34 src/util/cache.js
-badd +5 src/pages/dashboard/index.jsx
-badd +6 src/util/astring.test.js
-badd +50 src/util/acookie.js
-badd +36 src/util/requests.js
-badd +39 src/store/feature/sockjs-socket/socket.js
-badd +1 src/store/feature/sockjs-socket/index.js
-badd +196 src/util/socket.js
-badd +1 src/pages/dashboard/dtooltip-menu/index.jsx
-badd +14 src/pages/dashboard/dmain/DashboardInitializationPage/index.jsx
-badd +7 src/pages/dashboard/dmain/BotPlayCreateMenu.jsx
-badd +76 src/pages/dashboard/dmain/DashboardInitializationPage/initializer.jsx
-badd +27 src/components/loader/form/index.jsx
-badd +21 src/App.jsx
-badd +38 src/store/feature/initialization-data/index.js
-badd +2 src/pages/dashboard/dmain/DashboardInitializationPage/security.jsx
-badd +1 src/pages/dashboard/dmain/DashboardInitializationPage/security-task.jsx
-badd +25 src/pages/dashboard/dmain/DashboardInitializationPage/tasks.jsx
-badd +1 .gitignore
-badd +32 src/util/acookie.test.js
-badd +61 src/var-data/initialization-data.js
-badd +21 src/var-data/app-data.js
-badd +1 src/var-data/api-data.js
-badd +1 src/listeners/socket-listeners.js
-badd +12 src/util/api.js
+badd +39 src/pages/login/index.jsx
+badd +117 src/util/validate.js
+badd +61 src/components/form/registration.jsx
+badd +6 src/util/types.js
+badd +125 src/components/form/inputs/index.jsx
+badd +1 src/components/form/login.jsx
 argglobal
 %argdel
-edit src/components/chess-arena/index.jsx
+edit src/components/form/registration.jsx
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -96,7 +41,7 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
 exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 argglobal
-balt src/components/chess-arena/player-panel/index.jsx
+balt src/components/form/inputs/index.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -107,20 +52,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 60 - ((18 * winheight(0) + 19) / 38)
+let s:l = 61 - ((18 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 60
-normal! 012|
-lcd ~/Documents/coding/PSO/frontend
+keepjumps 61
+normal! 025|
 wincmd w
 argglobal
-if bufexists(fnamemodify("~/Documents/coding/PSO/frontend/src/var-data/initialization-data.js", ":p")) | buffer ~/Documents/coding/PSO/frontend/src/var-data/initialization-data.js | else | edit ~/Documents/coding/PSO/frontend/src/var-data/initialization-data.js | endif
+if bufexists(fnamemodify("src/components/form/inputs/index.jsx", ":p")) | buffer src/components/form/inputs/index.jsx | else | edit src/components/form/inputs/index.jsx | endif
 if &buftype ==# 'terminal'
-  silent file ~/Documents/coding/PSO/frontend/src/var-data/initialization-data.js
+  silent file src/components/form/inputs/index.jsx
 endif
-balt ~/Documents/coding/PSO/frontend/src/store/feature/chess-data/index.js
+balt src/components/form/registration.jsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -131,15 +75,14 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 54 - ((11 * winheight(0) + 19) / 38)
+let s:l = 106 - ((18 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 54
-normal! 019|
+keepjumps 106
+normal! 07|
 lcd ~/Documents/coding/PSO/frontend
 wincmd w
-2wincmd w
 exe 'vert 1resize ' . ((&columns * 79 + 79) / 159)
 exe 'vert 2resize ' . ((&columns * 79 + 79) / 159)
 tabnext 1
@@ -157,7 +100,6 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

@@ -72,45 +72,56 @@ export function PasswordField({ inputProp, ...p }) {
 }
 
 /**
- * @typedef {import("react").HTMLProps & {inputProp:import("react").InputHTMLAttributes & import("react").HTMLProps,icon:import("react").JSX.Element}} InputFieldProps
+ * @typedef {import("react").HTMLProps & {inputProp:import("react").InputHTMLAttributes & import("react").HTMLProps,icon:import("react").JSX.Element,[data-status]: "normal"|"error"}} InputFieldProps
  */
 
 /**
  * @param {InputFieldProps} param0
  */
-export function InputField({ className = "", inputProp, icon, ...args }) {
+export function InputField({
+  className = "",
+  "data-status": data_s = "normal",
+  inputProp,
+  icon,
+  ...args
+}) {
   return (
-    <div
-      {...args}
-      className={twMerge(
-        joinTWClass(
-          "border-index-third border-2 border-solid",
-          "flex justify-center items-center",
-          "mb-3",
-          "rounded-4xl",
-          "overflow-hidden",
-          "bg-index-third",
-        ),
-        className,
-      )}
-    >
-      <input
-        {...{
-          ...inputProp,
-          className: twMerge(
-            joinTWClass(
-              "h-full",
-              "bg-bg",
-              "text-index-second",
-              "p-3",
-              "grow-1",
-              "focus:outline-none",
-            ),
-            inputProp.className,
+    <>
+      <div
+        {...args}
+        data-status={data_s}
+        className={twMerge(
+          joinTWClass(
+            "data-[status=normal]:border-index-third border-2 border-solid",
+            "data-[status=error]:border-red-600",
+            "flex justify-center items-center",
+            "mb-3",
+            "rounded-4xl",
+            "overflow-hidden",
+            "data-[status=normal]:bg-index-third",
+            "data-[status=error]:bg-red-600",
           ),
-        }}
-      />
-      {icon}
-    </div>
+          className,
+        )}
+      >
+        <input
+          {...{
+            ...inputProp,
+            className: twMerge(
+              joinTWClass(
+                "h-full",
+                "bg-bg",
+                "text-index-second",
+                "p-3",
+                "grow-1",
+                "focus:outline-none",
+              ),
+              inputProp.className,
+            ),
+          }}
+        />
+        {icon}
+      </div>
+    </>
   );
 }

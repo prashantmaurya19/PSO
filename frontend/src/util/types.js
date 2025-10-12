@@ -5,10 +5,12 @@
 export function getTypeName(o) {
   return o.constructor.name;
 }
+
 /** check if o is any of given type return true
- * @param {object} o
+ * @template T
+ * @param {T} o
  * @param {...Function} types - type name
- * @returns {boolean}
+ * @returns {o is T}
  */
 export function isTypeOf(o, ...types) {
   for (const a of types) {
